@@ -421,6 +421,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			Set<AuditLogEntryType> excludedTypes,
 			Optional<String> authUserUuid, Optional<String> actorUuid,
 			Optional<String> actorEmail,
+			Optional<String> recipientEmail,
 			Optional<String> relatedAccount,
 			Optional<String> resource,
 			Optional<String> relatedResource,
@@ -433,7 +434,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		Pair<Optional<LocalDate>, Optional<LocalDate>> period = getPeriod(beginDate, endDate);
 		Query query = getQuery(
 				authUser, domain, includeNestedDomains, domains, logActions, resourceTypes, resourceGroups,
-				excludedTypes, authUserUuid, actorUuid, actorEmail, relatedAccount, resource, relatedResource,
+				excludedTypes, authUserUuid, actorUuid, actorEmail, recipientEmail, relatedAccount, resource, relatedResource,
 				resourceName, period.getFirst(), period.getSecond());
 
 		long count = mongoTemplate.count(query, AuditLogEntry.class);
@@ -466,8 +467,8 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	private Query getQuery(Account authUser, AbstractDomain domain, boolean includeNestedDomains, Set<String> domains,
 						   Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes, Set<AuditGroupLogEntryType> resourceGroups,
 						   Set<AuditLogEntryType> excludedTypes, Optional<String> authUserUuid, Optional<String> actorUuid,
-						   Optional<String> actorEmail, Optional<String> relatedAccount, Optional<String> resource, Optional<String> relatedResource,
-						   Optional<String> resourceName, Optional<LocalDate> begin, Optional<LocalDate> end) {
+						   Optional<String> actorEmail, Optional<String> recipientEmail, Optional<String> relatedAccount, Optional<String> resource,
+						   Optional<String> relatedResource, Optional<String> resourceName, Optional<LocalDate> begin, Optional<LocalDate> end) {
 		Query query = new Query();
 		//Domains
 		if (includeNestedDomains) {
@@ -504,6 +505,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		authUserUuid.ifPresent(s -> query.addCriteria(Criteria.where("authUser.uuid").is(s)));
 		actorUuid.ifPresent(s -> query.addCriteria(Criteria.where("actor.uuid").is(s)));
 		actorEmail.ifPresent(s -> query.addCriteria(Criteria.where("actor.mail").regex(s, "i")));
+		recipientEmail.ifPresent(s -> query.addCriteria(Criteria.where("recipientMail").regex(s, "i")));
 
 		// Period
 		if (begin.isPresent() && end.isPresent() ) {

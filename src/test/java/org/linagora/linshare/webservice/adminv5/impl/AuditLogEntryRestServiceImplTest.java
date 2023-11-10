@@ -36,6 +36,8 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.impl.DomainServiceImpl;
@@ -43,6 +45,7 @@ import org.linagora.linshare.core.service.impl.LogEntryServiceImpl;
 import org.linagora.linshare.core.service.impl.UserServiceImpl;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
@@ -130,6 +133,9 @@ public class AuditLogEntryRestServiceImplTest {
         logEntryService.insert(new DocumentEntryAuditLogEntry(john, john, documentEntry, LogAction.CREATE));
         logEntryService.insert(new DocumentEntryAuditLogEntry(john, john, documentEntry, LogAction.DOWNLOAD));
         logEntryService.insert(new DocumentEntryAuditLogEntry(john, john, documentEntry, LogAction.DOWNLOAD));
+
+        ShareEntry shareEntry = generateFakeShareEntry(documentEntry);
+        logEntryService.insert(new ShareEntryAuditLogEntry(john, john, LogAction.CREATE, shareEntry, AuditLogEntryType.SHARE_ENTRY));
     }
 
     @Test
@@ -138,12 +144,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(6);
+        assertThat(audits.size()).isEqualTo(7);
     }
 
 	@Test
@@ -152,7 +158,7 @@ public class AuditLogEntryRestServiceImplTest {
         assertThatThrownBy(() -> testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class))
                 .isInstanceOf(BusinessException.class)
@@ -165,12 +171,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(john.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(6);
+        assertThat(audits.size()).isEqualTo(7);
     }
 
 	@Test
@@ -179,7 +185,7 @@ public class AuditLogEntryRestServiceImplTest {
         assertThatThrownBy(() -> testee.findAll(john.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class))
                 .isInstanceOf(BusinessException.class)
@@ -192,7 +198,7 @@ public class AuditLogEntryRestServiceImplTest {
         assertThatThrownBy(() -> testee.findAll(john.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class))
                 .isInstanceOf(BusinessException.class)
@@ -205,7 +211,7 @@ public class AuditLogEntryRestServiceImplTest {
         assertThatThrownBy(() -> testee.findAll(john.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class))
                 .isInstanceOf(BusinessException.class)
@@ -218,7 +224,7 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), false,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
@@ -232,12 +238,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), false,
                 Set.of(root.getDomainId(), john.getDomainId()), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(6);
+        assertThat(audits.size()).isEqualTo(7);
     }
 
     @Test
@@ -246,12 +252,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(root.getDomainId()), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(6);
+        assertThat(audits.size()).isEqualTo(7);
     }
 
     @Test
@@ -260,7 +266,7 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of("DOWNLOAD"),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
@@ -274,7 +280,7 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of("USER"), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
@@ -288,7 +294,7 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of("ACCOUNTS"), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
@@ -302,12 +308,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of("USER"), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(3);
+        assertThat(audits.size()).isEqualTo(4);
     }
 
     @Test
@@ -316,12 +322,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), john.getLsUuid(),
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(5);
+        assertThat(audits.size()).isEqualTo(6);
     }
 
     @Test
@@ -330,7 +336,7 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                jane.getLsUuid(), null, null, null,
+                jane.getLsUuid(), null, null, null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
@@ -344,7 +350,21 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, jane.getMail(), null, null,
+                null, jane.getMail(), null, null, null,
+                null, null, null, null,
+                null, 100).readEntity(List.class);
+
+        assertThat(audits).isNotNull();
+        assertThat(audits.size()).isEqualTo(1);
+    }
+
+    @Test
+    @WithMockUser(LinShareConstants.defaultRootMailAddress)
+    public void getAuditFilterByRecipientEmail() {
+        List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
+                Set.of(), "ASC", "creationDate", List.of(),
+                List.of(), List.of(), List.of(), null,
+                null, null, jane.getMail(), null, null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
@@ -358,12 +378,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, john.getLsUuid(), null,
+                null, null,null,  john.getLsUuid(), null,
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(6);
+        assertThat(audits.size()).isEqualTo(7);
     }
 
     @Test
@@ -372,7 +392,7 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, "fakeZip",
+                null, null, null, null, "fakeZip",
                 null, null, null, null,
                 null, 100).readEntity(List.class);
 
@@ -386,12 +406,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 "fakeZip", null, null, null,
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(3);
+        assertThat(audits.size()).isEqualTo(4);
     }
 
     @Test
@@ -400,12 +420,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, "test", null, null,
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(3);
+        assertThat(audits.size()).isEqualTo(4);
     }
 
     @Test
@@ -414,12 +434,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, getDate(-1), getDate(1),
                 null, 100).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(6);
+        assertThat(audits.size()).isEqualTo(7);
     }
 
     @Test
@@ -428,7 +448,7 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, getDate(1), null,
                 null, 100).readEntity(List.class);
 
@@ -442,7 +462,7 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, getDate(-1),
                 null, 100).readEntity(List.class);
 
@@ -456,7 +476,7 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 null, 5).readEntity(List.class);
 
@@ -470,12 +490,12 @@ public class AuditLogEntryRestServiceImplTest {
         List<AuditLogEntry> audits = testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, null, null,
                 1, 5).readEntity(List.class);
 
         assertThat(audits).isNotNull();
-        assertThat(audits.size()).isEqualTo(1);
+        assertThat(audits.size()).isEqualTo(2);
     }
 
     @Test
@@ -484,7 +504,7 @@ public class AuditLogEntryRestServiceImplTest {
         assertThatThrownBy(() ->  testee.findAll(root.getDomainId(), true,
                 Set.of(), "ASC", "creationDate", List.of(),
                 List.of(), List.of(), List.of(), null,
-                null, null, null, null,
+                null, null, null, null, null,
                 null, null, getDate(1), getDate(-1),
                 null, 100))
                 .isInstanceOf(BusinessException.class)
@@ -499,6 +519,17 @@ public class AuditLogEntryRestServiceImplTest {
         documentEntry.setModificationDate(Calendar.getInstance());
         documentEntry.setUuid("fakeZip");
         return documentEntry;
+    }
+
+    @NotNull
+    private ShareEntry generateFakeShareEntry(DocumentEntry documentEntry) {
+        ShareEntryGroup shareEntryGroup = new ShareEntryGroup(john, "test group");
+        Calendar date = Calendar.getInstance();
+        date.setTime(Calendar.getInstance().getTime());
+        ShareEntry shareEntry = new ShareEntry(john, "test share", "test comment", jane, documentEntry, date, shareEntryGroup);
+        shareEntry.setCreationDate(date);
+        shareEntry.setModificationDate(date);
+        return shareEntry;
     }
 
     private String getDate() {

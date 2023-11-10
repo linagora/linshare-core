@@ -164,6 +164,13 @@ public class AuditLogEntryRestServiceImpl implements AuditLogEntryRestService {
 				)
 				@QueryParam("actorEmail") String actorEmail,
 			@Parameter(
+					description = "Filter the audit traces by recipient email."
+							+ "You just need to provide an email.",
+					required = false,
+					schema = @Schema(implementation = String.class)
+				)
+				@QueryParam("recipientEmail") String recipientEmail,
+			@Parameter(
 					description = "Return any audit traces related to an account uuid."
 							+ "You just need to provide an account uuid.",
 					required = false,
@@ -223,6 +230,7 @@ public class AuditLogEntryRestServiceImpl implements AuditLogEntryRestService {
 				Optional.ofNullable(authUser),
 				Optional.ofNullable(actor),
 				Optional.ofNullable(actorEmail),
+				Optional.ofNullable(recipientEmail),
 				Optional.ofNullable(relatedAccount),
 				Optional.ofNullable(resource),
 				Optional.ofNullable(relatedResource),
