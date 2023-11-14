@@ -94,8 +94,7 @@ public class JcloudObjectStorageFileDataStoreFactory {
 			properties.setProperty(k, v);
 		});
 
-		if ((provider.equals(S3) || provider.equals(AWS_S3))
-				&& (forceS3SignatureVersion == 2 || forceS3SignatureVersion == 4)){
+		if (provider.equals(S3) && (forceS3SignatureVersion == 2 || forceS3SignatureVersion == 4)){
 			properties.setProperty("jclouds.s3.signer-version", String.valueOf(forceS3SignatureVersion));
 			logger.debug("jcloudProperties: jclouds.s3.signer-version=" + forceS3SignatureVersion);
 		}
