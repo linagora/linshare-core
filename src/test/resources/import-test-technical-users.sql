@@ -14,7 +14,8 @@ VALUES
     (10, 'technicalAccountPermissionUuid10', now(), now()),
     (11, 'technicalAccountPermissionUuid11', now(), now()),
     (12, 'technicalAccountPermissionUuid12', now(), now()),
-    (13, 'technicalAccountPermissionUuid13', now(), now());
+    (13, 'technicalAccountPermissionUuid13', now(), now()),
+    (14, 'technicalAccountPermissionUuid14', now(), now());
 
 INSERT INTO account_permission
     (id, technical_account_permission_id, permission)
@@ -41,7 +42,9 @@ VALUES
 	(20, 13, 'SHARE_ENTRY_GROUPS_DELETE'),
 	(21, 13, 'SHARE_ENTRY_GROUPS_GET'),
 	(22, 13, 'SHARE_ENTRIES_GET'),
-	(23, 13, 'SHARE_ENTRIES_DELETE');
+	(23, 13, 'SHARE_ENTRIES_DELETE'),
+	(24, 14, 'GUESTS_CREATE'),
+	(25, 14, 'GUESTS_MODERATOR_CREATE');
 
 INSERT INTO TECHNICAL_ACCOUNT_PERMISSION_DOMAIN_ABSTRACT
     (TECHNICAL_ACCOUNT_PERMISSION_ID, DOMAIN_ABSTRACT_ID)
@@ -58,7 +61,8 @@ VALUES
     (10, 1),
     (11, 1),
     (12, 1),
-    (13, 1);
+    (13, 1),
+    (14, 1);
 
 -- LinShare Users
 INSERT INTO account
@@ -134,6 +138,11 @@ VALUES
 	true, false, 0, null),
 	-- technical user with delete share entry group permissions
 	(113, 'technical.delete.shareEntryGroup@linshare.org', 4, 'technical.delete.shareEntryGroup@linshare.org', 13,
+	now(), now(), 4, 'en', 'en', 'en', true, null,
+	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
+	true, false, 0, null),
+	-- technical user with create guest permissions
+	(114, 'technical.create.guest@linshare.org', 4, 'technical.create.guest@linshare.org', 14,
 	now(), now(), 4, 'en', 'en', 'en', true, null,
 	0, 1, 'IN_USE', 'none', 'technical', true, '', false,
 	true, false, 0, null);

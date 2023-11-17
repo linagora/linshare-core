@@ -166,7 +166,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	public GuestDto create(Version version, String actorUuid, GuestDto guestDto) throws BusinessException {
 		Validate.notNull(guestDto, "guest dto is required");
 		User authUser = checkAuthentication();
-		User actor = getActor(authUser, null);
+		User actor = getActor(authUser, actorUuid);
 		Guest guest = guestDto.toUserObject();
 		List<String> ac = null;
 		if (guest.isRestricted()) {
@@ -177,7 +177,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 				}
 			}
 		}
-		guest = guestService.create(authUser, authUser, guest, ac);
+		guest = guestService.create(authUser, actor, guest, ac);
 		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
