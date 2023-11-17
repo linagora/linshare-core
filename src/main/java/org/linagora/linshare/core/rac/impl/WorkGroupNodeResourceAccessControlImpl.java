@@ -150,8 +150,10 @@ public class WorkGroupNodeResourceAccessControlImpl
 			return hasPermission(authUser, TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE);
 		}
 
-		String domainUuid = sharedSpaceNodeMongoRepository.findByUuid(entry.getParent()).getDomainUuid();
-		if (authUser.hasAdminRole() && domainPermissionBusinessService.isAdminForThisDomain(actor, domainUuid)) {
+		SharedSpaceNode parentNode = sharedSpaceNodeMongoRepository.findByUuid(entry.getParent());
+		if (parentNode != null &&
+				authUser.hasAdminRole() &&
+				domainPermissionBusinessService.isAdminForThisDomain(actor, parentNode.getDomainUuid())) {
 			return true;
 		}
 
