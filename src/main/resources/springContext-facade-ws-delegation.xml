@@ -78,5 +78,11 @@
 		<constructor-arg ref="auditLogEntryService"/>
 		<constructor-arg ref="userService"/>
 	</bean>
-
+	<bean id="wsDelegationGuestFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.GuestFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="guestService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="moderatorService" />
+		<constructor-arg ref="mongoTemplate" />
+	</bean>
 </beans>

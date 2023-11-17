@@ -34,7 +34,7 @@
 	</bean>
 
 	<bean id="delegationV2GuestRestService" class="org.linagora.linshare.webservice.delegationv2.impl.GuestRestServiceImpl">
-		<constructor-arg ref="wsGuestFacade" />
+		<constructor-arg ref="wsDelegationGuestFacade" />
 	</bean>
 
 	<bean id="delegationV2AuditLogEntryDelegationRestService" class="org.linagora.linshare.webservice.delegationv2.impl.AuditLogEntryDelegationRestServiceImpl">

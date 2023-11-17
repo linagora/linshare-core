@@ -18,8 +18,6 @@ package org.linagora.linshare.webservice.delegationv2.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.io.IOException;
-
 import javax.transaction.Transactional;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +36,7 @@ import org.linagora.linshare.core.service.impl.GuestServiceImpl;
 import org.linagora.linshare.core.service.impl.UserServiceImpl;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -87,6 +86,7 @@ public class GuestDelegationRestServiceImplTest {
     private GuestServiceImpl guestService;
 
     @Autowired
+	@Qualifier("delegationV2GuestRestService")
     private GuestRestServiceImpl testee;
 
     private DomainLightDto topDomain2Dto;
@@ -98,6 +98,7 @@ public class GuestDelegationRestServiceImplTest {
     private User adminUser;
 
     private User simpleUser;
+
     private Guest guestUser;
 
     @BeforeEach
