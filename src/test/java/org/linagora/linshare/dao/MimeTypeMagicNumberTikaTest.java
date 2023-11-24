@@ -64,7 +64,7 @@ public class MimeTypeMagicNumberTikaTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<MimeType> allSupportedMimeType = mimeTypeService.getAllMimeType();
 		logger.debug("allSupportedMimeType size : " + allSupportedMimeType.size());
-		Assertions.assertEquals(1652, allSupportedMimeType.size());
+		Assertions.assertEquals(1653, allSupportedMimeType.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

@@ -48,9 +48,18 @@ import com.google.common.collect.Sets;
 public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(MimeTypeMagicNumberTikaImpl.class);
+	public static final String NOT_ANALYZED_MIME_TYPE = "not_analyzed";
+	final private boolean skipMimeChecks;
+
+	public MimeTypeMagicNumberTikaImpl(boolean skipMimeChecks) {
+		this.skipMimeChecks = skipMimeChecks;
+	}
 
 	@Override
 	public String getMimeType(InputStream theFileInputStream) throws BusinessException {
+		if (skipMimeChecks) {
+			return NOT_ANALYZED_MIME_TYPE;
+		}
 		try {
 			Metadata metadata = new Metadata();
 			AutoDetectParser parser = new AutoDetectParser();
@@ -69,6 +78,9 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 
 	@Override
 	public String getMimeType(File file) throws BusinessException {
+		if (skipMimeChecks) {
+			return NOT_ANALYZED_MIME_TYPE;
+		}
 		String mimeType = null;
 		try(FileInputStream f = new FileInputStream(file);
 			BufferedInputStream bufStream = new BufferedInputStream(f)) {
@@ -107,6 +119,9 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 
 	@Override
 	public boolean isKnownExtension(String extension) {
+		if (skipMimeChecks) {
+			return true;
+		}
 		MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();
 		SortedSet<MediaType> types = defaultMimeTypes.getMediaTypeRegistry().getTypes();
 		for (MediaType mediaType : types) {

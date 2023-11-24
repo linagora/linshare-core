@@ -9,6 +9,7 @@
 
 	<!-- apache tika -->
 	<bean id="mimeTypeMagicNumberDao" class="org.linagora.linshare.core.dao.tika.MimeTypeMagicNumberTikaImpl">
+		<constructor-arg value="${linshare.documents.mimetype.checks.skip}" />
 	</bean>
 
 	<bean name="notifierService" class="org.linagora.linshare.core.service.impl.MailNotifierServiceImpl">

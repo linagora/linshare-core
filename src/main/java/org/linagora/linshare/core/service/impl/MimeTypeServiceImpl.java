@@ -38,14 +38,18 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 
 	final private DomainPermissionBusinessService domainPermissionService;
 
+	final private boolean skipMimeChecks;
+
 	public MimeTypeServiceImpl(
 			MimeTypeBusinessService mimeTypeBusinessService,
 			MimePolicyBusinessService mimePolicyBusinessService,
-			DomainPermissionBusinessService domainPermissionService
+			DomainPermissionBusinessService domainPermissionService,
+			boolean skipMimeChecks
 			) {
 		this.mimeTypeBusinessService = mimeTypeBusinessService;
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
 		this.domainPermissionService = domainPermissionService;
+		this.skipMimeChecks = skipMimeChecks;
 	}
 
 	@Override
@@ -69,6 +73,9 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 
 	@Override
 	public void checkFileMimeType(Account actor, String fileName, String mimeType) throws BusinessException {
+		if (skipMimeChecks){
+			return;
+		}
 		Validate.notNull(actor);
 		Validate.notEmpty(fileName);
 		Validate.notEmpty(mimeType);
