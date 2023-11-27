@@ -179,5 +179,24 @@ public class MimeTypeMagicNumberTikaTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testMimeTypeDetection7() {
+
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		try {
+
+			URL url = Thread.currentThread().getContextClassLoader().getResource("sample-files/random_binaries");
+			File f = new File(url.getPath());
+			logger.debug("filename " + f.getName());
+			String mime = mimeTypeService.getMimeType(f);
+			Assertions.assertEquals("application/octet-stream", mime);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			logger.debug(e.getCause().toString());
+			Assertions.assertEquals(true, false);
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 
 }
