@@ -49,6 +49,7 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(MimeTypeMagicNumberTikaImpl.class);
 	public static final String NOT_ANALYZED_MIME_TYPE = "not_analyzed";
+	public static final String UNKNOWN_MIME_TYPE = "unknown_type";
 	final private boolean skipMimeChecks;
 
 	public MimeTypeMagicNumberTikaImpl(boolean skipMimeChecks) {
@@ -73,7 +74,7 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 			logger.error(e.getMessage());
 			logger.debug(e.getMessage(), e);
 		}
-		return "data";
+		return UNKNOWN_MIME_TYPE;
 	}
 
 	@Override
@@ -93,7 +94,7 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 			logger.debug(e1.getMessage(), e1);
 		}
 		if(mimeType == null) {
-			mimeType = "data";
+			mimeType = UNKNOWN_MIME_TYPE;
 		}
 		logger.debug("Mime type found : {}", mimeType);
 		return mimeType;
@@ -142,4 +143,8 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 		return false;
 	}
 
+	@Override
+	public String getUnkownType() {
+		return UNKNOWN_MIME_TYPE;
+	}
 }

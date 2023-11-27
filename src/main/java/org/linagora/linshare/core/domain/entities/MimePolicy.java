@@ -41,6 +41,8 @@ public class MimePolicy {
 
 	private AbstractDomain domain;
 
+	private boolean unknownTypeAllowed = false;
+
 	public MimePolicy() {
 		super();
 	}
@@ -48,6 +50,7 @@ public class MimePolicy {
 	public MimePolicy(final MimePolicyDto m) {
 		this.uuid = m.getUuid();
 		this.name = m.getName();
+		this.unknownTypeAllowed = m.isUnknownTypeAllowed();
 	}
 
 	public long getId() {
@@ -116,6 +119,14 @@ public class MimePolicy {
 
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
+	}
+
+	public boolean isUnknownTypeAllowed() {
+		return unknownTypeAllowed;
+	}
+
+	public void setUnknownTypeAllowed(boolean unknownTypeAllowed) {
+		this.unknownTypeAllowed = unknownTypeAllowed;
 	}
 
 	@Override

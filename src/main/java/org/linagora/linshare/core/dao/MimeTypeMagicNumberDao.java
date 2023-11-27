@@ -32,5 +32,7 @@ public interface MimeTypeMagicNumberDao {
 	public Set<MimeType> getAllMimeType();
 
 	public boolean isKnownExtension(String extension);
+
+	public String getUnkownType();
 }
 

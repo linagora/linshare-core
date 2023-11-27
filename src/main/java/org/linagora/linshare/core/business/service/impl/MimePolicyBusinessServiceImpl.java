@@ -106,6 +106,7 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 		entity.setDisplayable(mimePolicy.getDisplayable());
 		entity.setMode(mimePolicy.getMode());
 		entity.setName(mimePolicy.getName());
+		entity.setUnknownTypeAllowed(mimePolicy.isUnknownTypeAllowed());
 		return mimePolicyRepository.update(entity);
 	}
 
@@ -122,5 +123,10 @@ public class MimePolicyBusinessServiceImpl implements MimePolicyBusinessService 
 		MimePolicy entity = mimePolicyRepository.findByUuid(mimePolicy
 				.getUuid());
 		return mimePolicyRepository.disableAll(entity);
+	}
+
+	@Override
+	public boolean isTypeUnknown(String mimeType){
+		return mimeTypeMagicNumberDao.getUnkownType().equals(mimeType);
 	}
 }

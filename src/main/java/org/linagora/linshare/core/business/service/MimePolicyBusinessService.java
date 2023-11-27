@@ -37,4 +37,6 @@ public interface MimePolicyBusinessService {
 	MimePolicy enableAll(MimePolicy mimePolicy) throws BusinessException;
 
 	MimePolicy disableAll(MimePolicy mimePolicy) throws BusinessException;
+
+	boolean isTypeUnknown(String mimeType);
 }

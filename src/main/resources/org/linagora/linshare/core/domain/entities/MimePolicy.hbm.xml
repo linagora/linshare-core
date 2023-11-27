@@ -13,6 +13,7 @@
 		<property name="displayable" column="displayable" type="integer" length="10" not-null="true" lazy="false" />
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
+		<property name="unknownTypeAllowed" column="unknown_type_allowed" type="boolean" not-null="true" lazy="false"/>
 		<set name="mimeTypes" lazy="false" inverse="true" cascade="delete">
 			<key column="mime_policy_id" not-null="true" />
 			<one-to-many class="MimeType" />

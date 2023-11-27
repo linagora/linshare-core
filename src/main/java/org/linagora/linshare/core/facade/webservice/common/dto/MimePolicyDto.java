@@ -51,6 +51,10 @@ public class MimePolicyDto {
 	@Schema(description = "Mime types")
 	private Set<MimeTypeDto> mimeTypes;
 
+	@Schema(description = "Whether unknown mime type are allowed. Default to false (whitelist mode)," +
+			" set it to true to enable blacklist mode")
+	private boolean unknownTypeAllowed;
+
 	public MimePolicyDto(final MimePolicy m, boolean full) {
 		this.uuid = m.getUuid();
 		this.name = m.getName();
@@ -58,6 +62,7 @@ public class MimePolicyDto {
 		this.modificationDate = m.getModificationDate();
 		this.domainId = m.getDomain().getUuid();
 		this.domainName = m.getDomain().getLabel();
+		this.unknownTypeAllowed = m.isUnknownTypeAllowed();
 		if (full) {
 			mimeTypes = Sets.newHashSet();
 			for (MimeType mimeType : m.getMimeTypes()) {
@@ -128,5 +133,13 @@ public class MimePolicyDto {
 
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
+	}
+
+	public boolean isUnknownTypeAllowed() {
+		return unknownTypeAllowed;
+	}
+
+	public void setUnknownTypeAllowed(boolean unknownTypeAllowed) {
+		this.unknownTypeAllowed = unknownTypeAllowed;
 	}
 }

@@ -13,13 +13,13 @@ SET default_with_oids = false;
 
 CREATE OR REPLACE FUNCTION ls_version() RETURNS void AS $$
 BEGIN
-	INSERT INTO version (id, version, creation_date) VALUES ((SELECT nextVal('hibernate_sequence')),'6.1.1', now());
+	INSERT INTO version (id, version, creation_date) VALUES ((SELECT nextVal('hibernate_sequence')),'6.2.0', now());
 END
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION ls_prechecks() RETURNS void AS $$
 BEGIN
-	DECLARE version_to VARCHAR := '6.1.1';
+	DECLARE version_to VARCHAR := '6.2.0';
 	DECLARE version_from VARCHAR := '6.1.0';
 	DECLARE start VARCHAR := concat('You are about to upgrade from LinShare : ', version_from,  ' to ' , version_to);
 	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
@@ -88,6 +88,8 @@ SET client_min_messages = warning;
 
 ALTER TABLE domain_policy ADD COLUMN creation_date timestamp without time zone;
 ALTER TABLE domain_policy ADD COLUMN modification_date timestamp without time zone;
+
+ALTER TABLE mime_policy ADD COLUMN unknown_type_allowed bool DEFAULT 'false';
 
 UPDATE mail_content SET subject='[(#{subject(${subject.value})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">

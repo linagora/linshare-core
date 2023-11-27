@@ -82,6 +82,11 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 
 		String[] extras = { fileName };
 		MimePolicy mimePolicy = actor.getDomain().getMimePolicy();
+
+		if (mimePolicyBusinessService.isTypeUnknown(mimeType) && mimePolicy.isUnknownTypeAllowed()){
+			return;
+		}
+
 		mimePolicyBusinessService.load(mimePolicy);
 		MimeType entity = mimeTypeBusinessService.findByMimeType(mimePolicy,
 				mimeType);

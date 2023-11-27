@@ -61,6 +61,7 @@ public class MimePoliciesRestServiceImplTest {
 	private MimePolicyRestServiceImpl testee;
 
 	private final String rootMimePolicy = "0d3ff074-d22d-11ed-afa1-0242ac120002";
+	private final String subMimePolicy = "7bd723c4-d23a-11ed-afa1-0242ac120002";
 
 	@Test
 	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") //admin
@@ -69,6 +70,38 @@ public class MimePoliciesRestServiceImplTest {
 
 		assertThat(mimePolicyDto).isNotNull();
 		assertThat(mimePolicyDto.getName()).isEqualTo("Second Mime Policy");
+	}
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") //admin
+	public void adminCanSetUnknownTypeAllowed() {
+		MimePolicyDto mimePolicyDto = testee.find(subMimePolicy, true);
+		mimePolicyDto.setUnknownTypeAllowed(true);
+
+		MimePolicyDto newMimePolicyDto = testee.update(mimePolicyDto);
+		assertThat(newMimePolicyDto).isNotNull();
+		assertThat(newMimePolicyDto.isUnknownTypeAllowed()).isTrue();
+
+		MimePolicyDto storedMimePolicyDto = testee.find(subMimePolicy, true);
+		assertThat(storedMimePolicyDto).isNotNull();
+		assertThat(storedMimePolicyDto.isUnknownTypeAllowed()).isTrue();
+	}
+
+	@Test
+	@WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") //admin
+	public void adminCreateMimePolicyWithUnknownTypeAllowed() {
+		MimePolicyDto mimePolicyDto = new MimePolicyDto();
+		mimePolicyDto.setUnknownTypeAllowed(true);
+		mimePolicyDto.setName("blacklist mime policy for subdomain");
+		mimePolicyDto.setDomainId("MySubDomain");
+
+		MimePolicyDto newMimePolicyDto = testee.create(mimePolicyDto);
+		assertThat(newMimePolicyDto).isNotNull();
+		assertThat(newMimePolicyDto.isUnknownTypeAllowed()).isTrue();
+
+		MimePolicyDto storedMimePolicyDto = testee.find(newMimePolicyDto.getUuid(), true);
+		assertThat(storedMimePolicyDto).isNotNull();
+		assertThat(storedMimePolicyDto.isUnknownTypeAllowed()).isTrue();
 	}
 
 }
