@@ -30,8 +30,7 @@ variables:
   image: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
   tags:
     - docker
-  before_script:
-    - apt-get install git
+  
   services:
     - name: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
       alias: docker-dind
