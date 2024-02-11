@@ -30,6 +30,8 @@ variables:
   image: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
   tags:
     - docker
+  before_script:
+    - apt-get install git
   services:
     - name: docker-registry.linagora.com:5000/linshare-snapshots/linshare-dind:latest
       alias: docker-dind
@@ -62,8 +64,7 @@ build:
     DOCKER_HOST: "tcp://docker-dind:2375"
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-  before_script:
-    - apt-get install git
+  
   script:
     - echo "FROM maven:3.6-jdk-11" > Dockerfile
     - echo "RUN useradd -ms /bin/bash maven" >> Dockerfile
