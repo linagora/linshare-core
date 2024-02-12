@@ -124,6 +124,7 @@ test-api-branch-with-master:
   only:
     refs:
       - master@linagora/lgs/linshare/products/linshare-core
+      - development-7.0.0@linagora/lgs/linshare/products/linshare-core
       - /^feature-master-.*/@linagora/lgs/linshare/products/linshare-core
 
 test-api-branch-maintenance-x:
