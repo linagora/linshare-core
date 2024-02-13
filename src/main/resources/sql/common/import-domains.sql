@@ -11,8 +11,8 @@ INSERT INTO domain_abstract(id, type , uuid, label, enable, template, descriptio
 	VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en','IN_USE', 'en', now(), now(), null, 1, null, 0);
 
 -- Default mime policy
-INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date) 
-	VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now());
+INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, creation_date, modification_date, unknown_type_allowed) 
+	VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, now(), now(), false);
 UPDATE domain_abstract SET mime_policy_id=1;
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'

@@ -31,7 +31,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.impl.DomainServiceImpl;
 import org.linagora.linshare.core.service.impl.LogEntryServiceImpl;
-import org.linagora.linshare.core.service.impl.SharedSpaceNodeServiceImpl;;
+import org.linagora.linshare.core.service.impl.SharedSpaceNodeServiceImpl;
 import org.linagora.linshare.core.service.impl.UserServiceImpl;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
