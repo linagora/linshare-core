@@ -66,7 +66,7 @@ build:
     DOCKER_TLS_CERTDIR: ""
   
   script:
-    - echo "FROM maven:3.6-jdk-11" > Dockerfile
+    - echo "FROM maven:3.8.8-eclipse-temurin-17" > Dockerfile
     - echo "RUN useradd -ms /bin/bash maven" >> Dockerfile
     - echo "WORKDIR /home/maven/linshare" >> Dockerfile
     - echo "COPY src /home/maven/linshare/src" >> Dockerfile
