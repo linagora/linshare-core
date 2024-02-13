@@ -1596,6 +1596,20 @@
 				<version>3.0.0</version>
 				<executions>
 					<execution>
+						<id>enforce-java</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>[17.0.9,)</version>
+									<message>Java 17.0.9+ is required by Linshare Core.</message>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
 						<id>enforce-banned-dependencies</id>
 						<goals>
 							<goal>enforce</goal>
