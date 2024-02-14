@@ -115,7 +115,7 @@ sonarqube_job:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
     GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
   script:
-    - mvn verify sonar:sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.token=${SONAR_TOKEN}
+    - mvn verify sonar:sonar -Pjacoco-profile -Dsonar.host.url=${SONAR_URL} -Dsonar.token=${SONAR_TOKEN}
   allow_failure: true
   only:
     refs:
