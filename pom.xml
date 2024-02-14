@@ -1557,22 +1557,6 @@
 				</requestLog>
 				-->
 			</plugin>
-			<!-- cobertura (test coverage) -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<instrumentation>
-						<ignores>
-							<ignore>org.linagora.*Test*</ignore>
-						</ignores>
-						<excludes>
-							<exclude>**/*Test.class</exclude>
-						</excludes>
-					</instrumentation>
-				</configuration>
-			</plugin>
 			<!-- maven-surefire-plugin (test reports) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1762,6 +1746,53 @@
 			<properties>
 				<project.version>${project.version}-${maven.build.timestamp}-${sources.version}</project.version>
 			</properties>
+		</profile>
+
+
+		<profile>
+			<!-- Continuous integration profile -->
+			<id>jacoco-profile</id>
+			<properties>
+				<!-- These are properties that could be changed by the CI if needed -->
+				<jacoco-plugin.version>0.8.11</jacoco-plugin.version>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- Let's activate jacoco for unit test coverage -->
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco-plugin.version}</version>
+						<executions>
+							<execution>
+								<!-- This activates the use of jacoco for recording unit test coverage -->
+								<id>prepare-agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<!-- This activates the use of jacoco for recording integration test coverage -->
+								<id>prepare-agent-integration</id>
+								<goals>
+									<goal>prepare-agent-integration</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<goals>
+									<goal>report</goal>
+								</goals>
+								<configuration>
+									<formats>
+										<format>XML</format>
+									</formats>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 		<!--  profile:id=load-integration-context -->
