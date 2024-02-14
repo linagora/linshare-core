@@ -1,8 +1,15 @@
 ---
 
+#
+# Build stages:
+# - 'prepare': Execute some verification as system requirements before to launch the build
+# - 'build': Execute the build: compile, execute unit tests
+# - 'code_analysis': Execute an automatic review of source code
+# - 'test': Execute all kind of tests requiring the deployment of Linshare Core. Example: integration tests, API tests, ...
 stages:
   - prepare
   - build
+  - code_analysis
   - test
 
 variables:
@@ -88,7 +95,7 @@ build:
     - docker logout docker-registry.linagora.com:5000
 
 test-java:
-  stage: test
+  stage: build
   tags:
     - docker
   image: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
@@ -98,6 +105,22 @@ test-java:
         - target/surefire-reports/TEST-*.xml
   script:
     - mvn clean test
+    
+sonarqube_job:
+  stage: code_analysis
+  tags:
+    - docker
+  image: "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  script:
+    - mvn verify sonar:sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.token=${SONAR_TOKEN}
+  allow_failure: true
+  only:
+    refs:
+      - master@linagora/lgs/linshare/products/linshare-core
+      - /^development-.*/@linagora/lgs/linshare/products/linshare-core
 
 test-api-branch-with-master:
   stage: test
