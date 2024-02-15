@@ -1303,15 +1303,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
-				<configuration>
-					<source>11</source>
-					<target>11</target>
-				</configuration>
-			</plugin>
-			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>3.1.0</version>
 				<executions>
@@ -1583,6 +1574,13 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<version>3.4.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>extra-enforcer-rules</artifactId>
+						<version>1.7.0</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<id>enforce-java</id>
@@ -1592,9 +1590,15 @@
 						<configuration>
 							<rules>
 								<requireJavaVersion>
-									<version>[17.0.9,)</version>
-									<message>Java 17.0.9+ is required by Linshare Core.</message>
+									<!-- Check the OpenJDK base version of the JVM distribution used to build the project -->
+									<version>[${openjdk-base.min-version},)</version>
+									<message>Java ${openjdk-base.min-version}+ is required by Linshare Core.</message>
 								</requireJavaVersion>
+								<enforceBytecodeVersion>
+									<!-- Check that all dependencies of the project have a Java byte code compliant with our JVM distribution requirement -->
+									<maxJdkVersion>${java-language.version}</maxJdkVersion>
+									<strict>true</strict>
+								</enforceBytecodeVersion>
 							</rules>
 						</configuration>
 					</execution>
@@ -1726,6 +1730,11 @@
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.12.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -2028,6 +2037,22 @@
 	</distributionManagement>
 
 	<properties>
+		<!-- System requirement properties -->
+		<java-language.version>17</java-language.version>
+		<openjdk-base.min-version>${java-language.version}.0.9</openjdk-base.min-version>
+		
+		<!-- Project source code properties -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Maven plugin properties -->
+		<maven.compiler.release>${java-language.version}</maven.compiler.release>
+		<maven.compiler.source>${java-language.version}</maven.compiler.source>
+		<maven.compiler.target>${java-language.version}</maven.compiler.target>
+		<maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
+
+		<!-- Dependency properties -->
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
 		<cxf.version>3.4.4</cxf.version>
 		<!-- We can not yet upgrade from 3.4.4 to 3.5.3 because there is an unexpected NPE during file uploads -->
@@ -2040,10 +2065,8 @@
 		<jclouds.version>2.5.0</jclouds.version>
 		<jjwt.version>0.11.2</jjwt.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
-		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
 		<mongo.java.server>1.40.0</mongo.java.server>
 		<mozilla.rhino.version>1.7.13</mozilla.rhino.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<slf4j-release-version>1.7.32</slf4j-release-version>
 		<log4j-release-version>2.18.0</log4j-release-version>
