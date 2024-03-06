@@ -1591,7 +1591,7 @@
 							<rules>
 								<requireJavaVersion>
 									<!-- Check the OpenJDK base version of the JVM distribution used to build the project -->
-									<version>[${openjdk-base.min-version},)</version>
+									<version>[${openjdk-base.min-version},18)</version>
 									<message>Java ${openjdk-base.min-version}+ is required by Linshare Core.</message>
 								</requireJavaVersion>
 								<enforceBytecodeVersion>
