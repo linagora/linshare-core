@@ -919,668 +919,40 @@
 	<build>
 		<finalName>linshare-core</finalName>
 
-			<!-- Change licence -->
-			<!-- To update the license run mvn license:format -->
-			<plugins>
-				<plugin>
-					<groupId>com.mycila</groupId>
-					<artifactId>license-maven-plugin</artifactId>
-					<version>4.3</version>
-					<configuration>
-						<properties>
-							<owner>Anton Shepilov</owner>
-							<email>ashepilov@linagora.com</email>
-						</properties>
-						<licenseSets>
-							<licenseSet>
-								<header>LICENSE_INLINE</header>
-								<excludes>
-									<exclude>**/*.yml</exclude>
-									<exclude>**/*.xml</exclude>
-									<exclude>**/*.properties</exclude>
-									<exclude>**/README</exclude>
-									<exclude>src/test/resources/**</exclude>
-									<exclude>src/main/resources/**</exclude>
-								</excludes>
-							</licenseSet>
-						</licenseSets>
-					</configuration>
-				</plugin>
+		<resources>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>version.properties</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>version.properties</include>
+					<include>openapi-configuration-*.json</include>
+				</includes>
+			</resource>
+		</resources>
 
-			<!-- swagger-maven-plugin -->
-			<plugin>
-				<!-- https://github.com/openapi-tools/swagger-maven-plugin -->
-				<groupId>io.openapitools.swagger</groupId>
-				<artifactId>swagger-maven-plugin</artifactId>
-				<version>2.1.6</version>
-				<executions>
-					<execution>
-						<id>admin v5</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.adminv5</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.adminv5.impl</resourcePackage>
-								<resourcePackage>org.linagora.linshare.core.facade.webservice.adminv5.dto</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-admin-v5</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>Admin v5 API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>admin v4</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.adminv4</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.adminv4.impl</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-admin-v4</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>Admin v4 API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>admin v1</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.admin</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.admin.impl</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-admin-v1</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>Admin v1 API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>user v2</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.userv2</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.userv2.impl</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.userv2.impl.only</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-user-v2</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>User v2 API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>user v4</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.userv4</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.userv4.impl</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.userv2</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.userv2.impl</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-user-v4</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>User v4 API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>user v5</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.userv5</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.userv5.impl</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.userv2</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.userv2.impl</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-user-v5</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>User v5 API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>delegation v2</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.delegationv2</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.delegationv2.impl</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-delegation-v2</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>Delegation v2 API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>external</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.external</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.external.impl</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-external</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>External (anonymous) API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>upload request v4</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv4</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv4.impl</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-upload-request-v4</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>Upload Request v4 API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>upload request v5</id>
-						<configuration>
-							<attachSwaggerArtifact>true</attachSwaggerArtifact>
-							<resourcePackages>
-								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv5</resourcePackage>
-								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv5.impl</resourcePackage>
-							</resourcePackages>
-							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
-							<outputFilename>swagger-upload-request-v5</outputFilename>
-							<outputFormats>
-								<outputFormat>JSON</outputFormat>
-								<outputFormat>YAML</outputFormat>
-							</outputFormats>
-							<prettyPrint>true</prettyPrint>
-							<swaggerConfig>
-								<info>
-									<title>Upload Request v5 API</title>
-									<version>${project.version}</version>
-									<contact>
-										<name>LINAGORA/LinShare</name>
-										<url>https://github.com/linagora/linshare</url>
-									</contact>
-									<license>
-										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
-										<name>Affero GPL v3</name>
-									</license>
-								</info>
-							</swaggerConfig>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<phase>process-resources</phase>
-						<id>ant-merge-files-import-postgres</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<mkdir dir="target/classes/sql/postgresql/" />
-								<concat destfile="target/classes/sql/postgresql/import-postgresql.sql">
-									<fileset file="src/main/resources/sql/common/import-header.sql" />
-									<fileset file="src/main/resources/sql/common/import-domains.sql" />
-									<fileset file="src/main/resources/sql/common/import-quota.sql" />
-									<fileset file="src/main/resources/sql/common/import-welcome-messages.sql" />
-									<fileset file="src/main/resources/sql/common/import-functionalities.sql" />
-									<fileset file="src/main/resources/sql/common/import-mail-activation.sql" />
-									<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									<fileset file="src/main/resources/sql/common/import-settings.sql" />
-									<fileset file="src/main/resources/sql/common/import-footer.sql" />
-								</concat>
-							</target>
-						</configuration>
-					</execution>
-					<execution>
-						<id>ant-merge-files-mail-templates</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<phase>process-resources</phase>
-						<configuration>
-							<target>
-								<mkdir dir="target/classes/sql/postgresql/" />
-								<concat destfile="target/classes/sql/postgresql/import-all-emails.sql">
-									<fileset file="src/main/resources/sql/common/import-header.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									<fileset file="src/main/resources/sql/common/import-footer.sql" />
-								</concat>
-							</target>
-						</configuration>
-					</execution>
-					<execution>
-						<id>ant-merge-files-mail-templates-h2</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<phase>generate-test-sources</phase>
-						<configuration>
-							<target>
-								<mkdir dir="target/classes/sql/h2/" />
-								<concat destfile="target/classes/sql/h2/import-all-emails.sql">
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-								</concat>
-							</target>
-						</configuration>
-					</execution>
-					<execution>
-						<id>ant-merge-files-mail-templates-for-reset-mails</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<phase>process-resources</phase>
-						<configuration>
-							<target>
-								<mkdir dir="target/classes/sql/postgresql/" />
-								<concat destfile="target/classes/sql/postgresql/reset-default-emails-config.sql">
-									<fileset file="src/main/resources/sql/common/import-reset-default-emails-configuration-header.sql" />
-									<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									<fileset file="src/main/resources/sql/common/import-reset-default-emails-configuration-footer.sql" />
-								</concat>
-							</target>
-						</configuration>
-					</execution>
-					<execution>
-						<id>ant-merge-files-mail-templates-for-update-mails</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<phase>process-resources</phase>
-						<configuration>
-							<target>
-								<mkdir dir="target/classes/sql/postgresql/" />
-								<concat destfile="target/classes/sql/postgresql/update-default-emails-config.sql">
-									<fileset file="src/main/resources/sql/common/import-update-default-emails-configuration-header.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									<fileset file="src/main/resources/sql/common/import-update-default-emails-configuration-footer.sql" />
-								</concat>
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- buildnumber-maven-plugin (compute timestamp, build number, ...)-->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>3.2.0</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<!--  It will first check to see if you have locally modified files, and will fail if there are any.  -->
-					<!-- -Dmaven.buildNumber.doCheck=true -->
-					<doCheck>false</doCheck>
-					<!-- Update your local repository -->
-					<!-- -Dmaven.buildNumber.doUpdate=true -->
-					<doUpdate>false</doUpdate>
-					<buildNumberPropertyName>sources.version</buildNumberPropertyName>
-					<timestampPropertyName>build.timestamp</timestampPropertyName>
-					<timestampFormat>yyyy-MM-dd HH:mm</timestampFormat>
-				</configuration>
-			</plugin>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources/sample-files</directory>
+			</testResource>
+			<testResource>
+				<directory>src/mongo-java-server/resources</directory>
+			</testResource>
+		</testResources>
 
-			<!-- maven-war-plugin (packaging) -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>3.4.0</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Build>${sources.version} ${build.timestamp}</Implementation-Build>
-						</manifestEntries>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>default-war</id>
-						<phase>package</phase>
-						<goals>
-							<goal>war</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- maven-assembly-plugin for sql files -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.6.0</version>
-				<configuration>
-					<appendAssemblyId>true</appendAssemblyId>
-				</configuration>
-				<executions>
-					<execution>
-						<id>sql</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/assembly/sql.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					<execution>
-						<id>documentation-webservices</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/assembly/documentation-webservices.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- maven-scm-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-scm-plugin</artifactId>
-				<version>2.0.1</version>
-			</plugin>
-			<!-- maven-release-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>3.0.1</version>
-				<configuration>
-					<tagNameFormat>@{project.version}</tagNameFormat>
-					<!--During release:perform, enable the "release" profile -->
-					<!-- <releaseProfiles>release</releaseProfiles> -->
-				</configuration>
-			</plugin>
-			<!-- maven-install-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>3.1.1</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-			<!-- maven-deploy-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>3.1.1</version>
-				<configuration>
-					<skip>false</skip>
-				</configuration>
-			</plugin>
-			<!-- Maven Jetty Plugin 9.x : run the application using "mvn jetty:run" -->
-			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.4.53.v20231009</version>
-				<configuration>
-					<scanIntervalSeconds>10</scanIntervalSeconds>
-					<webApp>
-						<contextPath>/linshare</contextPath>
-					</webApp>
-					<!-- -Djetty.port=8080 -->
-					<httpConnector>
-						<port>8080</port>
-					</httpConnector>
-				</configuration>
-				<!--  not supported yet
-				<requestLog implementation="org.mortbay.jetty.NCSARequestLog">
-					This doesn't do anything for Jetty, but is a workaround for a Maven
-						bug that prevents the requestLog from being set.
-					<append>true</append>
-				</requestLog>
-				-->
-			</plugin>
-			<!-- maven-surefire-plugin (test reports) -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.2.5</version>
-				<configuration>
-					<useSystemClassLoader>false</useSystemClassLoader>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.6.3</version>
-				<configuration>
-					<failOnError>false</failOnError>
-				</configuration>
-			</plugin>
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.4.1</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>extra-enforcer-rules</artifactId>
-						<version>1.7.0</version>
-					</dependency>
-				</dependencies>
 				<executions>
 					<execution>
 						<id>enforce-java</id>
@@ -1621,11 +993,652 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- buildnumber-maven-plugin (compute timestamp, build number, ...)-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!--  It will first check to see if you have locally modified files, and will fail if there are any.  -->
+					<!-- -Dmaven.buildNumber.doCheck=true -->
+					<doCheck>false</doCheck>
+					<!-- Update your local repository -->
+					<!-- -Dmaven.buildNumber.doUpdate=true -->
+					<doUpdate>false</doUpdate>
+					<buildNumberPropertyName>sources.version</buildNumberPropertyName>
+					<timestampPropertyName>build.timestamp</timestampPropertyName>
+					<timestampFormat>yyyy-MM-dd HH:mm</timestampFormat>
+				</configuration>
+			</plugin>
+
+			<!-- maven-surefire-plugin (test reports) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<useSystemClassLoader>false</useSystemClassLoader>
+				</configuration>
+			</plugin>
+
+			<!-- maven-war-plugin (packaging) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Build>${sources.version} ${build.timestamp}</Implementation-Build>
+						</manifestEntries>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default-war</id>
+						<phase>package</phase>
+						<goals>
+							<goal>war</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- swagger-maven-plugin -->
+			<plugin>
+				<!-- https://github.com/openapi-tools/swagger-maven-plugin -->
+				<groupId>io.openapitools.swagger</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>admin v5</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.adminv5</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.adminv5.impl</resourcePackage>
+								<resourcePackage>org.linagora.linshare.core.facade.webservice.adminv5.dto</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-admin-v5</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Admin v5 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+					<execution>
+						<id>admin v4</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.adminv4</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.adminv4.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-admin-v4</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Admin v4 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+					<execution>
+						<id>admin v1</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.admin</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.admin.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-admin-v1</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Admin v1 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+					<execution>
+						<id>user v2</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.userv2</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv2.impl</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv2.impl.only</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-user-v2</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>User v2 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+					<execution>
+						<id>user v4</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.userv4</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv4.impl</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv2</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv2.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-user-v4</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>User v4 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+					<execution>
+						<id>user v5</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.userv5</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv5.impl</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv2</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.userv2.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-user-v5</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>User v5 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+					<execution>
+						<id>delegation v2</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.delegationv2</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.delegationv2.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-delegation-v2</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Delegation v2 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+					<execution>
+						<id>external</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.external</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.external.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-external</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>External (anonymous) API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+					<execution>
+						<id>upload request v4</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv4</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv4.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-upload-request-v4</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Upload Request v4 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+					<execution>
+						<id>upload request v5</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
+							<resourcePackages>
+								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv5</resourcePackage>
+								<resourcePackage>org.linagora.linshare.webservice.uploadrequestv5.impl</resourcePackage>
+							</resourcePackages>
+							<outputDirectory>${basedir}/target/swagger/</outputDirectory>
+							<outputFilename>swagger-upload-request-v5</outputFilename>
+							<outputFormats>
+								<outputFormat>JSON</outputFormat>
+								<outputFormat>YAML</outputFormat>
+							</outputFormats>
+							<prettyPrint>true</prettyPrint>
+							<swaggerConfig>
+								<info>
+									<title>Upload Request v5 API</title>
+									<version>${project.version}</version>
+									<contact>
+										<name>LINAGORA/LinShare</name>
+										<url>https://github.com/linagora/linshare</url>
+									</contact>
+									<license>
+										<url>http://download.linshare.org/LinShare-License_AfferoGPL-v3_en.pdf</url>
+										<name>Affero GPL v3</name>
+									</license>
+								</info>
+							</swaggerConfig>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>ant-merge-files-import-postgres</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<mkdir dir="target/classes/sql/postgresql/" />
+								<concat destfile="target/classes/sql/postgresql/import-postgresql.sql">
+									<fileset file="src/main/resources/sql/common/import-header.sql" />
+									<fileset file="src/main/resources/sql/common/import-domains.sql" />
+									<fileset file="src/main/resources/sql/common/import-quota.sql" />
+									<fileset file="src/main/resources/sql/common/import-welcome-messages.sql" />
+									<fileset file="src/main/resources/sql/common/import-functionalities.sql" />
+									<fileset file="src/main/resources/sql/common/import-mail-activation.sql" />
+									<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset file="src/main/resources/sql/common/import-settings.sql" />
+									<fileset file="src/main/resources/sql/common/import-footer.sql" />
+								</concat>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ant-merge-files-mail-templates</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<mkdir dir="target/classes/sql/postgresql/" />
+								<concat destfile="target/classes/sql/postgresql/import-all-emails.sql">
+									<fileset file="src/main/resources/sql/common/import-header.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset file="src/main/resources/sql/common/import-footer.sql" />
+								</concat>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ant-merge-files-mail-templates-h2</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<mkdir dir="target/classes/sql/h2/" />
+								<concat destfile="target/classes/sql/h2/import-all-emails.sql">
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+								</concat>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ant-merge-files-mail-templates-for-reset-mails</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<mkdir dir="target/classes/sql/postgresql/" />
+								<concat destfile="target/classes/sql/postgresql/reset-default-emails-config.sql">
+									<fileset file="src/main/resources/sql/common/import-reset-default-emails-configuration-header.sql" />
+									<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset file="src/main/resources/sql/common/import-reset-default-emails-configuration-footer.sql" />
+								</concat>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ant-merge-files-mail-templates-for-update-mails</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<mkdir dir="target/classes/sql/postgresql/" />
+								<concat destfile="target/classes/sql/postgresql/update-default-emails-config.sql">
+									<fileset file="src/main/resources/sql/common/import-update-default-emails-configuration-header.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset file="src/main/resources/sql/common/import-update-default-emails-configuration-footer.sql" />
+								</concat>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- maven-assembly-plugin for sql files -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<appendAssemblyId>true</appendAssemblyId>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sql</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/sql.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>documentation-webservices</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/documentation-webservices.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<failOnError>false</failOnError>
+				</configuration>
+			</plugin>
+			
+			<!-- maven-install-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			
+			<!-- maven-deploy-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+			
+			<!-- Change licence -->
+			<!-- To update the license run mvn license:format -->
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<properties>
+						<owner>Anton Shepilov</owner>
+						<email>ashepilov@linagora.com</email>
+					</properties>
+					<licenseSets>
+						<licenseSet>
+							<header>LICENSE_INLINE</header>
+							<excludes>
+								<exclude>**/*.yml</exclude>
+								<exclude>**/*.xml</exclude>
+								<exclude>**/*.properties</exclude>
+								<exclude>**/README</exclude>
+								<exclude>src/test/resources/**</exclude>
+								<exclude>src/main/resources/**</exclude>
+							</excludes>
+						</licenseSet>
+					</licenseSets>
+				</configuration>
+			</plugin>
+
+			<!-- maven-release-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+					<!--During release:perform, enable the "release" profile -->
+					<!-- <releaseProfiles>release</releaseProfiles> -->
+				</configuration>
+			</plugin>
+
+			<!-- Maven Jetty Plugin 9.x : run the application using "mvn jetty:run" -->
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<configuration>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<webApp>
+						<contextPath>/linshare</contextPath>
+					</webApp>
+					<!-- -Djetty.port=8080 -->
+					<httpConnector>
+						<port>8080</port>
+					</httpConnector>
+				</configuration>
+				<!--  not supported yet
+				<requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+					This doesn't do anything for Jetty, but is a workaround for a Maven
+						bug that prevents the requestLog from being set.
+					<append>true</append>
+				</requestLog>
+				-->
+			</plugin>
+			
 			<!-- mvn versions:display-dependency-updates -D allowMajorUpdates=false -DallowAnyUpdates=false -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.16.2</version>
 				<configuration>
 					<rulesUri>file:///${project.basedir}/src/dependencies/rules.xml</rulesUri>
 				</configuration>
@@ -1640,34 +1653,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<filtering>false</filtering>
-				<directory>src/main/resources</directory>
-				<excludes>
-					<exclude>version.properties</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<filtering>true</filtering>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>version.properties</include>
-					<include>openapi-configuration-*.json</include>
-				</includes>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-			</testResource>
-			<testResource>
-				<directory>src/test/resources/sample-files</directory>
-			</testResource>
-			<testResource>
-				<directory>src/mongo-java-server/resources</directory>
-			</testResource>
-		</testResources>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -1677,13 +1662,110 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.4.1</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>extra-enforcer-rules</artifactId>
+							<version>1.7.0</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>buildnumber-maven-plugin</artifactId>
+					<version>3.2.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>3.5.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>3.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.12.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>3.4.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.6.3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.6.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>3.0.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>2.0.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>4.0.0-M13</version>
+				</plugin>
+				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>4.3</version>
+				</plugin>
+				<plugin>
+					<groupId>io.openapitools.swagger</groupId>
+					<artifactId>swagger-maven-plugin</artifactId>
+					<version>2.1.6</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-maven-plugin</artifactId>
+					<version>9.4.53.v20231009</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>versions-maven-plugin</artifactId>
+					<version>2.16.2</version>
+				</plugin>
+				<plugin>
+					<groupId>com.google.code.maven-replacer-plugin</groupId>
+					<artifactId>replacer</artifactId>
+					<version>1.5.3</version>
 				</plugin>
 				<plugin>
 					<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
@@ -1695,15 +1777,9 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.zcore.maven
-										</groupId>
-										<artifactId>
-											merge-maven-plugin
-										</artifactId>
-										<versionRange>
-											[0.0.3,)
-										</versionRange>
+										<groupId>org.zcore.maven</groupId>
+										<artifactId>merge-maven-plugin</artifactId>
+										<versionRange>[0.0.3,)</versionRange>
 										<goals>
 											<goal>merge</goal>
 										</goals>
@@ -1731,11 +1807,6 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.12.1</version>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -1758,6 +1829,7 @@
 				</plugin> -->
 		</plugins>
 	</reporting>
+
 	<profiles>
 		<!--  profile:id=default -->
 		<profile>
@@ -1832,11 +1904,13 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
-						<version>3.1.0</version>
 						<executions>
 							<execution>
 								<id>ant-load-integration-context</id>
 								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
 								<configuration>
 									<target name="copySql">
 										<copy todir="${project.build.outputDirectory}" overwrite="true">
@@ -1845,15 +1919,13 @@
 										</copy>
 									</target>
 								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
 							</execution>
 						</executions>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
+		
 		<!--  profile:id=mongo-java-server -->
 		<!--  to-be-tested -->
 		<profile>
@@ -1863,10 +1935,13 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
-						<version>3.1.0</version>
 						<executions>
 							<execution>
+								<id>use-mongo-java-server</id>
 								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
 								<configuration>
 									<target name="copy-mongo-java-server">
 										<copy todir="${project.build.outputDirectory}/" overwrite="true" flatten="true">
@@ -1874,9 +1949,6 @@
 										</copy>
 									</target>
 								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
 							</execution>
 						</executions>
 					</plugin>
@@ -1928,7 +2000,6 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>3.5.0</version>
 						<executions>
 							<execution>
 								<id>add-source</id>
@@ -1969,11 +2040,11 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>3.5.0</version>
 						<executions>
 							<execution>
 								<id>parse-version</id>
 								<goals>
+									<!-- Parses project version and generates properties as: 'parsedVersion.majorVersion', 'parsedVersion.minorVersion' and 'parsedVersion.incrementalVersion' -->
 									<goal>parse-version</goal>
 								</goals>
 							</execution>
@@ -1982,7 +2053,6 @@
 					<plugin>
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
-						<version>1.5.3</version>
 						<executions>
 							<execution>
 								<id>import-settings.sql</id>
