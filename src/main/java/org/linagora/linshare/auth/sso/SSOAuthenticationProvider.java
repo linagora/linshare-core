@@ -17,8 +17,8 @@ package org.linagora.linshare.auth.sso;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -34,8 +34,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 public class SSOAuthenticationProvider implements AuthenticationProvider {
 
-	private final static Log logger = LogFactory
-			.getLog(SSOAuthenticationProvider.class);
+	private final static Logger logger = LogManager.getLogger(SSOAuthenticationProvider.class);
 
 	private AuthentificationFacade authentificationFacade;
 

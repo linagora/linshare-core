@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.math3.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -431,11 +430,11 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		Validate.notNull(authUser, "authUser must be set.");
 		checkDomainPermissions(authUser, domain, domains);
 
-		Pair<Optional<LocalDate>, Optional<LocalDate>> period = getPeriod(beginDate, endDate);
+		final DateRange period = getPeriod(beginDate, endDate);
 		Query query = getQuery(
 				authUser, domain, includeNestedDomains, domains, logActions, resourceTypes, resourceGroups,
 				excludedTypes, authUserUuid, actorUuid, actorEmail, recipientEmail, relatedAccount, resource, relatedResource,
-				resourceName, period.getFirst(), period.getSecond());
+				resourceName, period.getBeginDate(), period.getEndDate());
 
 		long count = mongoTemplate.count(query, AuditLogEntry.class);
 		logger.debug("Total of elements returned by the query without pagination: {}", count);
@@ -531,7 +530,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@NotNull
-	private static Pair<Optional<LocalDate>, Optional<LocalDate>> getPeriod(Optional<String> beginDate, Optional<String> endDate) {
+	private static DateRange getPeriod(Optional<String> beginDate, Optional<String> endDate) {
 		Optional<LocalDate> begin = Optional.empty();
 		Optional<LocalDate> end = Optional.empty();
 		try {
@@ -552,7 +551,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		} catch (DateTimeParseException e) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, e.getMessage());
 		}
-		return new Pair<>(begin, end);
+		return new DateRange(begin, end);
 	}
 
 	private void checkDomainPermissions(Account authUser, AbstractDomain domain, Set<String> domains) {
@@ -570,6 +569,24 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 							"You are not allowed to query this domain: " + domainUuid);
 				}
 			}
+		}
+	}
+
+	private static class DateRange {
+		final Optional<LocalDate> beginDate;
+		final Optional<LocalDate> endDate;
+
+		public DateRange(final Optional<LocalDate> beginDate, final Optional<LocalDate> endDate) {
+			this.beginDate = beginDate;
+			this.endDate = endDate;
+		}
+
+		public Optional<LocalDate> getBeginDate() {
+			return this.beginDate;
+		}
+
+		public Optional<LocalDate> getEndDate() {
+			return this.endDate;
 		}
 	}
 }

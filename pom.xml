@@ -133,6 +133,46 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
+			
+			<dependency>
+				<!-- We want an upper version than the one provided by hibernate-ehcache and LinID -->
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>2.10.9.2</version>
+			</dependency>
+			<dependency>
+				<!-- We want an upper version than the one provided by commons-dbcp -->
+				<groupId>commons-pool</groupId>
+				<artifactId>commons-pool</artifactId>
+				<version>1.6</version>
+			</dependency>
+			<dependency>
+				<!-- We want a unique version of this artefact provided by Apache Tika, Apache CXF and LinID -->
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.7</version>
+			</dependency>
+			<dependency>
+				<!-- We want an upper version than the one provided by LinID -->
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.9.4</version>
+			</dependency>
+			
+			<dependency>
+				<!-- We want a unique version of this artefact provided by Apache Tika, Apache CXF and Hibernate -->
+				<groupId>org.glassfish.jaxb</groupId>
+				<artifactId>jaxb-runtime</artifactId>
+				<version>2.3.1</version>
+			</dependency>
+			
+			<dependency>
+				<!-- We want an upper version than the one provided by LinID -->
+				<groupId>org.mozilla</groupId>
+				<artifactId>rhino</artifactId>
+				<version>1.7.13</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
@@ -143,35 +183,165 @@
 				<artifactId>netty</artifactId>
 				<version>3.10.6.Final</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>org.linid.dm</groupId>
+				<artifactId>core</artifactId>
+				<version>2.1.2</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
-		<!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests) will fail, preventing Maven
-			from packaging the WAR. Tapestry includes a large number of testing facilities designed for use with TestNG (http://testng.org/), so
-			it's recommended. -->
-
+		<!-- Spring Framework dependencies for compilation and runtime -->
 		<dependency>
-		    <groupId>javax.xml.ws</groupId>
-		    <artifactId>jaxws-api</artifactId>
-		    <version>2.3.1</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<!-- The logging sub-system of LinShare Core is Log4J-2. We replace 'spring-jcl' by 'jcl-over-slf4j' -->
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jcl</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<!-- for aspectj pointcut (ie transactions) -->
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.9.6</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>${h2.version}</version>
-			<scope>test</scope>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring-security-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring-security-release-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring-security-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-acl</artifactId>
+			<version>${spring-security-release-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+			<version>${spring-security-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-core</artifactId>
+			<version>2.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>${spring-security-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-client</artifactId>
+			<version>${spring-security-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-core</artifactId>
+			<version>${spring-security-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-jose</artifactId>
+			<version>${spring-security-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-resource-server</artifactId>
+			<version>${spring-security-release-version}</version>
+		</dependency>
+		
+		<!-- Data bean framework -->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer 'com.sun.activation:javax.activation' provided by the project -->
+					<groupId>javax.activation</groupId>
+					<artifactId>javax.activation-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
+		<!-- Data - SQL access dependencies for compilation and runtime -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+			<version>2.6.6</version>
+		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
+			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
+					<!-- We prefer 'com.sun.activation:javax.activation' provided by the project -->
+					<groupId>javax.activation</groupId>
+					<artifactId>javax.activation-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -179,245 +349,33 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-ehcache</artifactId>
 			<version>${hibernate.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate.validator.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<version>2.10.9.2</version>
-		</dependency>
-
-		<!-- Quartz framework -->
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>2.3.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- Spring dependencies -->
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- spring-context-support dependency is required with Quartz integration -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- Transaction dependency is required with Quartz integration -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- spring - begin -->
-		<dependency>
-			<groupId>org.springframework.ldap</groupId>
-			<artifactId>spring-ldap-core</artifactId>
-			<version>2.4.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- spring - end -->
-
-		<!-- spring security - begin -->
-		<!-- dependencies :
-		- spring-security-web
-		- spring-security-core
-		- spring-security-config
-		- spring-security-ldap
-		- spring-security-acl
-		 -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>${spring-security-release-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>${spring-security-release-version}
-			</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-ldap</artifactId>
-			<version>${spring-security-release-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-acl</artifactId>
-			<version>${spring-security-release-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>${spring-security-release-version}</version>
 			<scope>runtime</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-client</artifactId>
-			<version>${spring-security-release-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-jose</artifactId>
-			<version>${spring-security-release-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-resource-server</artifactId>
-			<version>${spring-security-release-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.nimbusds</groupId>
-			<artifactId>oauth2-oidc-sdk</artifactId>
-			<version>9.41</version>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${sql.driver.postgresql}</version>
+			<scope>runtime</scope>
 		</dependency>
-
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<version>${spring-security-release-version}</version>
-			<scope>test</scope>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.2</version>
 		</dependency>
-		<!-- spring security - end -->
-
-		<dependency>
-			<groupId>org.jboss.aerogear</groupId>
-			<artifactId>aerogear-otp-java</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
-		<!-- spring data - begin -->
+		
+		<!-- Data - MongoDB access dependencies for compilation and runtime -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
@@ -428,50 +386,25 @@
 			<artifactId>mongodb-driver-sync</artifactId>
 			<version>${spring-data.driver.version}</version>
 		</dependency>
-
-		<!-- spring data - end -->
-
-		<!--  LDAP Query Language integration - begin -->
 		<dependency>
-			<groupId>org.linid.dm</groupId>
-			<artifactId>authorization</artifactId>
-			<version>${linid.authorization.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>commons-lang3</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- override org.linid.dm.authorization dependency requirement - security issue. -->
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.9.4</version>
-			<scope>runtime</scope>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-core</artifactId>
+			<version>${spring-data.driver.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mozilla</groupId>
-			<artifactId>rhino</artifactId>
-			<version>${mozilla.rhino.version}</version>
-			<type>jar</type>
-			<optional>false</optional>
+			<groupId>org.mongodb</groupId>
+			<artifactId>bson</artifactId>
+			<version>${spring-data.driver.version}</version>
 		</dependency>
-		<!--  LQL integration - end -->
 
-		<!-- SL4J: Logger API and choose LOG4J implementation -->
+		<!-- Quartz framework -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+
+		<!-- logging sub-system -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -481,314 +414,227 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>log4j-over-slf4j</artifactId>
 			<version>${slf4j-release-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4j-release-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>${log4j-release-version}</version>
-		</dependency>
-
-		<!-- bridge logs from commons loggings to slf4j -->
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.3</version>
-			<scope>provided</scope>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${slf4j-release-version}</version>
 		</dependency>
-
-		<!-- Mime type detection tools. -->
-        <!-- Mime type detection tools. -->
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>2.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parsers-standard-package</artifactId>
-            <version>2.9.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.glassfish.jaxb</groupId>
-                    <artifactId>jaxb-runtime</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.pdfbox</groupId>
-                    <artifactId>pdfbox</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.pdfbox</groupId>
-                    <artifactId>xmpbox</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.pdfbox</groupId>
-                    <artifactId>preflight</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.pdfbox</groupId>
-                    <artifactId>jempbox</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.pdfbox</groupId>
-                    <artifactId>jbig2-imageio</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.pdfbox</groupId>
-                    <artifactId>pdfbox-tools</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.beust</groupId>
-                    <artifactId>jcommander</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.11.0</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j-release-version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j-release-version}</version>
+		</dependency>
+
+		<!-- Mime type detection tools. -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>2.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers-standard-package</artifactId>
+			<version>2.9.1</version>
+			<scope>runtime</scope>
+			<exclusions>
+				<!-- Apache Tika is used to detect MIME type. We don't use its part 'PDFBox' about PDF file manipulation -->
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>pdfbox</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>xmpbox</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>preflight</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>jempbox</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>jbig2-imageio</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>pdfbox-tools</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- The logging sub-system of LinShare is Log4J. We replace 'commons-logging' by 'jcl-over-slf4j' -->
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<!-- Extends Apache Tika with support of image format JPEG -->
 			<groupId>com.github.jai-imageio</groupId>
 			<artifactId>jai-imageio-jpeg2000</artifactId>
 			<version>1.4.0</version>
+			<scope>runtime</scope>
 		</dependency>
+
+		<!-- Apache JClouds dependencies for storage in cloud -->
 		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.8.9</version>
+			<groupId>org.apache.jclouds</groupId>
+			<artifactId>jclouds-core</artifactId>
+			<version>${jclouds.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jclouds</groupId>
 			<artifactId>jclouds-allblobstore</artifactId>
 			<version>${jclouds.version}</version>
+			<scope>runtime</scope>
 		</dependency>
-
 		<dependency>
-			<groupId>org.apache.jclouds.driver</groupId>
-			<artifactId>jclouds-sshj</artifactId>
+			<groupId>org.apache.jclouds</groupId>
+			<artifactId>jclouds-blobstore</artifactId>
 			<version>${jclouds.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcprov-ext-jdk15on</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
-
 		<dependency>
-			<groupId>org.apache.jclouds.driver</groupId>
-			<artifactId>jclouds-slf4j</artifactId>
+			<groupId>org.apache.jclouds</groupId>
+			<artifactId>jclouds-compute</artifactId>
 			<version>${jclouds.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.ws.rs</groupId>
-					<artifactId>jsr311-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
-
-		<dependency>
-			<groupId>org.apache.jclouds.driver</groupId>
-			<artifactId>jclouds-enterprise</artifactId>
-			<version>${jclouds.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcprov-ext-jdk15on</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<dependency>
 			<groupId>org.apache.jclouds.api</groupId>
 			<artifactId>filesystem</artifactId>
 			<version>${jclouds.version}</version>
 		</dependency>
-
-		<!--  for aspectj pointcut (ie transactions) -->
 		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-			<version>1.9.6</version>
+			<groupId>org.apache.jclouds.api</groupId>
+			<artifactId>openstack-swift</artifactId>
+			<version>${jclouds.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jclouds.api</groupId>
+			<artifactId>openstack-keystone</artifactId>
+			<version>${jclouds.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jclouds.driver</groupId>
+			<artifactId>jclouds-sshj</artifactId>
+			<version>${jclouds.version}</version>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer the Bouncy Castle's artifact build for Java 8+: bcprov-ext-jdk18on, coming With Apache Tika -->
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcpkix-jdk15on</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Bouncy Castle's artifact build for Java 8+: bcprov-ext-jdk18on, coming With Apache Tika -->
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-ext-jdk15on</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<!-- The logging sub-system of LinShare Core is Log4J-2. We redirect logging of JClouds to SLF4J that works with Log4J-2-->
+			<groupId>org.apache.jclouds.driver</groupId>
+			<artifactId>jclouds-slf4j</artifactId>
+			<version>${jclouds.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jclouds.driver</groupId>
+			<artifactId>jclouds-enterprise</artifactId>
+			<version>${jclouds.version}</version>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer the Bouncy Castle's artifact build for Java 8+: bcprov-ext-jdk18on, coming With Apache Tika -->
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-ext-jdk15on</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>5.0.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4.7</version>
-		</dependency>
+		<!-- Antivirus scanner dependencies -->
 		<dependency>
 			<groupId>net.taldius</groupId>
 			<artifactId>libclamav</artifactId>
 			<version>1.0</version>
 			<exclusions>
 				<exclusion>
+					<!-- The logging sub-system of LinShare is Log4J. We replace 'commons-logging' by 'jcl-over-slf4j' -->
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<!-- JAX-WS and JAX-RS -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
+			<!-- Provided by the servlet container Jetty or Tomcat --> 
 			<scope>provided</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>javax.annotations</groupId> -->
-<!-- 			<artifactId>jsr250-api</artifactId> -->
-<!-- 			<version>1.0</version> -->
-<!-- 		</dependency> -->
-
-
-		<!-- Test dependencies - begin -->
 		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.9.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.9.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-params</artifactId>
-			<version>5.9.0</version>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-commons</artifactId>
-			<version>1.9.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-launcher</artifactId>
-			<version>1.9.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-inline</artifactId>
-			<version>3.12.4</version>
-			<scope>test</scope>
-		</dependency>
-<!-- 		Mockito Extension -->
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-junit-jupiter</artifactId>
-			<version>3.12.4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.subethamail</groupId>
-			<artifactId>subethasmtp</artifactId>
-			<version>3.1.7</version>
-			<scope>test</scope>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
 			<exclusions>
 				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-simple</artifactId>
+					<!-- We prefer 'com.sun.activation:javax.activation' provided by the project -->
+					<groupId>javax.activation</groupId>
+					<artifactId>activation</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>de.bwaldvogel</groupId>
-			<artifactId>mongo-java-server</artifactId>
-			<version>${mongo.java.server}</version>
-			<scope>test</scope>
+			<!-- In replacement of 'javax.activation:activation' and 'javax.activation:javax.activation-api' -->
+			<groupId>com.sun.activation</groupId>
+			<artifactId>javax.activation</artifactId>
+			<version>1.2.0</version>
 		</dependency>
-		<!-- Test dependencies - end -->
-
-		<!-- timestamping bouncycastle last release : timestaping and ciphering-->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.bouncycastle</groupId> -->
-<!-- 			<artifactId>bctsp-jdk16</artifactId> -->
-<!-- 			<version>1.46</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.bouncycastle</groupId> -->
-<!-- 			<artifactId>bcprov-jdk16</artifactId> -->
-<!-- 			<version>1.46</version> -->
-<!-- 		</dependency> -->
-
-		<!-- Database related dependencies - begin -->
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>${sql.driver.postgresql}</version>
-		</dependency>
-		<!--  db connection pool -->
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.4</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-			<version>1.6</version>
-		</dependency>
-		<!-- Database related dependencies - begin -->
-
-		<!-- XSS filter -->
-		<!-- https://mvnrepository.com/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer -->
-		<dependency>
-			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-			<artifactId>owasp-java-html-sanitizer</artifactId>
-			<version>20191001.1</version>
-		</dependency>
-
-		<!-- ###### web services ####### -->
-		<!-- cxf rest jaxrs -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
-			<version>${cxf.version}</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
 		</dependency>
-		<!-- cxf -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
+			<artifactId>cxf-core</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
@@ -800,18 +646,86 @@
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
 			<version>${cxf.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-features-logging</artifactId>
 			<version>${cxf.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>swagger-ui</artifactId>
 			<version>${cxf.swagger.ui.version}</version>
+			<scope>runtime</scope>
 		</dependency>
-		<!-- Google Guava -->
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-models</artifactId>
+			<version>${cxf.swagger.jax-rs.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>${cxf.swagger.jax-rs.version}</version>
+		</dependency>
+
+		<!-- LDAP Query Language by LinID -->
+		<dependency>
+			<groupId>org.linid.dm</groupId>
+			<artifactId>authorization</artifactId>
+			<version>${linid.authorization.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- The logging sub-system of LinShare is Log4J. We replace 'commons-logging' by 'jcl-over-slf4j' -->
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- The logging sub-system of LinShare Core is Log4J-2. We replace 'slf4j-log4j12' by 'log4j-slf4j-impl' -->
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId> 
+				</exclusion>
+				<exclusion>
+					<!-- The logging sub-system of LinShare Core is Log4J-2.  We replace 'commons-logging' by 'log4j-over-slf4j' -->
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId> 
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Other third party products -->
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>oauth2-oidc-sdk</artifactId>
+			<version>9.41</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.aerogear</groupId>
+			<artifactId>aerogear-otp-java</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<!-- XSS filter -->
+			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+			<artifactId>owasp-java-html-sanitizer</artifactId>
+			<version>20191001.1</version>
+		</dependency>		
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -827,10 +741,6 @@
 			<artifactId>thymeleaf</artifactId>
 			<version>${thymeleaf.version}</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
@@ -855,16 +765,127 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.passay</groupId>
+			<artifactId>passay</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>4.10.0</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>13.0</version>
+		</dependency>
+
+		<!-- Bouncy Castle -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk18on</artifactId>
+			<version>1.76</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>1.76</version>
+		</dependency>
+
+		<!-- Test dependencies - JUnit -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.9.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-commons</artifactId>
+			<!-- Must be aligned with the version provided with junit-jupiter-api -->
+			<version>1.9.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<!-- Must be aligned with the version provided with junit-jupiter-api -->
+			<version>5.9.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-inline</artifactId>
+			<version>${mockito.version}</version>
+			<!-- Needed only at runtime of unit tests -->
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${spring-security-release-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Test dependencies - Database servers-->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.bwaldvogel</groupId>
+			<artifactId>mongo-java-server</artifactId>
+			<version>${mongo.java.server}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Test dependencies - Mail server-->
+		<dependency>
+			<groupId>org.subethamail</groupId>
+			<artifactId>subethasmtp</artifactId>
+			<version>3.1.7</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer 'com.sun.activation:javax.activation' provided by the project -->
+					<groupId>javax.activation</groupId>
+					<artifactId>activation</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Test dependencies - LDAP server-->
+		<dependency>
 			<groupId>com.unboundid</groupId>
 			<artifactId>unboundid-ldapsdk</artifactId>
 			<version>5.1.4</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.passay</groupId>
-			<artifactId>passay</artifactId>
-			<version>1.6.1</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
@@ -879,16 +900,33 @@
 		</dependency>
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
-			<version>4.10.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>mockwebserver</artifactId>
 			<version>4.10.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<!-- Used directly only by unit tests, but also used as transitive dependency of dependencies declared as 'compile', so its scope must be 'compile' -->
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>9.22</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<!-- Used directly only by unit tests, but also used as transitive dependency of CXF Client and CXF RS Frontend, so its scope must be 'compile' -->
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<!-- Used directly only by unit tests, but also used as transitive dependency of Hibernate needed at runtime, so its scope must be 'compile' -->
+			<groupId>org.jboss.spec.javax.transaction</groupId>
+			<artifactId>jboss-transaction-api_1.2_spec</artifactId>
+			<version>1.1.1.Final</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
+
 	<build>
 		<finalName>linshare-core</finalName>
 
@@ -970,6 +1008,7 @@
 							<rules>
 								<bannedDependencies>
 									<excludes>
+										<!-- LinShare Core uses Log4J-2 as logging subsystem. Log4J-1 and other logging system are banned -->
 										<exclude>log4j:log4j</exclude>
 										<exclude>org.slf4j:slf4j-log4j12</exclude>
 									</excludes>
@@ -980,7 +1019,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- buildnumber-maven-plugin (compute timestamp, build number, ...)-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -1004,6 +1043,79 @@
 					<timestampPropertyName>build.timestamp</timestampPropertyName>
 					<timestampFormat>yyyy-MM-dd HH:mm</timestampFormat>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<!-- Verify that all dependencies used are declared and that all dependencies declared are used -->
+						<id>analyze</id>
+						<phase>process-test-classes</phase>
+						<goals>
+							<!-- 'analyze-only' uses the compiled classes (analyze will compile then itself!) -->
+							<goal>analyze-only</goal>
+						</goals>
+						<configuration>
+							<ignoreNonCompile>${maven-dependency-plugin.ignoreNonCompile}</ignoreNonCompile>
+							<failOnWarning>${maven-dependency-plugin.failOnWarning}</failOnWarning>
+							<ignoredUnusedDeclaredDependencies>
+								<!-- Required logging runtime dependencies -->
+								<ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-slf4j-impl</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.slf4j:log4j-over-slf4j</ignoredUnusedDeclaredDependency>
+
+								<!-- Required Spring runtime dependencies -->
+								<ignoredUnusedDeclaredDependency>org.springframework:spring-aop</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.aspectj:aspectjweaver</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.springframework.security:spring-security-config</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.springframework.security:spring-security-acl</ignoredUnusedDeclaredDependency>
+
+								<!-- Required database runtime dependencies -->
+								<ignoredUnusedDeclaredDependency>org.hibernate:hibernate-ehcache</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.hibernate.validator:hibernate-validator</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>commons-dbcp:commons-dbcp</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.postgresql:postgresql</ignoredUnusedDeclaredDependency>
+
+								<!-- Required Apache Tika runtime dependencies -->
+								<ignoredUnusedDeclaredDependency>org.apache.tika:tika-parsers-standard-package</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>com.github.jai-imageio:jai-imageio-jpeg2000</ignoredUnusedDeclaredDependency>
+
+								<!-- Required Apache JClouds runtime dependencies -->
+								<ignoredUnusedDeclaredDependency>org.apache.jclouds:jclouds-allblobstore</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.jclouds.driver:jclouds-sshj</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.jclouds.driver:jclouds-enterprise</ignoredUnusedDeclaredDependency>
+								<!-- Used at compilation time for a constant definition which is not detected as used -->
+								<ignoredUnusedDeclaredDependency>org.apache.jclouds.api:filesystem</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.jclouds.api:openstack-keystone</ignoredUnusedDeclaredDependency>
+
+								<!-- Required Apache CXF and Swagger UI runtime dependencies -->
+								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-features-logging</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.cxf:cxf-rt-rs-service-description-openapi-v3</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.webjars:swagger-ui</ignoredUnusedDeclaredDependency>
+
+								<!-- Required JWT runtime dependencies -->
+								<ignoredUnusedDeclaredDependency>io.jsonwebtoken:jjwt-impl</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>io.jsonwebtoken:jjwt-jackson</ignoredUnusedDeclaredDependency>
+
+								<!-- Required at runtime in standalone mode or by unit tests -->
+								<ignoredUnusedDeclaredDependency>org.mockito:mockito-inline</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>com.h2database:h2</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>de.bwaldvogel:mongo-java-server</ignoredUnusedDeclaredDependency>
+							</ignoredUnusedDeclaredDependencies>
+							<ignoredNonTestScopedDependencies>
+								<!-- Used directly only by unit test, but also used as transitive dependency of Hibernate -->
+								<ignoredNonTestScopedDependency>org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec</ignoredNonTestScopedDependency>
+								<!-- Used directly only by unit test, but also used as transitive dependency of CXF Client and CXF RS Frontend -->
+								<ignoredNonTestScopedDependency>org.apache.cxf:cxf-rt-transports-http</ignoredNonTestScopedDependency>
+								<!-- Used directly only by unit test, but also used as transitive dependency of 'spring-orm' and LinID -->
+								<ignoredNonTestScopedDependency>org.springframework:spring-jdbc</ignoredNonTestScopedDependency>
+								<!-- Used directly only by unit test, but also used as transitive dependency of 'oaut2-oidc-sdk' and 'spring-security-auth2-jose' -->
+								<ignoredNonTestScopedDependency>com.nimbusds:nimbus-jose-jwt</ignoredNonTestScopedDependency>
+							</ignoredNonTestScopedDependencies>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- maven-surefire-plugin (test reports) -->
@@ -1500,7 +1612,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- maven-assembly-plugin for sql files -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1543,7 +1655,7 @@
 					<failOnError>false</failOnError>
 				</configuration>
 			</plugin>
-			
+
 			<!-- maven-install-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1552,7 +1664,7 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-			
+
 			<!-- maven-deploy-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1561,7 +1673,7 @@
 					<skip>false</skip>
 				</configuration>
 			</plugin>
-			
+
 			<!-- Change licence -->
 			<!-- To update the license run mvn license:format -->
 			<plugin>
@@ -1678,6 +1790,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.12.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.6.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -1836,7 +1953,6 @@
 			</properties>
 		</profile>
 
-
 		<profile>
 			<!-- Continuous integration profile -->
 			<id>jacoco-profile</id>
@@ -1913,9 +2029,8 @@
 			</build>
 		</profile>
 		
-		<!--  profile:id=mongo-java-server -->
-		<!--  to-be-tested -->
 		<profile>
+			<!-- Profile to launch LinShare Core standalonely with a MongoDB server embedded -->
 			<id>mongo-java-server</id>
 			<build>
 				<plugins>
@@ -1954,8 +2069,9 @@
 				</dependency>
 			</dependencies>
 		</profile>
-		<!--  profile:id=h2 -->
+
 		<profile>
+			<!-- Profile to launch LinShare Core standalonely with a H2 embedded fatabase -->
 			<id>h2</id>
 			<dependencies>
 				<dependency>
@@ -1965,8 +2081,9 @@
 				</dependency>
 			</dependencies>
 		</profile>
-		<!--  profile:id=local -->
+
 		<profile>
+			<!-- Profile to launch LinShare Core standalonely with an embedded SMTP server -->
 			<id>local</id>
 			<activation>
 				<property>
@@ -2062,7 +2179,6 @@
 				</plugins>
 			</build>
 		</profile>
-
 	</profiles>
 
 	<repositories>
@@ -2098,7 +2214,7 @@
 		<java-language.version>17</java-language.version>
 		<openjdk-base.min-version>${java-language.version}.0.9</openjdk-base.min-version>
 		<maven.min-version>3.9.6</maven.min-version>
-		
+
 		<!-- Project source code properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -2110,11 +2226,15 @@
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
 
+		<maven-dependency-plugin.ignoreNonCompile>false</maven-dependency-plugin.ignoreNonCompile>
+		<maven-dependency-plugin.failOnWarning>true</maven-dependency-plugin.failOnWarning>
+
 		<!-- Dependency properties -->
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
 		<cxf.version>3.4.4</cxf.version>
 		<!-- We can not yet upgrade from 3.4.4 to 3.5.3 because there is an unexpected NPE during file uploads -->
 		<cxf.swagger.ui.version>3.52.5</cxf.swagger.ui.version>
+		<cxf.swagger.jax-rs.version>2.1.6</cxf.swagger.jax-rs.version>
 		<guava.version>30.1.1-jre</guava.version>
 		<h2.version>1.4.200</h2.version>
 		<hibernate.version>5.4.30.Final</hibernate.version>
@@ -2124,7 +2244,6 @@
 		<jjwt.version>0.11.2</jjwt.version>
 		<linid.authorization.version>2.1.2.1</linid.authorization.version>
 		<mongo.java.server>1.40.0</mongo.java.server>
-		<mozilla.rhino.version>1.7.13</mozilla.rhino.version>
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<slf4j-release-version>1.7.32</slf4j-release-version>
 		<log4j-release-version>2.18.0</log4j-release-version>
@@ -2133,5 +2252,6 @@
 		<spring-data.driver.version>4.4.2</spring-data.driver.version>
 		<sql.driver.postgresql>42.4.1</sql.driver.postgresql>
 		<thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
+		<mockito.version>3.12.4</mockito.version>
 	</properties>
 </project>

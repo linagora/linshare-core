@@ -31,8 +31,8 @@ package org.linagora.linshare.ldap;
 
 import javax.naming.directory.SearchControls;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.DirContextOperations;
@@ -49,7 +49,7 @@ import org.springframework.util.Assert;
  */
 public class LinShareFilterBasedLdapUserSearch implements LdapUserSearch {
 
-		private static final Log logger = LogFactory.getLog(LinShareFilterBasedLdapUserSearch.class);
+		private static final Logger logger = LogManager.getLogger(LinShareFilterBasedLdapUserSearch.class);
 
 		private final ContextSource contextSource;
 
