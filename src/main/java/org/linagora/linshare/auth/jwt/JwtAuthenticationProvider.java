@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.auth.exceptions.JwtBadFormatException;
 import org.linagora.linshare.core.domain.entities.User;
@@ -46,7 +46,7 @@ import io.jsonwebtoken.security.SignatureException;
 
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
-	private final static Log logger = LogFactory.getLog(JwtAuthenticationProvider.class);
+	private final static Logger logger = LogManager.getLogger(JwtAuthenticationProvider.class);
 
 	private AuthentificationFacade authentificationFacade;
 

@@ -15,15 +15,18 @@
  */
 package org.linagora.linshare.repository.hibernate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.compress.utils.Lists;
 import org.hibernate.criterion.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +35,6 @@ import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
@@ -265,7 +267,7 @@ public class GuestRepositoryImplTest {
 	@Test
 	public void testFindUsersInSubset() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		PageContainer<Guest> actual = guestRepository.findAll(Lists.newArrayList(), Order.asc("mail"), null, null,
+		PageContainer<Guest> actual = guestRepository.findAll(Collections.emptyList(), Order.asc("mail"), null, null,
 				null, null, null, null, null, AccountType.GUEST,
 				Set.of(100_003L, 100_004L, 100_005L, 100_006L, 100_007L),
 				new PageContainer<>(0, 20));

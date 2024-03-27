@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
@@ -32,7 +33,6 @@ import java.util.UUID;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
@@ -333,7 +333,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		for (String identifier : keySet) {
 			DataSource dataSource = container.getAttachments().get(identifier);
 			try (InputStream stream = dataSource.getInputStream()) {
-				String base64String = Base64.encodeBase64String(IOUtils.toByteArray(stream));
+				final String base64String = Base64.getEncoder().encodeToString(IOUtils.toByteArray(stream));
 				String content = container.getContent().replaceAll("cid:" + identifier,
 						"data:image/png;base64, " + base64String);
 				container.setContent(content);

@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Base64;
 import java.util.Objects;
 
 import javax.ws.rs.WebApplicationException;
@@ -27,7 +28,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -102,7 +102,7 @@ public class DocumentStreamReponseBuilder {
 			if (inputStream != null) {
 				byteArray = IOUtils.toByteArray(inputStream);
 			}
-			response = Response.ok(Base64.encodeBase64(byteArray));
+			response = Response.ok(Base64.getEncoder().encode(byteArray));
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new BusinessException(

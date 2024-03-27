@@ -14,8 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.linagora.linshare.server.embedded.ldap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -26,7 +26,7 @@ import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
 public class LdapServerRule implements AfterAllCallback, BeforeAllCallback {
-	private static final Log LOG = LogFactory.getLog(LdapServerRule.class);
+	private static final Logger LOG = LogManager.getLogger(LdapServerRule.class);
 
 	public static final String DefaultDn = "cn=Directory Manager";
 	public static final String DefaultPassword = "password";
