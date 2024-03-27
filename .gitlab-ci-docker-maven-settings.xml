@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <mirrors>
+    <mirror>
+      <id>LinID-public.mirror</id>
+      <mirrorOf>Linagora</mirrorOf>
+      <url>https://nexus.linagora.com/content/repositories/public</url>
+    </mirror>
+    <mirror>
+      <id>LinID-releases.mirror</id>
+      <mirrorOf>Linagora-releases</mirrorOf>
+      <url>https://nexus.linagora.com/content/repositories/releases</url>
+    </mirror>
+    <mirror>
+      <id>LinID-snapshot.mirror</id>
+      <mirrorOf>Linagora-snapshot</mirrorOf>
+      <url>https://nexus.linagora.com/content/repositories/snapshots</url>
+    </mirror>
+    <mirror>
+      <id>jboss-repo.mirror</id>
+      <mirrorOf>jboss-repo</mirrorOf>
+      <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+      <blocked>false</blocked>
+    </mirror>
+    <mirror>
+      <id>maven.forgerock.org.mirror</id>
+      <mirrorOf>maven.forgerock.org</mirrorOf>
+      <url>http://maven.forgerock.org/repo/releases</url>
+      <blocked>false</blocked>
+    </mirror>
+  </mirrors>
+</settings>

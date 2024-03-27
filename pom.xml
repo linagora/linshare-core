@@ -442,33 +442,6 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.linid.dm</groupId>
-					<artifactId>core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>commons-lang3</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.linid.dm</groupId>
-            <artifactId>core</artifactId>
-			<version>${linid.authorization.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>org.apache.commons</groupId>
 					<artifactId>commons-lang3</artifactId>
 				</exclusion>
@@ -971,6 +944,20 @@
 									<maxJdkVersion>${java-language.version}</maxJdkVersion>
 									<strict>true</strict>
 								</enforceBytecodeVersion>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>enforce-maven</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>[${maven.min-version},4)</version>
+									<message>Maven ${maven.min-version}+ is required to build LinShare Core.</message>
+								</requireMavenVersion>
 							</rules>
 						</configuration>
 					</execution>
@@ -1634,7 +1621,7 @@
 				</requestLog>
 				-->
 			</plugin>
-			
+
 			<!-- mvn versions:display-dependency-updates -D allowMajorUpdates=false -DallowAnyUpdates=false -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -2110,6 +2097,7 @@
 		<!-- System requirement properties -->
 		<java-language.version>17</java-language.version>
 		<openjdk-base.min-version>${java-language.version}.0.9</openjdk-base.min-version>
+		<maven.min-version>3.9.6</maven.min-version>
 		
 		<!-- Project source code properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -2134,7 +2122,7 @@
 		<hibernate.validator.version>6.2.0.Final</hibernate.validator.version>
 		<jclouds.version>2.5.0</jclouds.version>
 		<jjwt.version>0.11.2</jjwt.version>
-		<linid.authorization.version>2.1.2</linid.authorization.version>
+		<linid.authorization.version>2.1.2.1</linid.authorization.version>
 		<mongo.java.server>1.40.0</mongo.java.server>
 		<mozilla.rhino.version>1.7.13</mozilla.rhino.version>
 		<servlet.context.version>3.0.1</servlet.context.version>

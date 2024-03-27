@@ -73,20 +73,22 @@ build:
     DOCKER_TLS_CERTDIR: ""
   
   script:
-    - echo "FROM maven:3.8.8-eclipse-temurin-17" > Dockerfile
+    - echo "FROM maven:3.9.6-eclipse-temurin-17" > Dockerfile
     - echo "RUN useradd -ms /bin/bash maven" >> Dockerfile
     - echo "WORKDIR /home/maven/linshare" >> Dockerfile
     - echo "COPY src /home/maven/linshare/src" >> Dockerfile
     - echo "COPY pom.xml /home/maven/linshare/" >> Dockerfile
+    - echo "COPY .gitlab-ci-docker-maven-settings.xml /home/maven/.m2/settings.xml" >> Dockerfile
     - echo "RUN chown -R maven:maven /home/maven/linshare" >> Dockerfile
+    - echo "RUN chown -R maven:maven /home/maven/.m2" >> Dockerfile
     - echo "RUN sed -i -e 's/log4j.category.org.linagora.linshare=info/log4j.category.org.linagora.linshare=debug/g' /home/maven/linshare/src/main/resources/log4j2.properties" >> Dockerfile
     - echo "USER maven" >> Dockerfile
     - echo "ENV LINSHARE_HOME=/home/maven/linshare" >> Dockerfile
     - echo "ENV MAVEN_CONFIG=/home/maven/.m2" >> Dockerfile
-    - echo "RUN mvn dependency:go-offline dependency:resolve dependency:resolve-plugins --batch-mode" >> Dockerfile
-    - echo "RUN mvn compile" >> Dockerfile
-    - echo "RUN mvn jetty:start  -P h2,local,mongo-java-server > /dev/null" >> Dockerfile
-    - echo "CMD mvn jetty:run -P h2,local,mongo-java-server -Dspring.profiles.active=default,jcloud,batches,tests" >> Dockerfile
+    - echo "RUN mvn -V dependency:go-offline dependency:resolve dependency:resolve-plugins --batch-mode" >> Dockerfile
+    - echo "RUN mvn -V compile" >> Dockerfile
+    - echo "RUN mvn -V jetty:start  -P h2,local,mongo-java-server > /dev/null" >> Dockerfile
+    - echo "CMD mvn -V jetty:run -P h2,local,mongo-java-server -Dspring.profiles.active=default,jcloud,batches,tests" >> Dockerfile
     - echo "EXPOSE 8080" >> Dockerfile
     - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}" docker-registry.linagora.com:5000
     - docker login -u "${HUB_DOCKER_USER}" -p "${HUB_DOCKER_RO_TOKEN}"
