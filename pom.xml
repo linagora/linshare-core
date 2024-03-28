@@ -147,7 +147,13 @@
 				<artifactId>jcl-over-slf4j</artifactId>
 				<version>${slf4j-release-version}</version>
 			</dependency>
-			
+			<dependency>
+				<!-- We force Apache Tika to use our version of Log4J -->
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>${log4j-release-version}</version>
+			</dependency>
+
 			<dependency>
 				<!-- We want an upper version than the one provided by commons-dbcp -->
 				<groupId>commons-pool</groupId>
@@ -158,13 +164,13 @@
 				<!-- We want a unique version of this artefact provided by Apache Tika, ClamAV and LinID -->
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.11.0</version>
+				<version>2.14.0</version>
 			</dependency>
 			<dependency>
 				<!-- We want a unique version of this artefact provided by Apache Tika, Apache CXF and LinID -->
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.7</version>
+				<version>3.13.0</version>
 			</dependency>
 			<dependency>
 				<!-- We want an upper version than the one provided by LinID -->
@@ -190,7 +196,7 @@
 				<artifactId>commons-compress</artifactId>
 				<version>1.24.0</version>
 			</dependency>
-			
+
 			<dependency>
 				<!-- Apache CXF comes with different versions of 'jakarta.activation-api', we choose one -->
 				<groupId>jakarta.activation</groupId>
@@ -220,9 +226,9 @@
 				<!-- We want a unique version of this artefact provided by Apache Tika, Apache CXF and Hibernate -->
 				<groupId>org.glassfish.jaxb</groupId>
 				<artifactId>jaxb-runtime</artifactId>
-				<version>2.3.1</version>
+				<version>2.3.6</version>
 			</dependency>
-			
+
 			<dependency>
 				<!-- Hibernate comes with different versions of 'jboss-logging', we choose one -->
 				<groupId>org.jboss.logging</groupId>
@@ -257,7 +263,7 @@
 				<!-- We want a unique version of this artefact provided by diferent dependencies -->
 				<groupId>com.nimbusds</groupId>
 				<artifactId>nimbus-jose-jwt</artifactId>
-				<version>9.22</version>
+				<version>9.23</version>
 			</dependency>
 			<dependency>
 				<!-- We want a unique version of this artefact provided by 'okhttp' -->
@@ -269,7 +275,7 @@
 				<!-- We want a unique version of this artefact provided by 'okhttp' -->
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-stdlib-common</artifactId>
-				<version>1.5.31</version>
+				<version>1.6.20</version>
 			</dependency>
 			<dependency>
 				<!-- We want an upper version than the one provided by LinID -->
@@ -303,7 +309,7 @@
 				<!-- We want a unique version of this artefact coming with several dependencies -->
 				<groupId>org.checkerframework</groupId>
 				<artifactId>checker-qual</artifactId>
-				<version>3.5.0</version>
+				<version>3.8.0</version>
 			</dependency>
 			<dependency>
 				<!-- We want a unique version of this artefact coming with several dependencies -->
@@ -553,14 +559,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
+			<artifactId>log4j-slf4j2-impl</artifactId>
 			<version>${log4j-release-version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>${log4j-release-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -811,7 +816,7 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 				<exclusion>
-					<!-- The logging sub-system of LinShare Core is Log4J-2. We replace 'slf4j-log4j12' by 'log4j-slf4j-impl' -->
+					<!-- The logging sub-system of LinShare Core is Log4J-2. We replace 'slf4j-log4j12' by 'log4j-slf4j2-impl' -->
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-log4j12</artifactId> 
 				</exclusion>
@@ -1096,7 +1101,8 @@
 								<enforceBytecodeVersion>
 									<!-- Check that all dependencies of the project have a Java byte code compliant with our JVM distribution requirement -->
 									<maxJdkVersion>${java-language.version}</maxJdkVersion>
-									<strict>true</strict>
+									<!-- We don't use the mode 'strict' to be able to accept Multi-Release Jar dependency having their default classes compliant with our requirements -->
+									<strict>false</strict>
 								</enforceBytecodeVersion>
 							</rules>
 						</configuration>
@@ -1145,6 +1151,18 @@
 							</rules>
 						</configuration>
 					</execution>
+					<execution>
+						<!-- The dependency version used must be the highest version among those declared -->
+						<id>enforce-upper-bound-dependencies</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireUpperBoundDeps />
+							</rules>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -1190,7 +1208,7 @@
 							<failOnWarning>${maven-dependency-plugin.failOnWarning}</failOnWarning>
 							<ignoredUnusedDeclaredDependencies>
 								<!-- Required logging runtime dependencies -->
-								<ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-slf4j-impl</ignoredUnusedDeclaredDependency>
+								<ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-slf4j2-impl</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>org.slf4j:log4j-over-slf4j</ignoredUnusedDeclaredDependency>
 
 								<!-- Required Spring runtime dependencies -->
@@ -2366,15 +2384,15 @@
 		<guava.version>30.1.1-jre</guava.version>
 		<h2.version>1.4.200</h2.version>
 		<hibernate.version>5.4.30.Final</hibernate.version>
-		<jackson.version>2.13.0</jackson.version>
+		<jackson.version>2.15.2</jackson.version>
 		<hibernate.validator.version>6.2.0.Final</hibernate.validator.version>
 		<jclouds.version>2.5.0</jclouds.version>
 		<jjwt.version>0.11.2</jjwt.version>
 		<linid.authorization.version>2.1.2.1</linid.authorization.version>
 		<mongo.java.server>1.40.0</mongo.java.server>
 		<servlet.context.version>3.0.1</servlet.context.version>
-		<slf4j-release-version>1.7.32</slf4j-release-version>
-		<log4j-release-version>2.18.0</log4j-release-version>
+		<slf4j-release-version>2.0.9</slf4j-release-version>
+		<log4j-release-version>2.23.1</log4j-release-version>
 		<spring-security-release-version>5.7.2</spring-security-release-version>
 		<spring-data.version>3.3.6</spring-data.version>
 		<spring-data.driver.version>4.4.2</spring-data.driver.version>
