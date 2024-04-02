@@ -73,7 +73,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		this.unlimited = false;
 		this.unlimitedUsed = false;
 	}
-	
+
 	public UnitValueFunctionality(String identifier, boolean system, Policy activationPolicy,
 			Policy configurationPolicy, AbstractDomain domain, Integer value, Unit<?> unit, Unit<?> maxUnit, Integer maxValue, boolean valueUsed, boolean maxValueUsed) {
 		super(identifier, system, activationPolicy, configurationPolicy, domain, value);
@@ -94,7 +94,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	public Unit<?> getUnit() {
 		return unit;
 	}
-	
+
 	public Unit<?> getMaxUnit() {
 		return maxUnit;
 	}
@@ -175,6 +175,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		return false;
 	}
 
+	@Override
 	public Object clone() {
 		UnitValueFunctionality func = null;
 		func = (UnitValueFunctionality) super.clone();
@@ -502,7 +503,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 						sizeUnit.getUnitValue(),
 						parentUnit,
 						TimeUnit.strValues()
-				));
+						));
 			}
 			if (defaut.isPresent() && maximum.isPresent()) {
 				return new TimeUnitDefaultAndMaximumParameterDto(this.system, !this.getParentAllowParametersUpdate(), defaut, maximum, unlimited);

@@ -53,6 +53,7 @@ public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements
 		return new AccountDto(checkAuthentication());
 	}
 
+	@Override
 	protected User getActor(String actorUuid) {
 		User actor = userService.findByLsUuid(actorUuid);
 		if (actor == null) {

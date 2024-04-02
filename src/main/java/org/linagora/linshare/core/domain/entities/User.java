@@ -234,10 +234,12 @@ public abstract class User extends Account {
 		return this.role.equals(Role.ADMIN) || this.role.equals(Role.SUPERADMIN);
 	}
 
+	@Override
 	public boolean isInternal() {
 		return this.getAccountType().equals(AccountType.INTERNAL);
 	}
 
+	@Override
 	public boolean isGuest() {
 		return this.getAccountType().equals(AccountType.GUEST);
 	}

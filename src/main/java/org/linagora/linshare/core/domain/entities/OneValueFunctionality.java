@@ -31,6 +31,7 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 		this.value = value;
 	}
 
+	@Override
 	public boolean hasSomeParam() {
 		return true;
 	}
@@ -46,7 +47,7 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 	/**
 	 * Check activation policy, delegation policy if exists and user value if
 	 * defined
-	 * 
+	 *
 	 * @param userValue
 	 *            : false, true, or null if user have not defined a value.
 	 * @return integer

@@ -52,6 +52,7 @@ public class FunctionalityBusinessServiceImpl extends
 				.toString());
 	}
 
+	@Override
 	protected BusinessException getBusinessNotFoundException() {
 		return new BusinessException(BusinessErrorCode.FUNCTIONALITY_NOT_FOUND, "Functionality not found.");
 	}

@@ -99,10 +99,12 @@ public class Functionality extends AbstractFunctionality {
 		this.parentIdentifier = parentIdentifier;
 	}
 
+	@Override
 	public Policy getDelegationPolicy() {
 		return delegationPolicy;
 	}
 
+	@Override
 	public void setDelegationPolicy(Policy delegationPolicy) {
 		this.delegationPolicy = delegationPolicy;
 	}

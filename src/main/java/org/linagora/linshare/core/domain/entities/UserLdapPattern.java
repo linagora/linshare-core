@@ -43,7 +43,7 @@ public class UserLdapPattern extends LdapPattern {
 	}
 	/**
 	 * For tests only.
-	 * 
+	 *
 	 * @param label
 	 * @param description
 	 * @param getUserCommand
@@ -100,7 +100,7 @@ public class UserLdapPattern extends LdapPattern {
 
 	/**
 	 * For tests only.
-	 * 
+	 *
 	 * @param label
 	 * @param description
 	 * @param authCommand
@@ -207,6 +207,7 @@ public class UserLdapPattern extends LdapPattern {
 	/**
 	 * Helpers
 	 */
+	@Override
 	public String getAttribute(String field) {
 		return attributes.get(field).getAttribute().trim().toLowerCase();
 	}

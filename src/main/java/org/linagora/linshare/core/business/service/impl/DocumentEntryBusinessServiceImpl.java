@@ -279,6 +279,7 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 		documentEntryRepository.delete(documentEntry);
 	}
 
+	@Override
 	protected void setDocumentProperties(Account actor, WorkGroupDocument documentNode, String fileName, WorkGroupNode parentNode, File myFile, Boolean checkIfIsCiphered) {
 		Validate.notNull(documentNode);
 		Validate.notNull(myFile);

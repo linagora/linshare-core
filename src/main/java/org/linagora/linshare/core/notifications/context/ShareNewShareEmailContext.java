@@ -146,6 +146,7 @@ public class ShareNewShareEmailContext extends EmailContext {
 	 * Helpers
 	 */
 
+	@Override
 	public Locale getLocale() {
 		if (language == null) {
 			// Locale was not override by the current logged in user.

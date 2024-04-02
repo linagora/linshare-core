@@ -103,6 +103,7 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 		return res;
 	}
 
+	@Override
 	protected Share getNewFakeShare(String name, String linshareURL) {
 		Share share = new Share(name);
 		if (linshareURL != null) {
