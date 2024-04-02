@@ -165,7 +165,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 					return false;
 				}
 				if (foundMember.getNode().getParentUuid() == null) {
-					// ssmember is a member of a root workgroup 
+					// ssmember is a member of a root workgroup
 					return hasPermission(foundMember.getRole().getUuid(), SharedSpaceActionType.DELETE,
 							getSharedSpaceResourceType(entry));
 				} else {
@@ -224,17 +224,17 @@ public class WorkGroupNodeResourceAccessControlImpl
 	protected SharedSpaceResourceType getSharedSpaceResourceType(WorkGroupNode entry) {
 		switch (entry.getNodeType()) {
 			case ROOT_FOLDER:
-			case FOLDER:	
+			case FOLDER:
 				return SharedSpaceResourceType.FOLDER;
 			case DOCUMENT:
 			case DOCUMENT_REVISION:
 				return SharedSpaceResourceType.FILE;
 			default:
 				throw new BusinessException(BusinessErrorCode.INVALID_WORK_GROUP_NODE_TYPE, "Bad workgroup node type mapping");
-			
 		}
 	}
 
+	@Override
 	protected boolean defaultSharedSpacePermissionCheck(Account authUser, Account actor, WorkGroupNode entry,
 			TechnicalAccountPermissionType permission, SharedSpaceActionType action) {
 		if (authUser.hasDelegationRole()) {

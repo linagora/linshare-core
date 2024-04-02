@@ -113,13 +113,14 @@ public class UploadRequestEntryRessourceAccessControlImpl extends EntryResourceA
 	/**
 	 * Checking if the functionality Upload Request is enabled before checking the
 	 * default permissions
-	 * 
+	 *
 	 * @param authUser
 	 * @param actor
 	 * @param entry
 	 * @param permission
 	 * @return
 	 */
+	@Override
 	protected boolean defaultPermissionCheck(Account authUser, Account actor, UploadRequestEntry entry,
 			TechnicalAccountPermissionType permission) {
 		logger.trace("Current authUser " + authUser.getAccountRepresentation());

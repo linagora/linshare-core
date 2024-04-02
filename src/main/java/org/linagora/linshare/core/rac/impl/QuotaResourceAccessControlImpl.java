@@ -137,6 +137,7 @@ public class QuotaResourceAccessControlImpl extends AbstractResourceAccessContro
 				+ entry.getLastValue() + " Current Value :" + entry.getCurrentValue();
 	}
 
+	@Override
 	protected boolean isAuthorized(Account authUser, Account targetedAccount, PermissionType permission, Quota entry,
 			Class<?> clazz, Object... opt) {
 		Validate.notNull(authUser);

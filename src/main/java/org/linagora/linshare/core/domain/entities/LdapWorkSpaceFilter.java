@@ -119,6 +119,7 @@ public class LdapWorkSpaceFilter extends LdapPattern {
 		return WorkSpaceFilterType.LDAP;
 	}
 
+	@Override
 	public String getAttribute(String field) {
 		Validate.notEmpty(field, "Field must be set.");
 		return attributes.get(field).getAttribute().trim().toLowerCase();

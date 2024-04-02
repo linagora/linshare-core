@@ -92,6 +92,7 @@ public class Guest extends User {
 		this.restricted = value;
 	}
 
+	@Override
 	public boolean isRestricted() {
 		return restricted;
 	}
@@ -112,10 +113,12 @@ public class Guest extends User {
 		this.contacts.addAll(c);
 	}
 
+	@Override
 	public Set<Moderator> getModerators() {
 		return moderators;
 	}
 
+	@Override
 	public void setModerators(Set<Moderator> moderators) {
 		this.moderators = moderators;
 	}

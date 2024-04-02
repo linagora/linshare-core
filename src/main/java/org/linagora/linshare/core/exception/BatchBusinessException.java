@@ -37,6 +37,7 @@ public class BatchBusinessException extends RuntimeException {
 		return context;
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}

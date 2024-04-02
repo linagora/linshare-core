@@ -125,6 +125,7 @@ public class GroupLdapPattern extends LdapPattern {
 		return GroupFilterType.LDAP;
 	}
 
+	@Override
 	public String getAttribute(String field) {
 		return attributes.get(field).getAttribute().trim().toLowerCase();
 	}

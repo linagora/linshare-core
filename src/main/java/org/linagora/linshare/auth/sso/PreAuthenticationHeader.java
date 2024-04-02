@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
 /**
  * This Spring Security filter is designed to filter authentication against a
  * LemonLDAP::NG Web Single Sign On
- * 
+ *
  * @author Clement Oudot &lt;coudot@linagora.com&gt;
  */
 public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
@@ -95,7 +95,7 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 			User foundUser = getPreAuthenticatedUser(authenticationHeader, domainIdentifier);
 			if (foundUser == null) {
 				logger.debug("No user was found with : " + authenticationHeader);
-			logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
+				logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
 				return null;
 			}
 			authenticationHeader = foundUser.getLsUuid();
@@ -144,6 +144,7 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 		return foundUser;
 	}
 
+	@Override
 	public void setPrincipalRequestHeader(String principalRequestHeader) {
 		Assert.hasText(principalRequestHeader,
 				"principalRequestHeader must not be empty or null");
