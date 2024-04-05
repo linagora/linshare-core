@@ -198,9 +198,9 @@
 			</dependency>
 
 			<dependency>
-				<!-- Apache CXF comes with different versions of 'jakarta.activation-api', we choose one -->
-				<groupId>jakarta.activation</groupId>
-				<artifactId>jakarta.activation-api</artifactId>
+				<!-- Apache CXF and Jakarta Mail come with different versions of 'jakarta.activation', we choose one -->
+				<groupId>com.sun.activation</groupId>
+				<artifactId>jakarta.activation</artifactId>
 				<version>1.2.2</version>
 			</dependency>
 			<dependency>
@@ -208,18 +208,6 @@
 				<groupId>jakarta.xml.bind</groupId>
 				<artifactId>jakarta.xml.bind-api</artifactId>
 				<version>2.3.3</version>
-			</dependency>
-			<dependency>
-				<!-- Apache JClouds uses an older version of 'javax.ws.rs-api' that the one we want, we update it -->
-				<groupId>javax.ws.rs</groupId>
-				<artifactId>javax.ws.rs-api</artifactId>
-				<version>2.1.1</version>
-			</dependency>
-			<dependency>
-				<!-- We want an upper version than the one provided by subethasmtp -->
-				<groupId>javax.mail</groupId>
-				<artifactId>mail</artifactId>
-				<version>1.4.7</version>
 			</dependency>
 
 			<dependency>
@@ -235,6 +223,7 @@
 				<artifactId>jboss-logging</artifactId>
 				<version>3.4.1.Final</version>
 			</dependency>
+
 			<dependency>
 				<!-- We want an upper version than the one provided by hibernate-ehcache and LinID -->
 				<groupId>net.sf.ehcache</groupId>
@@ -449,19 +438,18 @@
 		
 		<!-- Data bean framework -->
 		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>javax.persistence-api</artifactId>
-			<version>2.2</version>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<version>2.2.3</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.3.1</version>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
 			<exclusions>
 				<exclusion>
-					<!-- We prefer 'com.sun.activation:javax.activation' provided by the project -->
-					<groupId>javax.activation</groupId>
-					<artifactId>javax.activation-api</artifactId>
+					<!-- We prefer 'com.sun.activation:jakarta.activation' provided by the project -->
+					<groupId>jakarta.activation</groupId>
+					<artifactId>jakarta.activation-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -478,9 +466,24 @@
 			<version>${hibernate.version}</version>
 			<exclusions>
 				<exclusion>
-					<!-- We prefer 'com.sun.activation:javax.activation' provided by the project -->
+					<!-- We prefer the Jakarta EE artifact 'com.sun.activation:jakarta.activation' provided by the project -->
 					<groupId>javax.activation</groupId>
 					<artifactId>javax.activation-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.xml.bind:jakarta.xml.bind-api' already provided by Apache CXF and Hibernate -->
+					<groupId>javax.xml.bind</groupId>
+					<artifactId>jaxb-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.transaction:jakarta.transaction-api' already provided by Apache CXF -->
+					<groupId>org.jboss.spec.javax.transaction</groupId>
+					<artifactId>jboss-transaction-api_1.2_spec</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.persistence:jakarta.persistence-api' provided by the project -->
+					<groupId>javax.persistence</groupId>
+					<artifactId>javax.persistence-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -630,6 +633,23 @@
 			<groupId>org.apache.jclouds</groupId>
 			<artifactId>jclouds-core</artifactId>
 			<version>${jclouds.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jaxb-runtime' already provided by Apache Tika, Apache CXF and Hibernate -->
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.ws.rs:jakarta.ws.rs-api' already provided by Apache CXF -->
+					<groupId>javax.ws.rs</groupId>
+					<artifactId>javax.ws.rs-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.annotation:jakarta.annotation-api' already provided by Apache CXF -->
+					<groupId>javax.annotation</groupId>
+					<artifactId>javax.annotation-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jclouds</groupId>
@@ -678,6 +698,11 @@
 					<groupId>org.bouncycastle</groupId>
 					<artifactId>bcprov-ext-jdk15on</artifactId>
 				</exclusion>
+				<exclusion>
+					<!-- All classes of 'jsch.agentproxy.core' are already included in 'jsch.agentproxy.connector-factory' coming with 'jclouds-sshj' -->
+					<groupId>com.jcraft</groupId>
+					<artifactId>jsch.agentproxy.core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -703,6 +728,25 @@
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 			<version>5.0.1</version>
+			<exclusions>
+				<exclusion>
+					<!-- All classes of 'aopalliance' are already included in 'spring-aop' because of a redistribution licence probleme -->
+					<groupId>aopalliance</groupId>
+					<artifactId>aopalliance</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.inject:jakarta.inject-api' provided by the project -->
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<!-- In replacement of the Java EE artifact provided by `com.google.inject:guice` -->
+			<groupId>jakarta.inject</groupId>
+			<artifactId>jakarta.inject-api</artifactId>
+			<version>1.0.5</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Antivirus scanner dependencies -->
@@ -721,32 +765,26 @@
 
 		<!-- JAX-WS and JAX-RS -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>4.0.3</version>
 			<!-- Provided by the servlet container Jetty or Tomcat --> 
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<exclusions>
-				<exclusion>
-					<!-- We prefer 'com.sun.activation:javax.activation' provided by the project -->
-					<groupId>javax.activation</groupId>
-					<artifactId>activation</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<version>1.6.7</version>
 		</dependency>
 		<dependency>
-			<!-- In replacement of 'javax.activation:activation' and 'javax.activation:javax.activation-api' -->
+			<!-- In replacement of Java EE 'javax.activation:activation' and 'javax.activation:javax.activation-api' -->
 			<groupId>com.sun.activation</groupId>
-			<artifactId>javax.activation</artifactId>
-			<version>1.2.0</version>
+			<artifactId>jakarta.activation</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
+			<groupId>jakarta.ws.rs</groupId>
+			<artifactId>jakarta.ws.rs-api</artifactId>
+			<version>2.1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -764,28 +802,73 @@
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-core</artifactId>
 			<version>${cxf.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'com.sun.activation:jakarta.activation' provided by the project -->
+					<groupId>jakarta.activation</groupId>
+					<artifactId>jakarta.activation-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.transaction:jakarta.transaction-api' already provided by Apache CXF -->
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
 			<version>${cxf.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.transaction:jakarta.transaction-api' already provided by Apache CXF -->
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-rs-client</artifactId>
 			<version>${cxf.version}</version>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.transaction:jakarta.transaction-api' already provided by Apache CXF -->
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
 			<version>${cxf.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'com.sun.activation:jakarta.activation' provided by the project -->
+					<groupId>jakarta.activation</groupId>
+					<artifactId>jakarta.activation-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.transaction:jakarta.transaction-api' already provided by Apache CXF -->
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-features-logging</artifactId>
 			<version>${cxf.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.transaction:jakarta.transaction-api' already provided by Apache CXF -->
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -1000,9 +1083,14 @@
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
-					<!-- We prefer 'com.sun.activation:javax.activation' provided by the project -->
+					<!-- We prefer the Jakarta EE artifact 'com.sun.activation:jakarta.activation' provided by the project -->
 					<groupId>javax.activation</groupId>
 					<artifactId>activation</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'com.sun.mail:jakarta.mail' provided by the project -->
+					<groupId>javax.mail</groupId>
+					<artifactId>mail</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -1045,12 +1133,19 @@
 			<artifactId>cxf-rt-transports-http</artifactId>
 			<version>${cxf.version}</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<!-- We prefer the Jakarta EE artifact 'jakarta.transaction:jakarta.transaction-api' already provided by Apache CXF -->
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
-			<!-- Used directly only by unit tests, but also used as transitive dependency of Hibernate needed at runtime, so its scope must be 'compile' -->
-			<groupId>org.jboss.spec.javax.transaction</groupId>
-			<artifactId>jboss-transaction-api_1.2_spec</artifactId>
-			<version>1.1.1.Final</version>
+			<!-- Used directly only by unit tests, but also used in replacement of transitive dependency of Hibernate and CXF needed at runtime, so its scope must be 'compile' -->
+			<groupId>jakarta.transaction</groupId>
+			<artifactId>jakarta.transaction-api</artifactId>
+			<version>1.3.1</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
@@ -1143,6 +1238,92 @@
 									<banSnapshots>true</banSnapshots>
 									<phases>clean,deploy,site</phases>
 								</requirePluginVersions>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>enforce-ban-java-ee-deps</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<excludes>
+										<!-- Ban all Java Activation Framework artifacts except the one provided by Jakarta EE -->
+										<exclude>javax.activation:activation</exclude>
+										<exclude>com.sun.activation:javax.activation</exclude>
+										<exclude>org.apache.geronimo.specs:geronimo-activation_1.0.2_spec</exclude>
+										<exclude>org.apache.geronimo.specs:geronimo-activation_1.1_spec</exclude>
+										<exclude>jakarta.activation:jakarta.activation-api</exclude> <!-- To replace by com.sun.activation:jakarta.activation to avoid class duplication -->
+
+										<!-- Ban all Java Mail artifacts except the one provided by Jakarta EE: com.sun.mail:jakarta.mail -->
+										<exclude>com.sun.mail:javax.mail</exclude>
+										<exclude>javax.mail:mail</exclude>
+										<exclude>javax.mail:javax.mail-api</exclude>
+										<exclude>jakarta.mail:jakarta.mail-api</exclude> <!-- Already included in com.sun.mail:jakarta.mail -->
+										<exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec</exclude>
+
+										<!-- Ban all JaxB API artifacts except the one provided by Jakarta EE: jakarta.xml.bind:jakarta.xml.bind-api -->
+										<!-- And the implementation provided by Glassfish -->
+										<exclude>javax.xml.bind:jaxb-api</exclude>
+										<exclude>com.sun.xml.bind:jaxb-impl</exclude> <!-- To replace by org.glassfish.jaxb:jaxb-runtime -->
+										<exclude>com.sun.xml.bind:jaxb-core</exclude> <!-- To replace by org.glassfish.jaxb:jaxb-runtime -->
+										<exclude>com.sun.xml.bind:jaxb-xjc</exclude> <!-- To replace by org.glassfish.jaxb:jaxb-xjc -->
+										<exclude>com.sun.xml.bind:jaxb-jxc</exclude> <!-- To replace by org.glassfish.jaxb:jaxb-jxc -->
+
+										<!-- Ban all JAX-WS artifacts except the one provided by Jakarta EE -->
+										<exclude>org.apache.geronimo.specs:geronimo-jaxws_2.1_spec</exclude> <!-- To replace by jakarta.xml.ws:jakarta.xml.ws-api -->
+										<exclude>org.apache.geronimo.specs:geronimo-jaxws_2.2_spec</exclude> <!-- To replace by jakarta.xml.ws:jakarta.xml.ws-api -->
+										<exclude>javax.xml.ws:jaxws-api</exclude> <!-- To replace by jakarta.xml.ws:jakarta.xml.ws-api -->
+										<exclude>javax.jws:jsr181-api</exclude> <!-- To replace by jakarta.jws:jakarta.jws-api -->
+										<exclude>javax.jws:javax.jws-api</exclude> <!-- To replace by jakarta.jws:jakarta.jws-api -->
+										<exclude>org.apache.geronimo.specs:geronimo-ws-metadata_2.0_spec</exclude> <!-- To replace by jakarta.jws:jakarta.jws-api -->
+
+										<!-- Ban all JAX-RS artifacts except the one provided by Jakarta EE -->
+										<exclude>javax.ws.rs:javax.ws.rs-api</exclude> <!-- To replace by jakarta.ws.rs:jakarta.ws.rs-api -->
+
+										<!-- Ban all SOAP with Attachments artifacts except the one provided with Jakarta EE: com.sun.xml.messaging.saaj:saaj-impl -->
+										<exclude>javax.xml.soap:saaj-api</exclude>
+										<exclude>javax.xml.soap:saaj-impl</exclude>
+										<exclude>com.sun.xml:saaj-impl</exclude>
+										<exclude>org.apache.geronimo.specs:geronimo-saaj_1.1_spec</exclude>
+										<exclude>org.apache.geronimo.specs:geronimo-saaj_1.3_spec</exclude>
+
+										<!-- Ban all Java Bean Validation artifacts except the one provided by Jakarta EE: jakarta.validation:jakarta.validation-api -->
+										<exclude>javax.validation:validation-api</exclude>
+
+										<!-- Ban all Java Annotation artifacts except the one provided by Jakarta EE: jakarta.annotation:jakarta.annotation-api -->
+										<exclude>org.apache.geronimo.specs:geronimo-annotation_1.0_spec</exclude>
+										<exclude>javax.annotation:javax.annotation-api</exclude>
+										<exclude>javax.annotation:jsr250-api</exclude>
+
+										<!-- Ban all Java Messaging artifacts except the one provided by Jakarta EE: jakarta.jms:jakarta.jms-api -->
+										<exclude>org.apache.geronimo.specs:geronimo-jms_1.1_spec</exclude>
+										
+										<!-- Ban all Java Transaction artifacts except the one provided by Jakarta EE -->
+										<exclude>org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec</exclude>
+										<exclude>org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec</exclude>
+										<exclude>org.jboss.spec.javax.transaction:jboss-transaction-api_1.3_spec</exclude>
+										<exclude>javax.transaction:javax.transaction-api </exclude>
+										<exclude>javax.transaction:transaction-api</exclude>
+										<exclude>javax.transaction:jta</exclude>
+										<exclude>javax.transaction:api</exclude>
+
+										<!-- Ban all Java Persistence artifacts except the one provided by Jakarta EE: jakarta.persistence:jakarta.persistence-api -->
+										<exclude>javax.persistence:javax.persistence-api</exclude>
+										<exclude>javax.persistence:persistence-api</exclude>
+
+										<!-- Ban all Java Servlet artifacts except the one provided by Jakarta EE: jakarta.servlet:jakarta.servlet-api -->
+										<exclude>javax.servlet:javax.servlet-api</exclude>
+										<exclude>javax.servlet:servlet-api</exclude>
+
+										<!-- Ban all Java Dependency Injection artifacts except the one provided by Jakarta EE: jakarta.inject:jakarta.inject-api -->
+										<exclude>javax.inject:javax.inject</exclude>
+										<exclude>javax.inject:inject</exclude>
+									</excludes>
+									<message>Java EE dependencies are forbidden. Please use the Jakarta EE's ones</message>
+								</bannedDependencies>
 							</rules>
 						</configuration>
 					</execution>
@@ -1268,6 +1449,9 @@
 								<!-- Required JWT runtime dependencies -->
 								<ignoredUnusedDeclaredDependency>io.jsonwebtoken:jjwt-impl</ignoredUnusedDeclaredDependency>
 								<ignoredUnusedDeclaredDependency>io.jsonwebtoken:jjwt-jackson</ignoredUnusedDeclaredDependency>
+								
+								<!-- Required at runtime in replacement of anothers artifacts -->
+								<ignoredUnusedDeclaredDependency>jakarta.inject:jakarta.inject-api</ignoredUnusedDeclaredDependency>
 
 								<!-- Required at runtime in standalone mode or by unit tests -->
 								<ignoredUnusedDeclaredDependency>org.mockito:mockito-inline</ignoredUnusedDeclaredDependency>
@@ -1276,7 +1460,7 @@
 							</ignoredUnusedDeclaredDependencies>
 							<ignoredNonTestScopedDependencies>
 								<!-- Used directly only by unit test, but also used as transitive dependency of Hibernate -->
-								<ignoredNonTestScopedDependency>org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec</ignoredNonTestScopedDependency>
+								<ignoredNonTestScopedDependency>jakarta.transaction:jakarta.transaction-api</ignoredNonTestScopedDependency>
 								<!-- Used directly only by unit test, but also used as transitive dependency of CXF Client and CXF RS Frontend -->
 								<ignoredNonTestScopedDependency>org.apache.cxf:cxf-rt-transports-http</ignoredNonTestScopedDependency>
 								<!-- Used directly only by unit test, but also used as transitive dependency of 'spring-orm' and LinID -->
@@ -1690,18 +1874,30 @@
 							<target>
 								<mkdir dir="target/classes/sql/postgresql/" />
 								<concat destfile="target/classes/sql/postgresql/import-postgresql.sql">
-									<fileset file="src/main/resources/sql/common/import-header.sql" />
-									<fileset file="src/main/resources/sql/common/import-domains.sql" />
-									<fileset file="src/main/resources/sql/common/import-quota.sql" />
-									<fileset file="src/main/resources/sql/common/import-welcome-messages.sql" />
-									<fileset file="src/main/resources/sql/common/import-functionalities.sql" />
-									<fileset file="src/main/resources/sql/common/import-mail-activation.sql" />
-									<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									<fileset file="src/main/resources/sql/common/import-settings.sql" />
-									<fileset file="src/main/resources/sql/common/import-footer.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-header.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-domains.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-quota.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-welcome-messages.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-functionalities.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-mail-activation.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import_mail_structure.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-settings.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-footer.sql" />
 								</concat>
 							</target>
 						</configuration>
@@ -1716,11 +1912,16 @@
 							<target>
 								<mkdir dir="target/classes/sql/postgresql/" />
 								<concat destfile="target/classes/sql/postgresql/import-all-emails.sql">
-									<fileset file="src/main/resources/sql/common/import-header.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									<fileset file="src/main/resources/sql/common/import-footer.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-header.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-footer.sql" />
 								</concat>
 							</target>
 						</configuration>
@@ -1735,9 +1936,12 @@
 							<target>
 								<mkdir dir="target/classes/sql/h2/" />
 								<concat destfile="target/classes/sql/h2/import-all-emails.sql">
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
 								</concat>
 							</target>
 						</configuration>
@@ -1752,12 +1956,18 @@
 							<target>
 								<mkdir dir="target/classes/sql/postgresql/" />
 								<concat destfile="target/classes/sql/postgresql/reset-default-emails-config.sql">
-									<fileset file="src/main/resources/sql/common/import-reset-default-emails-configuration-header.sql" />
-									<fileset file="src/main/resources/sql/common/import_mail_structure.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									<fileset file="src/main/resources/sql/common/import-reset-default-emails-configuration-footer.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-reset-default-emails-configuration-header.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import_mail_structure.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-reset-default-emails-configuration-footer.sql" />
 								</concat>
 							</target>
 						</configuration>
@@ -1772,11 +1982,16 @@
 							<target>
 								<mkdir dir="target/classes/sql/postgresql/" />
 								<concat destfile="target/classes/sql/postgresql/update-default-emails-config.sql">
-									<fileset file="src/main/resources/sql/common/import-update-default-emails-configuration-header.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
-									<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
-									<fileset file="src/main/resources/sql/common/import-update-default-emails-configuration-footer.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-update-default-emails-configuration-header.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+									<fileset
+										file="src/main/resources/sql/common/import-update-default-emails-configuration-footer.sql" />
 								</concat>
 							</target>
 						</configuration>
@@ -1825,6 +2040,54 @@
 				<configuration>
 					<failOnError>false</failOnError>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.basepom.maven</groupId>
+				<artifactId>duplicate-finder-maven-plugin</artifactId>
+				<version>2.0.1</version>
+				<executions>
+					<execution>
+						<id>enforce-no-duplicate-classes</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+							<failBuildInCaseOfEqualContentConflict>true</failBuildInCaseOfEqualContentConflict>
+							<failBuildInCaseOfDifferentContentConflict>true</failBuildInCaseOfDifferentContentConflict>
+							<printEqualFiles>true</printEqualFiles>
+							<ignoredResourcePatterns>
+								<!-- TODO: Find a way to avoid duplication of these resources -->
+								<ignoredResourcePattern>/?[^/]*?springContext-datasource\.xml$</ignoredResourcePattern>
+								<ignoredResourcePattern>/?[^/]*?springContext-mongo\.xml$</ignoredResourcePattern>
+								<ignoredResourcePattern>/?[^/]*?springContext-storage-jcloud\.xml$</ignoredResourcePattern>
+								<ignoredResourcePattern>/?[^/]*?log4j2\.properties$</ignoredResourcePattern>
+							</ignoredResourcePatterns>
+							<exceptions>
+								<exception>
+									<!-- Duplicated (but equal) classes in LinID. This can be solved only improving LinID, that's why these exceptions are needed --> 
+									<conflictingDependencies>
+										<dependency>
+											<groupId>org.linid.dm</groupId>
+											<artifactId>authorization</artifactId>
+										</dependency>
+										<dependency>
+											<groupId>org.linid.dm</groupId>
+											<artifactId>core</artifactId>
+										</dependency>
+									</conflictingDependencies>
+									<currentProject>false</currentProject>
+									<classes>
+										<class>org.linid.dm.utils.CaseInsensitiveMap</class>
+										<class>org.linid.dm.utils.CaseInsensitiveSet</class>
+									</classes>
+								</exception>
+							</exceptions>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- maven-install-plugin -->
@@ -2303,6 +2566,16 @@
 							<groupId>org.slf4j</groupId>
 							<artifactId>slf4j-simple</artifactId>
 						</exclusion>
+						<exclusion>
+							<!-- We prefer 'com.sun.activation:jakarta.activation' provided by the project -->
+							<groupId>javax.activation</groupId>
+							<artifactId>activation</artifactId>
+						</exclusion>
+						<exclusion>
+							<!-- We prefer Jakarta EE artifact 'com.sun.mail:jakarta.mail' provided by the project -->
+							<groupId>javax.mail</groupId>
+							<artifactId>mail</artifactId>
+						</exclusion>
 					</exclusions>
 				</dependency>
 			</dependencies>
@@ -2396,7 +2669,7 @@
 		<maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
-
+		
 		<maven-dependency-plugin.ignoreNonCompile>false</maven-dependency-plugin.ignoreNonCompile>
 		<maven-dependency-plugin.failOnWarning>true</maven-dependency-plugin.failOnWarning>
 
