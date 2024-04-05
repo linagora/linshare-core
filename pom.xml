@@ -1122,6 +1122,24 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>enforce-maven-plugin-versions</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requirePluginVersions>
+									<!-- Check that all Maven plugins have a version explicitely defined --> 
+									<message>Best Practice is to always define a version for each Maven plugin !</message>
+									<banLatest>true</banLatest>
+									<banRelease>true</banRelease>
+									<banSnapshots>true</banSnapshots>
+									<phases>clean,deploy,site</phases>
+								</requirePluginVersions>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
 						<id>enforce-banned-dependencies</id>
 						<goals>
 							<goal>enforce</goal>
