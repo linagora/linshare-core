@@ -892,7 +892,7 @@
 					<artifactId>slf4j-log4j12</artifactId> 
 				</exclusion>
 				<exclusion>
-					<!-- The logging sub-system of LinShare Core is Log4J-2.  We replace 'commons-logging' by 'log4j-over-slf4j' -->
+					<!-- The logging sub-system of LinShare Core is Log4J-2.  We replace 'log4j' by 'log4j-over-slf4j' -->
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId> 
 				</exclusion>
@@ -1315,7 +1315,7 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>enforce-banned-dependencies</id>
+						<id>enforce-ban-logging-deps</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
@@ -1323,9 +1323,37 @@
 							<rules>
 								<bannedDependencies>
 									<excludes>
-										<!-- LinShare Core uses Log4J-2 as logging subsystem. Log4J-1 and other logging system are banned -->
+										<!-- LinShare Core uses Log4J-2 as logging subsystem, so only this logging system is accepted in dependencies. -->
+										
+										<!-- Log4J-1 dependencies are banned -->
 										<exclude>log4j:log4j</exclude>
+										<exclude>org.apache.logging.log4j:log4j-slf4j18-impl</exclude>
 										<exclude>org.slf4j:slf4j-log4j12</exclude>
+										<exclude>org.slf4j:slf4j-reload4j</exclude>
+										
+										<!-- Java Commons Logging dependencies are banned -->
+										<exclude>commons-logging:commons-logging</exclude>
+										<exclude>org.springframework:spring-jcl</exclude>
+										<exclude>org.slf4j:slf4j-jcl</exclude>
+										
+										<!-- Java Util Loggin dependencies are banned -->
+										<exclude>org.slf4j:slf4j-jdk14</exclude>
+										
+										<!-- JBoss Logger providers and log managers are banned -->
+										<exclude>org.jboss.logmanager:jboss-logmanager</exclude>
+										<exclude>org.jboss.logmanager:log4j-jboss-logmanager</exclude>
+										<exclude>org.jboss.logmanager:log4j2-jboss-logmanager</exclude>
+										<exclude>org.jboss.logmanager:jboss-commons-logging-jboss-logmanager</exclude>
+										<exclude>org.jboss.logging:slf4j-jboss-logmanager</exclude>
+										<exclude>org.jboss.logging:slf4j-jboss-logging</exclude>
+										<exclude>org.jboss.logging:jboss-commons-logging-jboss-logging</exclude>
+										
+										<!-- Logback dependencies are banned -->
+										<exclude>ch.qos.logback:logback-core</exclude>
+										<exclude>ch.qos.logback:logback-classic</exclude>
+										
+										<!-- Other SLF4J providers benned -->
+										<exclude>org.slf4j:slf4j-nop</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
