@@ -33,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -62,7 +63,6 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -88,7 +88,7 @@ public class UploadRequestGroupServiceImplTest {
 
 	@Autowired
 	private UploadRequestGroupService uploadRequestGroupService;
-	
+
 	@Autowired
 	private UploadRequestService uploadRequestService;
 
@@ -105,7 +105,7 @@ public class UploadRequestGroupServiceImplTest {
 	private User john;
 
 	private Contact yoda, external2;
-	
+
 	private List<Contact> contactList;
 
 	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
@@ -298,7 +298,7 @@ public class UploadRequestGroupServiceImplTest {
 	/**
 	 * Test ability to close (not automcatical) an URG in individual mode when all
 	 * nested UR are closed
-	 * 
+	 *
 	 * @throws BusinessException
 	 */
 	@Test
@@ -347,7 +347,7 @@ public class UploadRequestGroupServiceImplTest {
 
 	/**
 	 * Test ability to close URG individual with only one closed UR
-	 * 
+	 *
 	 * @throws BusinessException
 	 */
 	@Test
@@ -454,14 +454,14 @@ public class UploadRequestGroupServiceImplTest {
 		Assertions.assertEquals(5, uploadRequest.getMaxFileCount());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void updateWithForceIndividualGroup() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup urg = uploadRequestGroupService.create(john, john, urInit, contactList, "This is a subject",
 				"This is a body", false);
 		List<UploadRequest> uploadRequests = uploadRequestService.findAll(john, john, urg, null);
-		// assert initial conditions 
+		// assert initial conditions
 		Assertions.assertFalse(urg.isCollective());
 		for (UploadRequest uploadRequest : uploadRequests) {
 			Assertions.assertTrue(uploadRequest.isPristine());
@@ -481,7 +481,7 @@ public class UploadRequestGroupServiceImplTest {
 		// update via the uploadRequestService endpoint
 		uploadRequest1 = uploadRequestService.update(john, john, uploadRequest1.getUuid(), uploadRequest1, false);
 		Assertions.assertEquals(Integer.valueOf(5), uploadRequest1.getMaxFileCount());
-		// expected | UR should be dirty (not pristine) 
+		// expected | UR should be dirty (not pristine)
 		Assertions.assertFalse(uploadRequest1.isPristine());
 		// update the group without force | expected only pristine URs should be changed
 		urg.setMaxFileCount(7);
@@ -540,13 +540,13 @@ public class UploadRequestGroupServiceImplTest {
 	}
 
 	@Test
-	public void testReturnURGDetails() throws BusinessException, IOException {
+	public void testReturnURGDetails(final @TempDir File tempDir) throws BusinessException, IOException {
 		// On this test we will return the nbr of uploaded files and used space on an
 		// URG
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Assertions.assertEquals(UploadRequestStatus.ENABLED, ure.getStatus());
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
-		File tempFile2 = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
+		File tempFile2 = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.create(john, john, tempFile,
 				"First Upload request entry", "First URE", false, null,
@@ -575,7 +575,7 @@ public class UploadRequestGroupServiceImplTest {
 		uploadRequest.setActivationDate(null);
 		return uploadRequest;
 	}
-	
+
 	private void assertStatus(Set<UploadRequest> urs, UploadRequestStatus status) {
 		for (UploadRequest ur : urs) {
 			Assertions.assertEquals(status, ur.getStatus());

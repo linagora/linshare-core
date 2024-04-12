@@ -29,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -66,13 +67,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-test.xml" })
 /**
  * Test fails due to injected fake functionalities in 'import-test.sql'
- * TODO: move injected fake Functionalities from 'import-test.sql' to a new script  
- * TODO: Update of functionalities in the the test method will not work 
- * cf: https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core/issues/878 
+ * TODO: move injected fake Functionalities from 'import-test.sql' to a new script
+ * TODO: Update of functionalities in the the test method will not work
+ * cf: https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core/issues/878
  */
 @Disabled
 public class CoumputeNewExpirationUnsharedDocumentBatchImplTest {
-	
+
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -85,13 +86,13 @@ public class CoumputeNewExpirationUnsharedDocumentBatchImplTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
-	
+
 	@Autowired
 	private DocumentEntryBusinessService documentEntryBusinessService;
-	
+
 	@Autowired
 	private FunctionalityReadOnlyService functionalityService;
-	
+
 	private User jane;
 
 	@BeforeEach
@@ -108,9 +109,9 @@ public class CoumputeNewExpirationUnsharedDocumentBatchImplTest {
 	}
 
 	@Test
-	public void testBatchExecution() throws BusinessException, JobExecutionException, IOException {
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
-		tempFile.deleteOnExit();
+	public void testBatchExecution(final @TempDir File tempDir)
+			throws BusinessException, JobExecutionException, IOException {
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
 		IOUtils.copy(stream, new FileOutputStream(tempFile));

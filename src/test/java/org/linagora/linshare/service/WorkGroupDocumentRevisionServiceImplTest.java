@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
@@ -66,10 +67,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	
 	"/import-tests-domain-quota-updates.sql" })
 @Transactional
-@ContextConfiguration(locations = { 
+@ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -86,9 +86,12 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 
 	protected final Logger logger = LogManager.getLogger(getClass());
 
+	@TempDir
+	private File tempDir;
+
 	@Autowired
 	protected WorkGroupNodeService workGroupNodeService;
-	
+
 	@Autowired
 	protected WorkGroupDocumentService workGroupDocumentService;
 
@@ -116,7 +119,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	private WorkGroup workGroup;
 
 	private WorkGroupNode rootFolder;
-	
+
 	private WorkGroupNode folder;
 
 	@BeforeEach
@@ -136,7 +139,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void createNewDocumentTest() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 
 		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
@@ -151,7 +154,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void testUpdateModificationDateOnDocumentCreation() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
 		assertThat(tempFile1.getName()).isEqualTo(document.getName());
@@ -167,7 +170,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void testUpdateModificationDateOnDocumentDeletion() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
 		assertThat(tempFile1.getName()).isEqualTo(document.getName());
@@ -183,7 +186,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void testUpdateModificationDateOnRevisionCreation() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 
 		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
@@ -207,7 +210,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void createNewDocumentSpecialCharactersTest() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("EP_TEST_v233<script>alert(document.cookie)</script>", ".tmp");
+		File tempFile1 = File.createTempFile("EP_TEST_v233<script>alert(document.cookie)</script>", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		WorkGroupDocument document = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile1,
 				"EP_TEST_v233<script>alert(document.cookie)</script>", rootFolder.getUuid(), false);
@@ -217,10 +220,10 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void createNewDocumentAndRevisionSpecialCharTest() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		InputStream stream2 = getStream("linshare.properties.sample");
-		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream2, tempFile2);
 		WorkGroupDocument document = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile1,
 				"EP_TEST_v233<script>alert(document.cookie)</script>", rootFolder.getUuid(), false);
@@ -235,11 +238,11 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		InputStream stream1 = getStream("linshare-default.properties");
 		InputStream stream2 = getStream("linshare.properties.sample");
 		InputStream stream3 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
-		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream2, tempFile2);
-		File tempFile3 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile3 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream3, tempFile3);
 
 		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
@@ -261,11 +264,11 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		InputStream stream1 = getStream("linshare-default.properties");
 		InputStream stream2 = getStream("linshare.properties.sample");
 		InputStream stream3 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
-		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream2, tempFile2);
-		File tempFile3 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile3 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream3, tempFile3);
 
 		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
@@ -286,11 +289,11 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		InputStream stream1 = getStream("linshare-default.properties");
 		InputStream stream2 = getStream("linshare.properties.sample");
 		InputStream stream3 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
-		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream2, tempFile2);
-		File tempFile3 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile3 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream3, tempFile3);
 
 		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
@@ -322,11 +325,11 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		InputStream stream1 = getStream("linshare-default.properties");
 		InputStream stream2 = getStream("linshare.properties.sample");
 		InputStream stream3 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
-		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream2, tempFile2);
-		File tempFile3 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile3 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream3, tempFile3);
 
 		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
@@ -361,7 +364,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void duplicateWGDocumentTest() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
 				tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
@@ -384,7 +387,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		ssnode2.setVersioningParameters(new VersioningParameters(true));
 		ssnode2 = sharedSpaceNodeService.create(john, john, ssnode2);
 		WorkGroup workGroup2 = threadService.find(john, john, ssnode2.getUuid());
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
 				tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
@@ -401,8 +404,8 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	public void createRevisionFromDocumentTest() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
 		InputStream stream2 = getStream("linshare.properties.sample");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
-		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
+		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		IOUtils.transferTo(stream2, tempFile2);
 		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
@@ -423,8 +426,8 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	public void createRevisionFromRevisionTest() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
 		InputStream stream2 = getStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
-		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
+		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		IOUtils.transferTo(stream2, tempFile2);
 		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
@@ -446,8 +449,8 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	public void createRevisionIntoDocumentTest() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
 		InputStream stream2 = getStream("linshare.properties.sample");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
-		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
+		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		IOUtils.transferTo(stream2, tempFile2);
 		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
@@ -468,8 +471,8 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	public void createRevisionIntoRevisionTest() throws IOException {
 		InputStream stream1 = getStream("linshare-default.properties");
 		InputStream stream2 = getStream("linshare.properties.sample");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
-		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
+		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		IOUtils.transferTo(stream2, tempFile2);
 		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
@@ -483,7 +486,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		});
 		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, exception.getErrorCode());
 	}
-	
+
 	/**
 	 * Test that the tree in Workgroup node is correct from a revision to the root folder
 	 * @throws IOException
@@ -492,7 +495,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	public void treePathTest() throws IOException {
 		InputStream stream1 = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(),
 				"text/plain", tempFile1.getName(), folder);

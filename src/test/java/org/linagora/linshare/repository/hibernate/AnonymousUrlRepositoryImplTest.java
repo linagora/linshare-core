@@ -31,6 +31,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -66,33 +67,33 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
-		})
+})
 @Transactional
 public class AnonymousUrlRepositoryImplTest {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	
+
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
-	
+
 	private Account john;
-	
+
 	@Autowired
 	private AnonymousUrlRepository anonymousUrlRepository;
-	
+
 	@Autowired
 	private ShareEntryGroupRepository shareEntryGroupRepository;
-	
+
 	@Autowired
 	private DocumentEntryService documentEntryService;
 
 	@Autowired
 	private AnonymousShareEntryRepository anonymousShareEntryRepository;
-	
+
 	@Autowired
 	private ContactRepository contactRepository;
-	
+
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
@@ -108,8 +109,8 @@ public class AnonymousUrlRepositoryImplTest {
 	}
 
 	@Test
-	public void testFindAllExpiredEntries() throws BusinessException, IOException {
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+	public void testFindAllExpiredEntries(final @TempDir File tempDir) throws BusinessException, IOException {
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
 		IOUtils.transferTo(stream, tempFile);

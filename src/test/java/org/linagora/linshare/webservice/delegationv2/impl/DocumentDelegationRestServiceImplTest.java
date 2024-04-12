@@ -36,8 +36,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
@@ -90,10 +90,9 @@ public class DocumentDelegationRestServiceImplTest {
     public static final String TECHNICAL_USER_NONE = "technical.none@linshare.org";
     public static final String USER1_UUID = "aebe1b64-39c0-11e5-9fa8-080027b8274b";
     public static final String SAMPLE_DOCUMENT_UUID = "bfaf3fea-c64a-4ee0-bae8-b1482f1f6401";
-
+    
     @Autowired
     private DocumentRestServiceImpl testee;
-
 
     // Mocks
     private Message message;
@@ -109,7 +108,6 @@ public class DocumentDelegationRestServiceImplTest {
         when(exchange.containsKey("org.linagora.linshare.webservice.interceptor.start_time")).thenReturn(true);
         when(exchange.get("org.linagora.linshare.webservice.interceptor.start_time")).thenReturn(new Date().getTime() - 1000L);
         when(PhaseInterceptorChain.getCurrentMessage()).thenReturn(message);
-
     }
 
     @AfterEach
@@ -120,9 +118,9 @@ public class DocumentDelegationRestServiceImplTest {
 
     @Test
     @WithMockUser(LinShareConstants.defaultRootMailAddress)
-    public void rootCannotCreateDocument() {
+    public void rootCannotCreateDocument(final @TempDir File tempDir) {
         assertThatThrownBy(() -> testee.create(LinShareConstants.defaultRootMailAddress,
-                getFileInputStream(), "test", "test",
+                getFileInputStream(tempDir), "test", "test",
                 null, null, null, null, false, 0L, null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("You are not authorized to use this service");
@@ -130,9 +128,9 @@ public class DocumentDelegationRestServiceImplTest {
 
     @Test
     @WithMockUser("d896140a-39c0-11e5-b7f9-080027b8274b") // Jane's uuid (admin on top domain 1)
-    public void adminCannotCreateDocument() {
+    public void adminCannotCreateDocument(final @TempDir File tempDir) {
         assertThatThrownBy(() -> testee.create("d896140a-39c0-11e5-b7f9-080027b8274b",
-                getFileInputStream(), "test", "test",
+                getFileInputStream(tempDir), "test", "test",
                 null, null, null, null, false, 0L, null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("You are not authorized to use this service");
@@ -140,9 +138,9 @@ public class DocumentDelegationRestServiceImplTest {
 
     @Test
     @WithMockUser("aebe1b64-39c0-11e5-9fa8-080027b8254j") // Amy's uuid (simple)
-    public void userCannotCreateDocument() {
+    public void userCannotCreateDocument(final @TempDir File tempDir) {
         assertThatThrownBy(() -> testee.create("aebe1b64-39c0-11e5-9fa8-080027b8254j",
-                getFileInputStream(), "test", "test",
+                getFileInputStream(tempDir), "test", "test",
                 null, null, null, null, false, 0L, null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("You are not authorized to use this service");
@@ -150,18 +148,18 @@ public class DocumentDelegationRestServiceImplTest {
 
     @Test
     @WithMockUser(TECHNICAL_USER_CREATE_DOCUMENT)
-    public void technicalUserCanCreateDocumentWithPermissions() throws IOException {
+    public void technicalUserCanCreateDocumentWithPermissions(final @TempDir File tempDir) throws IOException {
         DocumentDto document = testee.create("aebe1b64-39c0-11e5-9fa8-080027b8254j",
-                getFileInputStream(), "test", "test",
+                getFileInputStream(tempDir), "test", "test",
                 null, null, null, null, false, 0L, null);
         assertThat(document).isNotNull();
     }
 
     @Test
     @WithMockUser(TECHNICAL_USER_CREATE_NODE)
-    public void technicalUserCannotCreateDocumentWithWrongPermissions() {
+    public void technicalUserCannotCreateDocumentWithWrongPermissions(final @TempDir File tempDir) {
         assertThatThrownBy(() -> testee.create(TECHNICAL_USER_CREATE_NODE,
-                getFileInputStream(), "test", "test",
+                getFileInputStream(tempDir), "test", "test",
                 null, null, null, null, false, 0L, null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("You are not authorized to create an entry.");
@@ -169,9 +167,9 @@ public class DocumentDelegationRestServiceImplTest {
 
     @Test
     @WithMockUser(TECHNICAL_USER_NONE)
-    public void technicalUserCannotCreateDocumentWithoutPermissions() {
+    public void technicalUserCannotCreateDocumentWithoutPermissions(final @TempDir File tempDir) {
         assertThatThrownBy(() -> testee.create(TECHNICAL_USER_NONE,
-                getFileInputStream(), "test", "test",
+                getFileInputStream(tempDir), "test", "test",
                 null, null, null, null, false, 0L, null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("You are not authorized to create an entry.");
@@ -384,8 +382,8 @@ public class DocumentDelegationRestServiceImplTest {
         return document;
     }
 
-    private static FileInputStream getFileInputStream() throws IOException {
-        return new FileInputStream(File.createTempFile("my-text-file.1", "txt"));
+    private static FileInputStream getFileInputStream(final File tempDir) throws IOException {
+        return new FileInputStream(File.createTempFile("my-text-file.1", "txt", tempDir));
     }
 
 }

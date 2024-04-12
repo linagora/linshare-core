@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -100,10 +101,10 @@ public class DocumentGarbageCollectorBatchImplTest {
 
 	@Autowired
 	private DocumentEntryBusinessService documentEntryBusinessService;
-	
+
 	@Autowired
 	private ContactRepository contactRepository;
-	
+
 	@Autowired
 	private UploadRequestGroupService uploadRequestGroupService;
 
@@ -118,22 +119,22 @@ public class DocumentGarbageCollectorBatchImplTest {
 	private UserRepository<User> userRepository;
 
 	private Account john;
-	
+
 	private Contact yoda;
 
 	private File tempFile, tempFile2, tempFile3, tempFile4;
 
 	private InputStream stream;
-	
+
 	private UploadRequest ur, urEntity;
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp(final @TempDir File tempDir) throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		tempFile = File.createTempFile("linshare-test-1", ".tmp");
-		tempFile2 = File.createTempFile("linshare-test-2", ".tmp");
-		tempFile3 = File.createTempFile("linshare-test-3", ".tmp");
-		tempFile4 = File.createTempFile("linshare-test-4", ".tmp");
+		tempFile = File.createTempFile("linshare-test-1", ".tmp", tempDir);
+		tempFile2 = File.createTempFile("linshare-test-2", ".tmp", tempDir);
+		tempFile3 = File.createTempFile("linshare-test-3", ".tmp", tempDir);
+		tempFile4 = File.createTempFile("linshare-test-4", ".tmp", tempDir);
 		stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		yoda = contactRepository.findByMail("yoda@linshare.org");

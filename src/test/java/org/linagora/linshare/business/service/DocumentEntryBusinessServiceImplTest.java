@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
@@ -78,10 +79,13 @@ import com.google.common.io.Files;
 		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml",
-		})
+})
 public class DocumentEntryBusinessServiceImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImplTest.class);
+
+	@TempDir
+	private File tempDir;
 
 	@Autowired
 	private DocumentEntryBusinessService documentEntryBusinessService;
@@ -132,7 +136,7 @@ public class DocumentEntryBusinessServiceImplTest {
 	@DirtiesContext
 	public void testCreateDocument() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
 		IOUtils.copy(stream, new FileOutputStream(tempFile));
@@ -149,7 +153,7 @@ public class DocumentEntryBusinessServiceImplTest {
 	@DirtiesContext
 	public void testCreateAndDeleteDocument() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
 		IOUtils.copy(stream, new FileOutputStream(tempFile));
@@ -170,7 +174,7 @@ public class DocumentEntryBusinessServiceImplTest {
 	@DirtiesContext
 	public void testUpdateDocument() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
 		IOUtils.copy(stream, new FileOutputStream(tempFile));
@@ -183,7 +187,7 @@ public class DocumentEntryBusinessServiceImplTest {
 		Assertions.assertTrue(documentEntryRepository.findById(createDocumentEntry.getUuid()).getType() == "image/png");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Disabled //FIXME : Handle issues (related to thumbnail server) and enable the test
 	@Test
 	public void testUpdateThumbnail() throws BusinessException, IOException {
@@ -204,8 +208,7 @@ public class DocumentEntryBusinessServiceImplTest {
 	}
 
 	private Document createDocument() throws BusinessException, IOException {
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
-		tempFile.deleteOnExit();
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
 		IOUtils.copy(stream, new FileOutputStream(tempFile));
@@ -217,8 +220,7 @@ public class DocumentEntryBusinessServiceImplTest {
 		documentEntries.add(createDocumentEntry);
 		document.setDocumentEntries(documentEntries);
 		createWorkGroupDocument(jane, document);
-		File tempThmbFile = File.createTempFile("thumbnail", "png");
-		tempThmbFile.deleteOnExit();
+		File tempThmbFile = File.createTempFile("thumbnail", "png", this.tempDir);
 		FileMetaData metaDataThmb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
 				tempThmbFile.length(), "thumbnail");
 		metaDataThmb = fileDataStore.add(Files.asByteSource(tempThmbFile), metaDataThmb);
