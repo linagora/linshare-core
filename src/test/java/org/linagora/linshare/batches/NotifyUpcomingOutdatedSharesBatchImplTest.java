@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -108,12 +109,12 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 	}
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp(final @TempDir File tempDir) throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		owner = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		recipient = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		actor = (Account) owner;
-		initShares();
+		initShares(tempDir);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -131,8 +132,8 @@ public class NotifyUpcomingOutdatedSharesBatchImplTest {
 		Assertions.assertTrue(batchRunner.execute(batches), "At least one batch failed.");
 	}
 
-	private void initShares() throws IOException {
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+	private void initShares(final File tempDir) throws IOException {
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		Calendar documentEntryExpiration = Calendar.getInstance();
 		DocumentEntry documentEntry = documentEntryBusinessService.createDocumentEntry(owner, tempFile,
 				tempFile.length(), "shareFile", null, false, null, "text/plain", documentEntryExpiration, false, null);

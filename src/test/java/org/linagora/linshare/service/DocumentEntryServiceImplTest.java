@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
@@ -80,11 +81,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
-		})
+})
 public class DocumentEntryServiceImplTest {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(DocumentEntryServiceImplTest.class);
+
+	@TempDir
+	private File tempDir;
 
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
@@ -140,7 +144,7 @@ public class DocumentEntryServiceImplTest {
 	public void testCreateDocumentEntry() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		Assertions.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
@@ -159,7 +163,7 @@ public class DocumentEntryServiceImplTest {
 	public void testCreateDocumentEntrySpecialCharacters() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile,
 				"EP_TEST_v233<script>alert(document.cookie)</script>", comment, false, null);
@@ -180,7 +184,7 @@ public class DocumentEntryServiceImplTest {
 	public void testCreateDocumentEntryAcceptedSpecialCharacters() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile,
 				"@!'&+", comment, false, null);
@@ -200,7 +204,7 @@ public class DocumentEntryServiceImplTest {
 	/**
 	 * We need this method because all the functionalities are check when we create
 	 * a DocumentEntry
-	 * 
+	 *
 	 * @throws IllegalArgumentException
 	 * @throws BusinessException
 	 */
@@ -234,7 +238,7 @@ public class DocumentEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		User owner = jane;
-		File tempFile = File.createTempFile("linshare-test", ".tmp");
+		File tempFile = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		List<DocumentEntry> documents = documentEntryService.findAll(actor, owner);
@@ -247,7 +251,7 @@ public class DocumentEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account intruder = john;
 		Account actor = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
@@ -272,7 +276,7 @@ public class DocumentEntryServiceImplTest {
 	public void testQuotaDeleteDocumentEntries() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		AccountQuota actorQuota = quotaService.findByRelatedAccount(actor);
 		Long quota = quotaService.getRealTimeUsedSpace(actor, actor, actorQuota.getUuid());
@@ -291,7 +295,7 @@ public class DocumentEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account intruder = john;
 		Account actor = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		try {
@@ -316,7 +320,7 @@ public class DocumentEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account intruder = john;
 		Account actor = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
@@ -346,10 +350,10 @@ public class DocumentEntryServiceImplTest {
 	public void testUpdateDocumentEntrySpecialCharacters() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		InputStream stream1 = getStream("linshare-default.properties");
-		File tempFile = File.createTempFile("linshare-test", ".tmp");
+		File tempFile = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile);
 		InputStream stream2 = getStream("linshare.properties.sample");
-		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream2, tempFile2);
 		aDocumentEntry = documentEntryService.create(john, john, tempFile, fileName, comment, false, null);
 		Assertions.assertNotNull(documentEntryRepository.findById(aDocumentEntry.getUuid()));

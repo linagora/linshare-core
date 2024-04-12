@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -80,7 +81,6 @@ import com.google.common.collect.Lists;
 
 @ExtendWith({ SpringExtension.class, MockitoExtension.class })
 @Sql({
-	
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -98,6 +98,9 @@ public class UploadRequestServiceImplV2Test {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplV2Test.class);
 
+	@TempDir
+	private File tempDir;
+
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
@@ -107,17 +110,17 @@ public class UploadRequestServiceImplV2Test {
 
 	@Autowired
 	private UploadRequestService uploadRequestService;
-	
+
 	@Autowired
 	@InjectMocks
 	private UploadRequestGroupService uploadRequestGroupService;
-	
+
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
 	@Autowired
 	private UploadRequestEntryService uploadRequestEntryService;
-	
+
 	@Autowired
 	@InjectMocks
 	private FunctionalityReadOnlyService functionalityReadOnlyService;
@@ -158,7 +161,7 @@ public class UploadRequestServiceImplV2Test {
 	private final String comment = "file description";
 
 	private Date globalNow;
-	
+
 	public UploadRequestServiceImplV2Test() {
 		super();
 	}
@@ -347,7 +350,7 @@ public class UploadRequestServiceImplV2Test {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		Assertions.assertNotNull(actor);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequestUrl requestUrl = ureJohn.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
@@ -364,7 +367,7 @@ public class UploadRequestServiceImplV2Test {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		Assertions.assertNotNull(actor);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequestUrl requestUrl = ureJohn.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
@@ -382,7 +385,7 @@ public class UploadRequestServiceImplV2Test {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		Assertions.assertNotNull(actor);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequestUrl requestUrl = ureJohn.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(requestUrl);
@@ -400,7 +403,7 @@ public class UploadRequestServiceImplV2Test {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		Assertions.assertNotNull(actor);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequest request = globaleUploadRequest.clone();
 		request.setActivationDate(null);
@@ -433,7 +436,7 @@ public class UploadRequestServiceImplV2Test {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		Assertions.assertNotNull(actor);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequest request = globaleUploadRequest.clone();
 		request.setActivationDate(null);
@@ -464,7 +467,7 @@ public class UploadRequestServiceImplV2Test {
 	@Test
 	public void testEnabledUploadRequestCopyUploadRequestEntry() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequest request = globaleUploadRequest.clone();
 		request.setActivationDate(null);
@@ -492,7 +495,7 @@ public class UploadRequestServiceImplV2Test {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		Assertions.assertNotNull(actor);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequest request = globaleUploadRequest.clone();
 		request.setActivationDate(null);
@@ -528,7 +531,7 @@ public class UploadRequestServiceImplV2Test {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		Assertions.assertNotNull(actor);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequest request = globaleUploadRequest.clone();
 		request.setActivationDate(null);
@@ -647,7 +650,7 @@ public class UploadRequestServiceImplV2Test {
 				"The activation date has not been rounded");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testNotRoundActivateDateWhenCreateUploadRequest() throws BusinessException, ParseException {
 		// validate activation date not rounded if enabled now (activation date is set to null)
@@ -665,7 +668,7 @@ public class UploadRequestServiceImplV2Test {
 				"The activation date should have now date value");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testRoundActivateDateWhenCreatePostponedUploadRequest() throws BusinessException, ParseException {
 		// validate activation date not rounded if not enabled now (activation date has a value)
@@ -706,7 +709,7 @@ public class UploadRequestServiceImplV2Test {
 				"The expiry date of the upload request has not been rounded");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testRoundExpiryDateDefaultWhenCreateEnabledUploadRequest() throws BusinessException, ParseException {
 		// test that expiration date is rounded if the upload request is created without
@@ -897,7 +900,7 @@ public class UploadRequestServiceImplV2Test {
 		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_ACTIVATION_DATE_INVALID, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testUploadRequestActivationPostponed() throws BusinessException, ParseException {
 		// validate expiration date with a postponed activation date
@@ -929,7 +932,7 @@ public class UploadRequestServiceImplV2Test {
 				"The notification date should be 7 days before expiration date");
 
 	}
-	
+
 	@Test
 	public void testUploadRequestNotificationDate() throws BusinessException, ParseException {
 		// test to validate that notification date should have a minimum value expiration date
@@ -964,5 +967,5 @@ public class UploadRequestServiceImplV2Test {
 		Assertions.assertEquals(expiryDate, uploadRequest.getExpiryDate());
 		Assertions.assertEquals(notifyDate, uploadRequest.getNotificationDate());
 	}
-	
+
 }

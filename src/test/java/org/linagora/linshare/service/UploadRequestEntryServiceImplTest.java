@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
@@ -70,7 +71,6 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = {
@@ -87,6 +87,9 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-test.xml", })
 public class UploadRequestEntryServiceImplTest {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestEntryServiceImplTest.class);
+
+	@TempDir
+	private File tempDir;
 
 	@Qualifier("userRepository")
 	@Autowired
@@ -205,7 +208,7 @@ public class UploadRequestEntryServiceImplTest {
 	@Test
 	public void testUploadRequestCreateDocumentEntry() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
@@ -230,7 +233,7 @@ public class UploadRequestEntryServiceImplTest {
 		Assertions.assertNotNull(request);
 		UploadRequestUrl url = request.getUploadRequestURLs().iterator().next();
 		Assertions.assertNotNull(url);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		Assertions.assertEquals(UploadRequestStatus.CREATED, request.getStatus());
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
@@ -244,7 +247,7 @@ public class UploadRequestEntryServiceImplTest {
 	@Disabled
 	public void deleteUploadRequestEntryFail() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				enabledUploadRequest.getUploadRequestURLs().iterator().next());
@@ -268,7 +271,7 @@ public class UploadRequestEntryServiceImplTest {
 	@Test
 	public void deleteUploadRequestEntryClosedUR() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				enabledUploadRequest.getUploadRequestURLs().iterator().next());
@@ -287,7 +290,7 @@ public class UploadRequestEntryServiceImplTest {
 	@Test
 	public void deleteUploadRequestEntryEnabledUR() throws BusinessException, IOException, ParseException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				enabledUploadRequest.getUploadRequestURLs().iterator().next());
@@ -308,7 +311,7 @@ public class UploadRequestEntryServiceImplTest {
 		// In this test the deletion of URE is forbidden if the deletion right is
 		// disabled
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		uploadRequestEntry = uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null,
 				enabledUploadRequest.getUploadRequestURLs().iterator().next());
@@ -331,7 +334,7 @@ public class UploadRequestEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account owner = john;
 		Account recipient = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		AccountQuota johnQuota = quotaService.findByRelatedAccount(owner);
@@ -358,7 +361,7 @@ public class UploadRequestEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account owner = john;
 		Account recipient = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		AccountQuota johnQuota = quotaService.findByRelatedAccount(owner);
 		Long quota = quotaService.getRealTimeUsedSpace(owner, owner, johnQuota.getUuid());
@@ -386,7 +389,7 @@ public class UploadRequestEntryServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account owner = john;
 		Account recipient = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequest enabledUploadRequest = enabledUploadRequest();
 		UploadRequestUrl uploadRequestUrl = enabledUploadRequest.getUploadRequestURLs().iterator().next();
@@ -417,7 +420,7 @@ public class UploadRequestEntryServiceImplTest {
 		Assertions.assertNotNull(url);
 		enabledUploadRequest.setMaxDepositSize((long) 10000);
 		uploadRequestService.update(john, john, enabledUploadRequest.getUuid(), enabledUploadRequest, false);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
 			uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null, url);
@@ -442,9 +445,9 @@ public class UploadRequestEntryServiceImplTest {
 		enabledUploadRequest = uploadRequestService.update(john, john, enabledUploadRequest.getUuid(),
 				enabledUploadRequest, false);
 		Assertions.assertEquals(1, enabledUploadRequest.getMaxFileCount());
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
-		File tempFile2 = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream2, tempFile2);
 		uploadRequestEntryService.create(jane, jane, tempFile, fileName, comment, false, null, url);
 		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {

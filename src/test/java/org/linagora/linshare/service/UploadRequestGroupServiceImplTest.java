@@ -15,10 +15,10 @@
  */
 package org.linagora.linshare.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,23 +37,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
-import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -563,7 +564,7 @@ public class UploadRequestGroupServiceImplTest {
 	}
 
 	@Test
-	public void testReturnURGDetails() throws BusinessException, IOException {
+	public void testReturnURGDetails(final @TempDir File tempDir) throws BusinessException, IOException {
 		// On this test we will return the nbr of uploaded files and used space on an
 		// URG
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -598,7 +599,7 @@ public class UploadRequestGroupServiceImplTest {
 		uploadRequest.setActivationDate(null);
 		return uploadRequest;
 	}
-	
+
 	private void assertStatus(Set<UploadRequest> urs, UploadRequestStatus status) {
 		for (UploadRequest ur : urs) {
 			assertEquals(status, ur.getStatus());

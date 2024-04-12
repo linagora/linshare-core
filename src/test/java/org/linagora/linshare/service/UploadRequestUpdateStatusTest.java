@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -59,7 +60,6 @@ import com.google.common.collect.Lists;
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @ExtendWith(SpringExtension.class)
 @Sql({
-	
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -77,13 +77,16 @@ public class UploadRequestUpdateStatusTest {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestUpdateStatusTest.class);
 
+	@TempDir
+	private File tempDir;
+
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
 
 	@Autowired
 	private UploadRequestService uploadRequestService;
-	
+
 	@Autowired
 	private UploadRequestGroupService uploadRequestGroupService;
 
@@ -132,7 +135,7 @@ public class UploadRequestUpdateStatusTest {
 	@Test
 	public void testPurgeUploadRequest() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED
@@ -155,7 +158,7 @@ public class UploadRequestUpdateStatusTest {
 	@Test
 	public void testPurgeUploadRequestAndCopyDocuments() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED
@@ -178,7 +181,7 @@ public class UploadRequestUpdateStatusTest {
 	@Test
 	public void testCloseAndPurgeUploadRequest() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED
@@ -199,7 +202,7 @@ public class UploadRequestUpdateStatusTest {
 	@Test
 	public void testCloseCopyAndPurgeUploadRequest() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED
@@ -220,7 +223,7 @@ public class UploadRequestUpdateStatusTest {
 	@Test
 	public void testCloseCopyAndPurgeCopyUploadRequest() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		//CreateUploadRequest : STATUS ENABLED

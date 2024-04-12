@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -60,7 +61,7 @@ import com.google.common.io.Files;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(locations = {
-		"classpath:springContext-datasource.xml", 
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-mongo.xml",
@@ -73,7 +74,7 @@ import com.google.common.io.Files;
 		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
-		})
+})
 public class ComputeThumbnailBatchTest {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -126,8 +127,9 @@ public class ComputeThumbnailBatchTest {
 
 	@Disabled //FIXME : Handle issues (related to thumbnail server) and enable the test
 	@Test
-	public void testBatchExecution() throws BusinessException, JobExecutionException, IOException {
-		Document document = createDocument();
+	public void testBatchExecution(final @TempDir File tempDir)
+			throws BusinessException, JobExecutionException, IOException {
+		Document document = createDocument(tempDir);
 		documentRepository.update(document);
 		Assertions.assertTrue(document != null);
 		Assertions.assertTrue(document.getThmbUuid() != null);
@@ -139,9 +141,8 @@ public class ComputeThumbnailBatchTest {
 		Assertions.assertTrue(thmbMetadata.getUuid() == null);
 	}
 
-	private Document createDocument() throws BusinessException, IOException {
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
-		tempFile.deleteOnExit();
+	private Document createDocument(final File tempDir) throws BusinessException, IOException {
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
 		IOUtils.copy(stream, new FileOutputStream(tempFile));
@@ -152,8 +153,7 @@ public class ComputeThumbnailBatchTest {
 		Set<DocumentEntry> documentEntries = Sets.newHashSet();
 		documentEntries.add(createDocumentEntry);
 		document.setDocumentEntries(documentEntries);
-		File tempThmbFile = File.createTempFile("thumbnail", "png");
-		tempThmbFile.deleteOnExit();
+		File tempThmbFile = File.createTempFile("thumbnail", "png", tempDir);
 		FileMetaData metaDataThmb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
 				tempThmbFile.length(), "thumbnail");
 		metaDataThmb = fileDataStore.add(Files.asByteSource(tempThmbFile), metaDataThmb);

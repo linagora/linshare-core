@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
@@ -72,7 +73,6 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -97,7 +97,7 @@ public class UploadRequestServiceImplTest {
 
 	@Autowired
 	private UploadRequestGroupService uploadRequestGroupService;
-	
+
 	@Autowired
 	private ContactRepository repository;
 
@@ -307,10 +307,11 @@ public class UploadRequestServiceImplTest {
 	}
 
 	@Test
-	public void testUploadRequestCreateDocumentEntry() throws BusinessException, IOException {
+	public void testUploadRequestCreateDocumentEntry(final @TempDir File tempDir)
+			throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
 				eJohn.getUploadRequestURLs().iterator().next());
@@ -327,11 +328,11 @@ public class UploadRequestServiceImplTest {
 	}
 
 	@Test
-	public void testFindAllUploadRequestEntries()
+	public void testFindAllUploadRequestEntries(final @TempDir File tempDir)
 			throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
 				eJane.getUploadRequestURLs().iterator().next());

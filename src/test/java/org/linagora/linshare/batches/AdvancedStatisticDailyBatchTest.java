@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
@@ -80,10 +81,10 @@ import com.google.common.collect.Maps;
 @DirtiesContext
 @ExtendWith(SpringExtension.class)
 @Transactional
-@Sql({ 
+@Sql({
 	"/import-tests-document-entry-setup.sql" })
 @ContextConfiguration(locations = {
-		"classpath:springContext-datasource.xml", 
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-mongo.xml",
@@ -153,13 +154,13 @@ public class AdvancedStatisticDailyBatchTest {
 	}
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	public void setUp(final @TempDir File tempDir) throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
-		createWorkgroupDocument();
-		createUploadRequestEntry();
-		createDocumentEntry();
+		createWorkgroupDocument(tempDir);
+		createUploadRequestEntry(tempDir);
+		createDocumentEntry(tempDir);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -225,9 +226,8 @@ public class AdvancedStatisticDailyBatchTest {
 		Assertions.assertEquals("document", mimeTypeStatistics.get(mimeType).getHumanMimeType());
 	}
 
-	private void createWorkgroupDocument() throws IOException {
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
-		tempFile.deleteOnExit();
+	private void createWorkgroupDocument(final File tempDir) throws IOException {
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		createSharedSpaceNode(jane, workGroup.getName(), workGroup.getLsUuid());
 		AccountMto author = new AccountMto(jane);
@@ -263,7 +263,7 @@ public class AdvancedStatisticDailyBatchTest {
 		memberService.create(jane, jane, node, context, new SharedSpaceAccount((User) account));
 	}
 
-	private void createUploadRequestEntry() throws IOException {
+	private void createUploadRequestEntry(final File tempDir) throws IOException {
 		Contact yoda = new Contact("yoda@linshare.org");
 		UploadRequest ure = new UploadRequest();
 		ure.setCanClose(true);
@@ -280,7 +280,7 @@ public class AdvancedStatisticDailyBatchTest {
 		ure = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assertions.assertEquals(UploadRequestStatus.ENABLED,
 				ure.getStatus());
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		addURDocument(ure, tempFile, "my-text-file.1.txt"); // text/plain 2512
 		addURDocument(ure, tempFile, "my-text-file.2.txt"); // text/plain 8472
 		addURDocument(ure, tempFile, "fichier.test.1.png"); // image/png 49105
@@ -294,8 +294,8 @@ public class AdvancedStatisticDailyBatchTest {
 				ure.getUploadRequestURLs().iterator().next());
 	}
 
-	private void createDocumentEntry() throws IOException {
-		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+	private void createDocumentEntry(final File tempDir) throws IOException {
+		File tempFile = File.createTempFile("linshare-test-", ".tmp", tempDir);
 		addDocumentEntry(tempFile, "my-text-file.1.txt"); // text/plain 2512
 		addDocumentEntry(tempFile, "my-text-file.2.txt"); // text/plain 8472
 		addDocumentEntry(tempFile, "fichier.test.1.png"); // image/png 49105

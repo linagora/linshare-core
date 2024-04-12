@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
@@ -75,7 +76,6 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith({ SpringExtension.class, MockitoExtension.class })
 @Transactional
 @Sql({
-	
 	"/import-tests-document-entry-setup.sql" })
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
@@ -93,6 +93,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ShareNewShareEmailBuilderTest {
 
 	private static Logger logger = LoggerFactory.getLogger(ShareNewShareEmailBuilderTest.class);
+
+	@TempDir
+	private File tempDir;
 
 	@Autowired
 	@InjectMocks
@@ -116,14 +119,14 @@ public class ShareNewShareEmailBuilderTest {
 
 	@Autowired
 	protected MailAttachmentService attachmentService;
-	
+
 	@Autowired
 	@InjectMocks
 	private FunctionalityReadOnlyService functionalityReadOnlyService;
-	
+
 	@Autowired
 	private FunctionalityService functionalityService;
-	
+
 	@Mock
 	private TimeService timeService;
 
@@ -172,7 +175,7 @@ public class ShareNewShareEmailBuilderTest {
 		User recipient = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
-		File tempFile = File.createTempFile("linshare-test", ".tmp");
+		File tempFile = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		// create a document entry
 		DocumentEntry entry = documentEntryService.create(actor, actor, tempFile, tempFile.getName(), "", false, null);
@@ -188,7 +191,7 @@ public class ShareNewShareEmailBuilderTest {
 		// check initial state of functionality
 		UnitValueFunctionality entity = (UnitValueFunctionality) functionalityService.find(admin,
 				admin.getDomain().getUuid(), FunctionalityNames.SHARE_EXPIRATION.toString());
-		TimeUnitValueFunctionality shareFunc = new TimeUnitValueFunctionality(entity); 
+		TimeUnitValueFunctionality shareFunc = new TimeUnitValueFunctionality(entity);
 		Assertions.assertTrue(shareFunc.getActivationPolicy().getStatus());
 		// mock now moment
 		Mockito.when(timeService.dateNow()).thenReturn(parseDate("2020-08-13 00:00:00"));
@@ -208,7 +211,7 @@ public class ShareNewShareEmailBuilderTest {
 			shareService.create(actor, owner, sc);
 		});
 		Assertions.assertEquals(e.getErrorCode(), BusinessErrorCode.SHARE_EXPIRY_DATE_INVALID);
-		
+
 		// compute an expiration date after the max date of functionality
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(timeService.dateNow());
@@ -238,7 +241,7 @@ public class ShareNewShareEmailBuilderTest {
 		User recipient = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
-		File tempFile = File.createTempFile("linshare-test", ".tmp");
+		File tempFile = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		// create a document entry
 		DocumentEntry entry = documentEntryService.create(actor, actor, tempFile, tempFile.getName(), "", false, null);
@@ -320,7 +323,7 @@ public class ShareNewShareEmailBuilderTest {
 		User recipient = userRepository.findByMail(LinShareTestConstants.FOO_ACCOUNT);
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
 		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-		File tempFile = File.createTempFile("linshare-test", ".tmp");
+		File tempFile = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		// EnableForAll is disabled and the language == emailContext language -> inserted
 		attachmentService.create(admin, true, "Logo", false, cfg.getUuid(),

@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -89,7 +90,7 @@ public class SharedSpaceNodeServiceImplWorkSpaceTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
-	
+
 	@Autowired
 	@Qualifier("sharedSpaceMemberWorkSpaceService")
 	private SharedSpaceMemberFragmentService ssMemberWorkSpaceService;
@@ -97,7 +98,7 @@ public class SharedSpaceNodeServiceImplWorkSpaceTest {
 	@Autowired
 	@Qualifier("workgroupMemberService")
 	private SharedSpaceMemberFragmentService ssMemberWorkgroupService;
-	
+
 	@Autowired
 	@Qualifier("sharedSpaceMemberService")
 	private SharedSpaceMemberService memberService;
@@ -259,7 +260,7 @@ public class SharedSpaceNodeServiceImplWorkSpaceTest {
 	@Test
 	public void deleteWorkSpaceByNotMember() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		// test a workSpace member not allowed to delete a workSpace where he is not a membership 
+		// test a workSpace member not allowed to delete a workSpace where he is not a membership
 		SharedSpaceNode johnWorkSpace = service.create(authUser, authUser, new SharedSpaceNode("john workSpace", NodeType.WORK_SPACE));
 		service.create(jane, jane, new SharedSpaceNode("jane WorkSpace", NodeType.WORK_SPACE));
 		BusinessException e = assertThrows(BusinessException.class, () -> {
@@ -272,7 +273,7 @@ public class SharedSpaceNodeServiceImplWorkSpaceTest {
 	@Test
 	public void deleteWorkSpaceByInvitedMemberWorkSpaceAdmin() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		// test an invited member with WorkSpace Admin role can delete his WorkSpace 
+		// test an invited member with WorkSpace Admin role can delete his WorkSpace
 		SharedSpaceNode workSpace = service.create(authUser, authUser, new SharedSpaceNode("My WorkSpace", NodeType.WORK_SPACE));
 		service.create(authUser, authUser, new SharedSpaceNode("nested-wg", workSpace.getUuid(), NodeType.WORK_GROUP));
 		service.create(authUser, authUser, new SharedSpaceNode("nested-wg1", workSpace.getUuid(), NodeType.WORK_GROUP));
@@ -293,7 +294,7 @@ public class SharedSpaceNodeServiceImplWorkSpaceTest {
 	@Test
 	public void deleteWorkSpaceByInvitedMemberWorkSpaceReader() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		// test an invited member with WorkSpace Reader role NOT ALLOWED to delete his WorkSpace 
+		// test an invited member with WorkSpace Reader role NOT ALLOWED to delete his WorkSpace
 		SharedSpaceNode workSpace = service.create(authUser, authUser, new SharedSpaceNode("My WorkSpace", NodeType.WORK_SPACE));
 		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", workSpace.getUuid(), NodeType.WORK_GROUP));
 		service.create(authUser, authUser, new SharedSpaceNode("nested-wg1", workSpace.getUuid(), NodeType.WORK_GROUP));
@@ -320,7 +321,7 @@ public class SharedSpaceNodeServiceImplWorkSpaceTest {
 	@Test
 	public void deleteNestedByInvitedMemberAdmin() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		// test an invited member in nested workgroup with admin role delete his wg 
+		// test an invited member in nested workgroup with admin role delete his wg
 		SharedSpaceNode workSpace = service.create(authUser, authUser, new SharedSpaceNode("My WorkSpace", NodeType.WORK_SPACE));
 		SharedSpaceNode nested1 = service.create(authUser, authUser, new SharedSpaceNode("nested-wg", workSpace.getUuid(), NodeType.WORK_GROUP));
 		Assertions.assertEquals(service.findAllByAccount(authUser, authUser, false, workSpace.getUuid()).size(), 1);
@@ -413,7 +414,7 @@ public class SharedSpaceNodeServiceImplWorkSpaceTest {
 	}
 
 	@Test
-	public void deleteWorkSpaceAndNestedWorkgroup() throws BusinessException, IOException {
+	public void deleteWorkSpaceAndNestedWorkgroup(final @TempDir File tempDir) throws BusinessException, IOException {
 		// test delete a workSpace and its wg
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// Create WorkSpace and nested workgroups
@@ -424,7 +425,7 @@ public class SharedSpaceNodeServiceImplWorkSpaceTest {
 		Assertions.assertNotNull(nested2);
 		// Create workgroupNodes
 		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-		File tempFile = File.createTempFile("linshare-default.properties", ".tmp");
+		File tempFile = File.createTempFile("linshare-default.properties", ".tmp", tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		WorkGroup workGroup = threadService.find(authUser, authUser, nested1.getUuid());
 		WorkGroupNode groupNode = workGroupNodeService.create(authUser, (User) authUser, workGroup, tempFile,

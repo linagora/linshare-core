@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
@@ -98,6 +99,9 @@ public class WorkGroupNodeServiceImplTest {
 
 	protected final Logger logger = LogManager.getLogger(getClass());
 
+	@TempDir
+	private File tempDir;
+
 	@Autowired
 	protected WorkGroupNodeService workGroupNodeService;
 
@@ -139,7 +143,7 @@ public class WorkGroupNodeServiceImplTest {
 	private WorkGroup workGroup;
 
 	private WorkGroupNode rootFolder;
-	
+
 	private WorkGroupNode folder;
 
 	@BeforeEach
@@ -241,7 +245,7 @@ public class WorkGroupNodeServiceImplTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -251,9 +255,9 @@ public class WorkGroupNodeServiceImplTest {
 				.getResourceAsStream("linshare-default.properties");
 		InputStream stream2 = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
-		File tempFile2 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream2, tempFile2);
 		// store the size of uploaded files
 		Long documentsSize = tempFile1.length() + tempFile2.length();
@@ -293,7 +297,7 @@ public class WorkGroupNodeServiceImplTest {
 	public void testQuotaDelete() throws IOException {
 		InputStream stream1 = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
-		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp", this.tempDir);
 		IOUtils.transferTo(stream1, tempFile1);
 		AccountQuota workgroupQuota = quotaService.findByRelatedAccount(workGroup);
 		Long quota = quotaService.getRealTimeUsedSpace(john, john, workgroupQuota.getUuid());
@@ -424,7 +428,7 @@ public class WorkGroupNodeServiceImplTest {
 
 		documentKinds.add(DocumentKind.OTHER);
 		// means we want documents that have mimeType not exists in all defaultSupported
-		// mimeTypes defined in DocumentKind Enum 
+		// mimeTypes defined in DocumentKind Enum
 		// see WorkgroupNodeBusinessServiceImpl.getDefaultSupportedMimetypes()
 		nodes = workGroupNodeService.findAll(john, john, workGroup, parent, pattern, withTree, false,
 				pageContainer, creationDateAfter, creationDateBefore, modificationDateAfter, modificationDateBefore,
@@ -442,7 +446,7 @@ public class WorkGroupNodeServiceImplTest {
 
 	private void createWorkgroupDocument(String streamName, String tempFileName) throws IOException {
 		InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(streamName);
-		File tempFile = File.createTempFile(tempFileName, ".tmp");
+		File tempFile = File.createTempFile(tempFileName, ".tmp", this.tempDir);
 		IOUtils.transferTo(stream, tempFile);
 		workGroupNodeService.create(john, john, workGroup, tempFile, tempFile.getName(), folder.getUuid(), false);
 	}
