@@ -255,18 +255,6 @@
 				<version>9.23</version>
 			</dependency>
 			<dependency>
-				<!-- We want a unique version of this artefact provided by 'okhttp' -->
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-stdlib</artifactId>
-				<version>1.6.20</version>
-			</dependency>
-			<dependency>
-				<!-- We want a unique version of this artefact provided by 'okhttp' -->
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-stdlib-common</artifactId>
-				<version>1.6.20</version>
-			</dependency>
-			<dependency>
 				<!-- We want an upper version than the one provided by LinID -->
 				<groupId>org.mozilla</groupId>
 				<artifactId>rhino</artifactId>
@@ -984,8 +972,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
-			<version>4.10.0</version>
+			<artifactId>okhttp-jvm</artifactId>
+			<version>${okhttp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -1110,8 +1098,14 @@
 		</dependency>
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>mockwebserver</artifactId>
-			<version>4.10.0</version>
+			<artifactId>mockwebserver3-junit5</artifactId>
+			<version>${okhttp.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>mockwebserver3</artifactId>
+			<version>${okhttp.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -1332,6 +1326,25 @@
 										<!-- LinShare Core uses Log4J-2 as logging subsystem. Log4J-1 and other logging system are banned -->
 										<exclude>log4j:log4j</exclude>
 										<exclude>org.slf4j:slf4j-log4j12</exclude>
+									</excludes>
+								</bannedDependencies>
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+					<execution>
+						<id>enforce-ban-old-junit-deps</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<excludes>
+										<!-- LinShare Core uses JUnit 5, older versions must be banned -->
+										<exclude>junit:junit</exclude>
+										<exclude>junit:Junit</exclude>
+										<exclude>junit:junit-dep</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -2676,5 +2689,6 @@
 		<sql.driver.postgresql>42.4.1</sql.driver.postgresql>
 		<thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
 		<mockito.version>3.12.4</mockito.version>
+		<okhttp.version>5.0.0-alpha.12</okhttp.version>
 	</properties>
 </project>
