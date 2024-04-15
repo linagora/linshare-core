@@ -27,26 +27,23 @@ import org.linagora.linshare.core.domain.entities.TwakeConnection;
 import org.linagora.linshare.core.domain.entities.TwakeUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 
+import mockwebserver3.MockResponse;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
 
-public abstract class AbstractTwakeUserProviderServiceImplTest {
+public abstract class AbstractTwakeUserProviderServiceImplTest extends AbstractTwakeUserProviderServiceImplEnv {
 
 	@Test
 	public void twakeUserProviderShouldNotFailWhenUnknownEntriesInJson() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(unknownEntryUserResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -62,18 +59,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void searchUserShouldReturnTheUsersList() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -85,18 +80,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void searchUserShouldReturnEmptyListWhenAllBlocked() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(allBlockedUsersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -108,18 +101,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void searchUserShouldReturnEmptyListWhenAllWrongDomainKind() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(allWrongDomainKindUsersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -131,18 +122,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void searchUserShouldParseResponse() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(oneUserResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -159,18 +148,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void searchUserShouldFilterByMail() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -180,18 +167,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void searchUserShouldFilterByFirstName() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -201,18 +186,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void searchUserShouldFilterByLastName() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -222,18 +205,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void findUserShouldReturnTheUserWhenExists() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(oneUserResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -245,18 +226,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void findUserShouldReturnNullWhenDoesNotExist() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(oneUserResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -266,18 +245,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void autoCompleteUserShouldReturnTheUsersListWhenEmptyPattern() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -287,18 +264,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void autoCompleteUserShouldReturnEmptyListWhenNoneMatch() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -308,18 +283,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void autoCompleteUserShouldReturnTheUsersListWhenSomeMatch() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -329,18 +302,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void autoCompleteUserByNamesShouldReturnTheUsersListWhenEmptyPattern() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -350,18 +321,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void autoCompleteUserByNamesShouldReturnTheUsersListWhenSomeMatchFirstName() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -371,18 +340,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void autoCompleteUserByNamesShouldReturnTheUsersListWhenSomeMatchLastName() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -392,18 +359,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void autoCompleteUserByNamesShouldReturnTheUsersListWhenSomeMatchFirstNameAndLastName() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -413,18 +378,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void autoCompleteUserByNamesShouldReturnEmptyListWhenNoneMatchFirstNameAndLastName() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -434,18 +397,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void isUserExistShouldReturnTrueWhenExists() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(oneUserResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -454,18 +415,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void isUserExistShouldReturnFalseWhenDoesNotExist() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(oneUserResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -474,18 +433,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void searchForAuthShouldReturnNullWhenUsersDoesntExist() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
@@ -495,18 +452,16 @@ public abstract class AbstractTwakeUserProviderServiceImplTest {
 
 	@Test
 	public void searchForAuthShouldReturnUserWhenExists() throws Exception {
-		MockWebServer server = new MockWebServer();
-		String url = "/twakeconsole.dev";
-		HttpUrl httpUrl = server.url(url);
+		HttpUrl httpUrl = this.mockWebServer.url(TWAKE_CONSOLE_URL);
 		TwakeUserProviderService testee = implementation(httpUrl);
 
 		String responseBody = IOUtils.toString(ClassLoader.getSystemResourceAsStream(usersResponseFileName()));
-		server.enqueue(new MockResponse().setBody(responseBody));
+		this.mockWebServer.enqueue(new MockResponse.Builder().body(responseBody).build());
 
 		AbstractDomain domain = mockDomain();
 		TwakeConnection twakeConnection = new TwakeConnection();
 		twakeConnection.setServerType(ServerType.TWAKE);
-		twakeConnection.setProviderUrl(url);
+		twakeConnection.setProviderUrl(TWAKE_CONSOLE_URL);
 		twakeConnection.setClientId("clientId");
 		twakeConnection.setClientSecret("clientSecret");
 		TwakeUserProvider userProvider = new TwakeUserProvider(domain, twakeConnection, "twakeCompanyId");
