@@ -1507,12 +1507,17 @@
 				</executions>
 			</plugin>
 
-			<!-- maven-surefire-plugin (test reports) -->
+			<!-- maven-surefire-plugin (unit tests) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
+					<systemPropertyVariables combine.children="append">
+						<!-- Override the default test database configuration provided by 'linshare-test.properties'-->
+						<linshare.db.url>${h2-db.unit-test.url}</linshare.db.url>
+						<linshare.db.hbm2ddl.auto>${h2-db.unit-test.hibernate-hbm2ddl-auto}</linshare.db.hbm2ddl.auto>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 
@@ -2179,27 +2184,22 @@
 				</configuration>
 			</plugin>
 
-			<!-- Maven Jetty Plugin 9.x : run the application using "mvn jetty:run" -->
+			<!-- mvn versions:display-dependency-updates -D allowMajorUpdates=false -DallowAnyUpdates=false -->
 			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
 				<configuration>
-					<scanIntervalSeconds>10</scanIntervalSeconds>
-					<webApp>
-						<contextPath>/linshare</contextPath>
-					</webApp>
-					<!-- -Djetty.port=8080 -->
-					<httpConnector>
-						<port>8080</port>
-					</httpConnector>
+					<rulesUri>file:///${project.basedir}/src/dependencies/rules.xml</rulesUri>
 				</configuration>
-				<!--  not supported yet
-				<requestLog implementation="org.mortbay.jetty.NCSARequestLog">
-					This doesn't do anything for Jetty, but is a workaround for a Maven
-						bug that prevents the requestLog from being set.
-					<append>true</append>
-				</requestLog>
-				-->
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>display-dependency-updates</goal>
+							<goal>display-plugin-updates</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -2307,9 +2307,37 @@
 					<version>3.1.0</version>
 				</plugin>
 				<plugin>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-maven-plugin</artifactId>
-					<version>9.4.53.v20231009</version>
+					<groupId>org.eclipse.jetty.ee8</groupId>
+					<artifactId>jetty-ee8-maven-plugin</artifactId>
+					<version>12.0.7</version>
+					<configuration>
+						<deployMode>FORK</deployMode>
+						<scan>10</scan>
+						<webApp>
+							<contextPath>/linshare</contextPath>
+						</webApp>
+						<!-- -Djetty.port=8080 -->
+						<httpConnector>
+							<port>8080</port>
+						</httpConnector>
+						<!-- Environment variable definitions -->
+						<env>
+							<LINSHARE_HOME>${linshare.home}</LINSHARE_HOME>
+						</env>
+						<!--
+						   By default the Maven Jetty plugin is disabled because a Maven profile ('standalone', 'integration-local', ...)
+						   defining the environment in which LinShare Core will run is needed.
+						 -->
+						<skip>${jetty-maven-plugin.skip}</skip>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<!-- Add a SLF4J backend for the jetty-maven-plugin -->
+							<groupId>org.apache.logging.log4j</groupId>
+							<artifactId>log4j-slf4j2-impl</artifactId>
+							<version>${log4j-release-version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 				<plugin>
 					<!-- mvn versions:display-plugin-updates versions:display-dependency-updates -->
@@ -2326,7 +2354,7 @@
 					<version>1.5.3</version>
 				</plugin>
 				<plugin>
-					<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+					<!-- This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
 					<version>1.0.0</version>
@@ -2484,10 +2512,70 @@
 		</profile>
 		
 		<profile>
-			<!-- Profile to launch LinShare Core standalonely with a MongoDB server embedded -->
-			<id>mongo-java-server</id>
+			<!-- Profile to use a file-based embedded H2 database instead of an in-memory embedded H2 database -->
+			<id>file-based-h2-db</id>
+			<properties>
+				<!-- Default file-based H2 database configuration for unit tests -->
+				<h2-db.unit-test.url>jdbc:h2:file:${project.build.directory}/linshare-unit-tests-db</h2-db.unit-test.url>
+		
+				<!-- Default file-based H2 database configuration to run LinShare Core standalonely -->
+				<h2-db.run-standalonely.url>jdbc:h2:file:${project.build.directory}/linshare-standalone-db</h2-db.run-standalonely.url>
+			</properties>
+		</profile>
+
+		<profile>
+			<!-- 
+			   Profile to launch LinShare Core standalonely, with:
+			     * a SMTP server,
+			     * a MongoDB server,
+			     * a H2 database instance different from the one used by unit tests
+			 -->
+			<id>standalone</id>
+			<properties>
+				<linshare.home>${project.build.directory}/linshare-standalone</linshare.home>
+				<jetty-maven-plugin.skip>false</jetty-maven-plugin.skip>
+			</properties>
 			<build>
+				<resources>
+					<resource>
+						<directory>src/subethamail/resources</directory>
+					</resource>
+				</resources>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.jetty.ee8</groupId>
+							<artifactId>jetty-ee8-maven-plugin</artifactId>
+							<configuration>
+								<systemProperties combine.children="append">
+									<!-- Override the default database configuration provided by 'linshare-default.properties' -->
+									<linshare.db.url>${h2-db.run-standalonely.url}</linshare.db.url>
+									<linshare.db.hbm2ddl.auto>${h2-db.run-standalonely.hibernate-hbm2ddl-auto}</linshare.db.hbm2ddl.auto>
+								</systemProperties>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
 				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>add-subethamail-sources</id>
+								<phase>generate-sources</phase>
+								<inherited>false</inherited>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>src/subethamail/java</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
@@ -2512,71 +2600,10 @@
 			</build>
 			<dependencies>
 				<dependency>
-					<groupId>de.bwaldvogel</groupId>
-					<artifactId>mongo-java-server</artifactId>
-					<version>${mongo.java.server}</version>
-				</dependency>
-				<dependency>
-					<groupId>org.springframework.data</groupId>
-					<artifactId>spring-data-mongodb</artifactId>
-					<version>${spring-data.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-
-		<profile>
-			<!-- Profile to launch LinShare Core standalonely with a H2 embedded fatabase -->
-			<id>h2</id>
-			<dependencies>
-				<dependency>
 					<groupId>com.h2database</groupId>
 					<artifactId>h2</artifactId>
 					<version>${h2.version}</version>
 				</dependency>
-			</dependencies>
-		</profile>
-
-		<profile>
-			<!-- Profile to launch LinShare Core standalonely with an embedded SMTP server -->
-			<id>local</id>
-			<activation>
-				<property>
-					<name>target</name>
-					<value>local</value>
-				</property>
-			</activation>
-			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources</directory>
-					</resource>
-					<resource>
-						<directory>src/subethamail/resources</directory>
-					</resource>
-				</resources>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>add-source</id>
-								<phase>generate-sources</phase>
-								<inherited>false</inherited>
-								<goals>
-									<goal>add-source</goal>
-								</goals>
-								<configuration>
-									<sources>
-										<source>src/subethamail/java</source>
-									</sources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-			<dependencies>
 				<dependency>
 					<groupId>org.subethamail</groupId>
 					<artifactId>subethasmtp</artifactId>
@@ -2598,7 +2625,97 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<dependency>
+					<groupId>de.bwaldvogel</groupId>
+					<artifactId>mongo-java-server</artifactId>
+					<version>${mongo.java.server}</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.data</groupId>
+					<artifactId>spring-data-mongodb</artifactId>
+					<version>${spring-data.version}</version>
+				</dependency>
 			</dependencies>
+		</profile>
+		
+		<profile>
+			<!-- Profile to use to launch LinShare Core from source code coupled with the integration environment -->
+			<id>integration-local</id>
+			<properties>
+				<jetty-maven-plugin.skip>false</jetty-maven-plugin.skip>
+				<linshare.home>${project.build.directory}/linshare-integration-local</linshare.home>
+			</properties>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.jetty.ee8</groupId>
+							<artifactId>jetty-ee8-maven-plugin</artifactId>
+							<configuration>
+								<systemProperties combine.children="append">
+									<!-- Override the default database configuration provided by 'linshare-default.properties' -->
+									<linshare.db.driver.class>org.postgresql.Driver</linshare.db.driver.class>
+									<linshare.db.url>jdbc:postgresql://localhost:25432/linshare</linshare.db.url>
+									<linshare.db.dialect>org.hibernate.dialect.PostgreSQLDialect</linshare.db.dialect>
+									<linshare.db.username>linshare</linshare.db.username>
+									<linshare.db.password>${env.integration.linshare.db.password}</linshare.db.password>
+									<linshare.db.hbm2ddl.auto>validate</linshare.db.hbm2ddl.auto>
+									<!-- Override the default MongoDB configuration -->
+									<linshare.mongo.data.replicaset>localhost:20017</linshare.mongo.data.replicaset>
+									<linshare.mongo.data.credentials>${env.integration.linshare.mongo.data.credentials}</linshare.mongo.data.credentials>
+									<linshare.mongo.smallfiles.replicaset>localhost:20017</linshare.mongo.smallfiles.replicaset>
+									<linshare.mongo.smallfiles.credentials>${env.integration.linshare.mongo.smallfiles.credentials}</linshare.mongo.smallfiles.credentials>
+									<linshare.mongo.bigfiles.replicaset>localhost:20017</linshare.mongo.bigfiles.replicaset>
+									<linshare.mongo.bigfiles.credentials>${env.integration.linshare.mongo.bigfiles.credentials}</linshare.mongo.bigfiles.credentials>
+									<!-- Override the default SMTP configuration -->
+									<mail.smtp.port>20025</mail.smtp.port>
+									<mail.smtp.user>user</mail.smtp.user>
+									<mail.smtp.password>${env.integration.mail.smtp.password}</mail.smtp.password>
+									<mail.smtp.auth.needed>false</mail.smtp.auth.needed>
+								</systemProperties>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>enforce-conf-intg-env</id>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireProperty>
+											<property>env.integration.linshare.db.password</property>
+											<message>You must define in your Maven environment the property 'env.integration.linshare.db.password' to set the password of the integration environment database!</message>
+										</requireProperty>
+										<requireProperty>
+											<property>env.integration.linshare.mongo.data.credentials</property>
+											<message>You must define in your Maven environment the property 'env.integration.linshare.mongo.data.credentials' to set the credentials of the MongoDB base 'Data'!</message>
+										</requireProperty>
+										<requireProperty>
+											<property>env.integration.linshare.mongo.smallfiles.credentials</property>
+											<message>You must define in your Maven environment the property 'env.integration.linshare.mongo.smallfiles.credentials' to set the credentials of the MongoDB base 'Small Files'!</message>
+										</requireProperty>
+										<requireProperty>
+											<property>env.integration.linshare.mongo.bigfiles.credentials</property>
+											<message>You must define in your Maven environment the property 'env.integration.linshare.mongo.bigfiles.credentials' to set the credentials of the MongoDB base 'Big Files'!</message>
+										</requireProperty>
+										<requireProperty>
+											<property>env.integration.mail.smtp.password</property>
+											<message>You must define in your Maven environment the property 'env.integration.mail.smtp.password' to set the password of the integration environment SMTP server!</message>
+										</requireProperty>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 		<profile>
@@ -2692,6 +2809,8 @@
 		
 		<maven-dependency-plugin.ignoreNonCompile>false</maven-dependency-plugin.ignoreNonCompile>
 		<maven-dependency-plugin.failOnWarning>true</maven-dependency-plugin.failOnWarning>
+		
+		<jetty-maven-plugin.skip>true</jetty-maven-plugin.skip>
 
 		<!-- Dependency properties -->
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
@@ -2718,5 +2837,16 @@
 		<thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
 		<mockito.version>3.12.4</mockito.version>
 		<okhttp.version>5.0.0-alpha.12</okhttp.version>
+		
+		<!-- Default LinShare Core runtime system properties -->
+		<linshare.home>${project.build.directory}/linshare-unit-tests</linshare.home>
+		
+		<!-- Default H2 database configuration for unit tests -->
+		<h2-db.unit-test.url>jdbc:h2:mem:linshare-unit-tests-db</h2-db.unit-test.url>
+		<h2-db.unit-test.hibernate-hbm2ddl-auto>create</h2-db.unit-test.hibernate-hbm2ddl-auto>
+		
+		<!-- Default H2 database configuration to run LinShare Core standalonely -->
+		<h2-db.run-standalonely.url>jdbc:h2:mem:linshare-standalone-db</h2-db.run-standalonely.url>
+		<h2-db.run-standalonely.hibernate-hbm2ddl-auto>create</h2-db.run-standalonely.hibernate-hbm2ddl-auto>
 	</properties>
 </project>
