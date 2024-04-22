@@ -728,18 +728,32 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User saveOrUpdateUser(User user, Optional<Account> actor) throws TechnicalException {
+		return this.saveOrUpdateUser(user, actor, false);
+	}
+
+	@Override
+	public User saveOrUpdateUser(User user, Optional<Account> actor, boolean useExternalUid) throws TechnicalException {
 		// User object should be an new entity, or an existing one
 		logger.debug("Begin saveOrUpdateUser");
 		if (user != null && user.getDomain() != null) {
 			logger.debug("Trying to find the current user in the user repository.");
 			logger.debug("mail:" + user.getMail());
 			logger.debug("domain id:" + user.getDomainId());
-			User existingUser = userRepository.findByMailAndDomain(user
-					.getDomain().getUuid(), user.getMail());
+			User existingUser;
+			if (useExternalUid) {
+				existingUser = userRepository.findByExternalUidAndDomain(user.getDomain().getUuid(), user.getLdapUid());
+
+			} else {
+				existingUser = userRepository.findByMailAndDomain(user
+						.getDomain().getUuid(), user.getMail());
+			}
 			if (existingUser != null) {
+				existingUser.setFirstName(user.getFirstName());
+				existingUser.setLastName(user.getLastName());
+				existingUser.setMail(user.getMail());
 				// update
 				logger.debug("userRepository.update(existingUser)");
-					user = userRepository.update(existingUser);
+				user = userRepository.update(existingUser);
 			} else {
 				logger.debug("userRepository.create(user)");
 				// create
@@ -883,6 +897,28 @@ public class UserServiceImpl implements UserService {
 						"The user could not be found in the DB nor in the LDAP");
 			}
 		}
+		return user;
+	}
+
+	@Override
+	public User findOrCreateUserByExternalUid(String externalUid, String domainId)
+			throws BusinessException {
+		// AccountRepository<Account>
+		User user;
+		List<User> users = abstractDomainService
+				.searchUserRecursivelyWithoutRestrictionByExternalUid(domainId, externalUid);
+		if (users != null && users.size() == 1) {
+			user = users.get(0);
+			user = saveOrUpdateUser(user, Optional.empty(), true);
+		} else {
+			logger.error("Could not find the user " + externalUid
+					+ " in the database nor in the LDAP");
+			logger.debug("nb result : " + (users != null ? users.size() : 0));
+			// this should really not happened
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"The user could not be found in the DB nor in the LDAP");
+		}
+
 		return user;
 	}
 

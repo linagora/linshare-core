@@ -17,6 +17,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -117,6 +118,15 @@ public interface AbstractDomainService {
 	 */
 	public List<User> searchUserRecursivelyWithoutRestriction(String domainIdentifier, String mail) throws BusinessException;
 
+	/**
+	 * This method is designed to search in a particular domain and its SubDomain.
+	 * @param domainIdentifier
+	 * @param externalUid
+	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
+	 * @throws BusinessException
+	 */
+	public List<User> searchUserRecursivelyWithoutRestrictionByExternalUid(String domainIdentifier, String externalUid) throws BusinessException;
+
 
 	/**
 	 * This method is designed to search users in a particular domain.
@@ -126,6 +136,15 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public User findUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException;
+
+	/**
+	 * This method is designed to search users in a particular domain.
+	 * @param domain
+	 * @param externalUid
+	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name, last name, domain and default role). It is not an entity !
+	 * @throws BusinessException
+	 */
+	public User findUserWithoutRestrictionByExternalUid(AbstractDomain domain, @NotNull String externalUid) throws BusinessException;
 
 	/**
 	 * Test if a user exists or not in ldap. This method does not test domain policies.

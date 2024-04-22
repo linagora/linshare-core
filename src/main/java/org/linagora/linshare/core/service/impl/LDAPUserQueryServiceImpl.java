@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
@@ -106,6 +107,28 @@ public class LDAPUserQueryServiceImpl extends LDAPQueryServiceImpl implements LD
 		try {
 			JScriptUserLdapQuery query = new JScriptUserLdapQuery(lqlctx, baseDn, domainPattern, dnList);
 			user = query.findUser(mail);
+		} finally {
+			ldapContext.close();
+		}
+		return user;
+	}
+
+	@Override
+	public User getUserByUid(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, @NotNull String uid) throws BusinessException, NamingException, IOException {
+		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
+
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("domain", baseDn);
+		vars.put("logger", logger);
+
+		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
+
+		logger.debug("LDAPQueryServiceImpl.searchUserByUid: baseDn: '" + baseDn + "' , motif (uid) : '" + uid + "'");
+		User user = null;
+		try {
+			JScriptUserLdapQuery query = new JScriptUserLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+			user = query.findUserByExternalUid(uid);
 		} finally {
 			ldapContext.close();
 		}

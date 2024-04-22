@@ -17,6 +17,7 @@ package org.linagora.linshare.core.facade.auth.impl;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationExceptionCode;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -82,6 +83,12 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	public User findOrCreateUser(String domainIdentifier, String mail)
 			throws BusinessException {
 		return userService.findOrCreateUser(mail, domainIdentifier);
+	}
+
+	@Override
+	public User findOrCreateUserByExternalUid(String domainIdentifier, @NotNull String externalUid)
+			throws BusinessException {
+		return userService.findOrCreateUserByExternalUid(externalUid, domainIdentifier);
 	}
 
 	@Override
@@ -164,7 +171,19 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	public User findByLogin(String login) {
 		User user = userRepository.findByLogin(login);
 		// Ugly but needed until we find a more elegant solution :(
-		if (user != null) user.getDomain().getUuid();
+		if (user != null) {
+			user.getDomain().getUuid();
+		}
+		return user;
+	}
+
+	@Override
+	public User findByExternalUid(@NotNull String externalUid) {
+		User user = userRepository.findByExternalUid(externalUid);
+		// Ugly but needed until we find a more elegant solution :(
+		if (user != null) {
+			user.getDomain().getUuid();
+		}
 		return user;
 	}
 

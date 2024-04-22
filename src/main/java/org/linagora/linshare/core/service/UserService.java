@@ -75,6 +75,12 @@ public interface UserService {
 	 * @return user entity created or updated.
 	 */
 	User saveOrUpdateUser(User user, Optional<Account> actor) throws TechnicalException ;
+
+	/**
+	 * This method create a new user entity from a valid user object, or update an existing one.
+	 * @return user entity created or updated.
+	 */
+	User saveOrUpdateUser(User user, Optional<Account> actor, boolean useExternalUid) throws TechnicalException ;
 	
 	/** Find a  user (based on mail address).
 	 * Search first in database, then on ldap if not found.
@@ -86,6 +92,17 @@ public interface UserService {
 	 * @throws BusinessException if the user could not be found
 	 */
 	User findOrCreateUser(String mail, String domainId) throws BusinessException ;
+
+	/** Find a  user (based on external uid).
+	 * Search first in database, then on ldap if not found.
+	 * If the user isn't found on DB, then it is created from the ldap info.
+	 * If the user isn't found in the ldap, an exception is raised.
+	 * @param externalUid user external uid.
+	 * @param domainId domain identifier.
+	 * @return founded user.
+	 * @throws BusinessException if the user could not be found
+	 */
+	User findOrCreateUserByExternalUid(String externalUid, String domainId) throws BusinessException ;
 
 
 	 /** Find a  user (based on mail address).

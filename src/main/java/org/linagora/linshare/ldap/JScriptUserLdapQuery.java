@@ -297,6 +297,35 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 		return null;
 	}
 
+	public User findUserByExternalUid(String externalUid) throws NamingException {
+
+		// Getting lql expression for completion
+		String command = ((UserLdapPattern)ldapPattern).getSearchUserCommand();
+		if (externalUid == null || externalUid.length() < 1) {
+			return null;
+		}
+		String first_name = "*";
+		String last_name = "*";
+
+		// Setting lql query parameters
+		Map<String, Object> vars = lqlctx.getVariables();
+		vars.put("uid", cleanLdapInputPattern(externalUid));
+		vars.put("first_name", first_name);
+		vars.put("last_name", last_name);
+		if (logger.isDebugEnabled())
+			logLqlQuery(command, externalUid, first_name, last_name);
+
+		// searching ldap directory with pattern
+		List<String> dnResultList = this.evaluate(command);
+
+		if (dnResultList.size() == 1) {
+			return dnToUser(dnResultList.get(0), false);
+		} else if (dnResultList.size() > 1) {
+			logger.error("uid must be unique ! " + externalUid);
+		}
+		return null;
+	}
+
 	/**
 	 * test if a user exists using his mail. (entire mail, not a fragment)
 	 * 

@@ -27,6 +27,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.batches.impl.gdpr.GDPRConstants;
 import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -101,6 +102,24 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		} else {
 			logger.error("Mail: {}  must be unique in domain {}", domainUuid, mail);
 			throw new IllegalStateException("Mail must be unique in domain");
+		}
+	}
+
+	@Override
+	public U findByExternalUidAndDomain(String domainUuid, @NotNull String externalUid) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.createAlias("domain", "domain");
+		criteria.add(Restrictions.eq("domain.uuid", domainUuid));
+		criteria.add(Restrictions.eq("ldapUid", externalUid));
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		List<U> accounts = findByCriteria(criteria);
+		if (accounts == null || accounts.isEmpty()) {
+			return null;
+		} else if (accounts.size() == 1) {
+			return accounts.get(0);
+		} else {
+			logger.error("ExternalUid: {}  must be unique in domain {}", domainUuid, externalUid);
+			throw new IllegalStateException("ExternalUid must be unique in domain");
 		}
 	}
 

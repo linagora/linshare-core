@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -418,6 +419,16 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 	}
 
 	@Override
+	public User findUserWithoutRestrictionByExternalUid(AbstractDomain domain, @NotNull String externalUid)
+			throws BusinessException {
+		if (domain.getUserProvider() != null) {
+			return userProviderService.findUserByExternalUid(domain, domain.getUserProvider(), externalUid);
+		}
+		logger.debug("UserProvider is null for domain : " + domain.getUuid());
+		return null;
+	}
+
+	@Override
 	public Boolean isUserExist(AbstractDomain domain, String mail)
 			throws BusinessException {
 		if (domain.getUserProvider() != null) {
@@ -446,6 +457,26 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 		List<AbstractDomain> abstractDomains = domainBusinessService.getSubDomainsByDomain(domain.getUuid());
 		for (AbstractDomain subDomain : abstractDomains) {
 			users.addAll(findUserRecursivelyWithoutRestriction(subDomain, mail));
+		}
+		return users;
+	}
+
+	private List<User> findUserRecursivelyWithoutRestrictionByExternalUid(
+			AbstractDomain domain, @NotNull String externalUid) throws BusinessException {
+		List<User> users = new ArrayList<User>();
+		try {
+			// TODO FMA
+			User temp = findUserWithoutRestrictionByExternalUid(domain, externalUid);
+			if (temp != null) {
+				users.add(temp);
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+		}
+
+		List<AbstractDomain> abstractDomains = domainBusinessService.getSubDomainsByDomain(domain.getUuid());
+		for (AbstractDomain subDomain : abstractDomains) {
+			users.addAll(findUserRecursivelyWithoutRestrictionByExternalUid(subDomain, externalUid));
 		}
 		return users;
 	}
@@ -588,6 +619,21 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 			return null;
 		}
 		List<User> users = findUserRecursivelyWithoutRestriction(domain, mail);
+		logger.debug("End searchUserRecursivelyWithoutRestriction");
+		return users;
+	}
+
+	@Override
+	public List<User> searchUserRecursivelyWithoutRestrictionByExternalUid(
+			String domainIdentifier, String externalUid) throws BusinessException {
+		logger.debug("Begin searchUserRecursivelyWithoutRestriction");
+		AbstractDomain domain = retrieveDomain(domainIdentifier);
+		if (domain == null) {
+			logger.error("Impossible to find domain : " + domainIdentifier
+					+ ". This domain does not exist.");
+			return null;
+		}
+		List<User> users = findUserRecursivelyWithoutRestrictionByExternalUid(domain, externalUid);
 		logger.debug("End searchUserRecursivelyWithoutRestriction");
 		return users;
 	}

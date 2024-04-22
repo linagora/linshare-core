@@ -341,6 +341,37 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		return null;
 	}
 
+	@Override
+	public User findUserByExternalUid(AbstractDomain domain, UserProvider up, @NotNull String externalUid)
+			throws BusinessException {
+		if (up == null) {
+			return null;
+		}
+		UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
+
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			return getUserFromLdapByExternalUid(domain, externalUid, (LdapUserProvider) userProvider);
+
+		} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			if (!authentication.isAuthenticated()) {
+				// it means we are trying to find/create this profile during authentication process.
+				if ((OidcTokenWithClaims.class).isAssignableFrom(authentication.getClass())) {
+					return buildUserFromClaims(domain, (OIDCUserProvider) userProvider, ((OidcTokenWithClaims) authentication).getClaims());
+				}
+			} else {
+				// probably trying to discover a user.
+				logger.debug("UserProviderType.OIDC provider does not supported discovering new user.");
+			}
+		} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+			return twakeUserProviderService.findUser(domain, (TwakeUserProvider) userProvider, externalUid);
+		} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+			return twakeGuestUserProviderService.findUser(domain, (TwakeGuestUserProvider) userProvider, externalUid);
+		}
+		logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
+		return null;
+	}
+
 
 	@Nullable
 	private static Internal buildUserFromClaims(AbstractDomain domain, OIDCUserProvider userProvider, OidcLinShareUserClaims claims) {
@@ -384,6 +415,25 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		try {
 			user = ldapQueryService.getUser(ldapUserProvider.getLdapConnection(),
 					ldapUserProvider.getBaseDn(), ldapUserProvider.getPattern(), mail);
+			if (user != null) {
+				user.setDomain(domain);
+				user.setRole(domain.getDefaultRole());
+				user.setMailLocale(user.getDomain().getExternalMailLocale());
+				user.setExternalMailLocale(user.getDomain().getExternalMailLocale());
+			}
+		} catch (NamingException | IOException | CommunicationException e) {
+			logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
+		}
+		return user;
+	}
+
+	@Nullable
+	private User getUserFromLdapByExternalUid(AbstractDomain domain, String externalUid, LdapUserProvider userProvider) {
+		LdapUserProvider ldapUserProvider = userProvider;
+		User user = null;
+		try {
+			user = ldapQueryService.getUserByUid(ldapUserProvider.getLdapConnection(),
+					ldapUserProvider.getBaseDn(), ldapUserProvider.getPattern(), externalUid);
 			if (user != null) {
 				user.setDomain(domain);
 				user.setRole(domain.getDefaultRole());

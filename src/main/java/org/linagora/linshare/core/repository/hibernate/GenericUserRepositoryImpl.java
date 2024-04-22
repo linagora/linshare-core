@@ -26,6 +26,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -76,6 +77,23 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 			return users.get(0);
 		} else {
 			throw new IllegalStateException("Mail must be unique");
+		}
+	}
+
+	@Override
+	public U findByExternalUid(@NotNull String externalUid) {
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("ldapUid", externalUid));
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		List<U> users = findByCriteria(criteria);
+
+		if (users == null || users.isEmpty()) {
+			return null;
+		} else if (users.size() == 1) {
+			return users.get(0);
+		} else {
+			throw new IllegalStateException("Ldap uid must be unique");
 		}
 	}
 

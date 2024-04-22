@@ -341,7 +341,7 @@ public class UserRestServiceImplTest {
 
 	@Test
 	@WithMockUser(LinShareConstants.defaultRootMailAddress)
-	public void createExistingUserDoesNotUpdate() {
+	public void createExistingUserDoesUpdate() {
 		// Given
 		User userInDBBefore = userService.findUserInDB(topDomain2Dto.getUuid(), "amy.wolsh@linshare.org");
 		assertThat(userInDBBefore).isNotNull();
@@ -357,7 +357,7 @@ public class UserRestServiceImplTest {
 		// Then
 		assertThat(createdUserDto).isNotNull();
 		assertThat(createdUserDto.getUuid()).isNotBlank();
-		assertThat(createdUserDto.getLastName()).isEqualTo("Bar2");
+		assertThat(createdUserDto.getLastName()).isEqualTo("NotWolsh");
 		compareUserToDto(userInDBBefore, createdUserDto);
 		User userInDBAfter = userService.findUserInDB(topDomain2Dto.getUuid(), "amy.wolsh@linshare.org");
 		assertThat(userInDBAfter).isNotNull();

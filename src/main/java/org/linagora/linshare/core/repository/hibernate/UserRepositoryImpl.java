@@ -17,6 +17,7 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.springframework.orm.hibernate5.HibernateTemplate;
@@ -41,6 +42,17 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User>
 			return super.findByMail(login);
 		} catch (IllegalStateException e) {
 			logger.error("you are looking for account using login '" + login + "' but your login is not unique, same account logins in different domains.");;
+			logger.debug("error: " + e.getMessage());
+			throw e;
+		}
+	}
+
+	@Override
+	public User findByExternalUid(@NotNull String externalUid) {
+		try {
+			return super.findByExternalUid(externalUid);
+		} catch (IllegalStateException e) {
+			logger.error("you are looking for account using login '" + externalUid + "' but your login is not unique, same account logins in different domains.");;
 			logger.debug("error: " + e.getMessage());
 			throw e;
 		}

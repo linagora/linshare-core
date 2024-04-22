@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.hibernate.criterion.Order;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -36,6 +37,12 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
      * @return  user, null if not found.
      */
     T findByMail(String mail);
+
+	/** Find a user using its external uid.
+	 * @param externalUid
+	 * @return  user, null if not found.
+	 */
+	T findByExternalUid(@NotNull String externalUid);
     
     /**
      * Return a list of mails beginning with the text
