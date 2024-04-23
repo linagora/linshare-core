@@ -15,22 +15,12 @@
  */
 package org.linagora.linshare.webservice.external.impl;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
+import com.google.common.io.ByteSource;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.facade.webservice.external.AnonymousUrlFacade;
 import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto;
@@ -39,13 +29,9 @@ import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.webservice.external.AnonymousUrlRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
-import com.google.common.io.ByteSource;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 
 @Path("/anonymousurl")
@@ -55,9 +41,12 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 
 	private final AnonymousUrlFacade anonymousUrlFacade;
 
-	public AnonymousUrlRestServiceImpl(AnonymousUrlFacade anonymousUrlFacade) {
+	private final String noPasswordCookieValue;
+
+	public AnonymousUrlRestServiceImpl(AnonymousUrlFacade anonymousUrlFacade, String noPasswordCookieValue) {
 		super();
 		this.anonymousUrlFacade = anonymousUrlFacade;
+		this.noPasswordCookieValue = noPasswordCookieValue;
 	}
 
 	@GET
@@ -71,9 +60,8 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 	@Override
 	public Response getAnonymousUrl(
 			@PathParam(value = "urlUuid") String urlUuid,
-			@HeaderParam("linshare-anonymousurl-password") String password,
 			@Context HttpHeaders headers) {
-		password = loadPasswordFromCookie(urlUuid, password, headers);
+		String password = loadPasswordFromCookie(urlUuid, headers);
 		AnonymousUrlDto anonymousUrl = anonymousUrlFacade.find(urlUuid, password);
 		NewCookie cookie = new NewCookie(anonymousUrl.getUuid(), password);
 		Response.ResponseBuilder rb = Response.ok(anonymousUrl);
@@ -87,12 +75,10 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 	public ShareEntryDto getAnonymousShareEntry(
 			@PathParam(value = "urlUuid") String anonymousUrlUuid,
 			@PathParam(value = "shareEntryUuid") String shareEntryUuid,
-			@HeaderParam("linshare-anonymousurl-password") String password,
 			@Context HttpHeaders headers) {
-		password = loadPasswordFromCookie(anonymousUrlUuid, password, headers);
-		ShareEntryDto shareEntry = anonymousUrlFacade
+		String password = loadPasswordFromCookie(anonymousUrlUuid, headers);
+		return anonymousUrlFacade
 				.getShareEntry(anonymousUrlUuid, shareEntryUuid, password);
-		return shareEntry;
 	}
 
 	@GET
@@ -101,9 +87,8 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 	@Override
 	public Response download(@PathParam(value = "urlUuid") String urlUuid,
 			@PathParam(value = "shareEntryUuid") String shareEntryUuid,
-			@HeaderParam("linshare-anonymousurl-password") String password,
 			@Context HttpHeaders headers) {
-		password = loadPasswordFromCookie(urlUuid, password, headers);
+		String password = loadPasswordFromCookie(urlUuid, headers);
 		ShareEntryDto shareEntry = anonymousUrlFacade.getShareEntry(urlUuid,
 				shareEntryUuid, password);
 		ByteSource documentStream = anonymousUrlFacade.download(urlUuid,
@@ -123,10 +108,9 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 			@PathParam(value = "urlUuid") String anonymousUrlUuid,
 			@PathParam(value = "shareEntryUuid") String shareEntryUuid,
 			@PathParam(value = "kind") ThumbnailType thumbnailType,
-			@HeaderParam("linshare-anonymousurl-password") String password,
-			@QueryParam("base64") @DefaultValue("false") boolean base64, 
+			@QueryParam("base64") @DefaultValue("false") boolean base64,
 			@Context HttpHeaders headers) {
-		password = loadPasswordFromCookie(anonymousUrlUuid, password, headers);
+		String password = loadPasswordFromCookie(anonymousUrlUuid, headers);
 		ShareEntryDto shareEntry = anonymousUrlFacade.getShareEntry(anonymousUrlUuid, shareEntryUuid, password);
 		ByteSource byteSource = anonymousUrlFacade.getThumbnail(anonymousUrlUuid, shareEntryUuid, password,
 				thumbnailType);
@@ -135,14 +119,22 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 		return response.build();
 	}
 
-	protected String loadPasswordFromCookie(String urlUuid, String password, HttpHeaders headers) {
-		if (password == null) {
-			Cookie cookiePwd = headers.getCookies().get(urlUuid);
-			if (cookiePwd != null) {
-				// first time cookie does not exist.
-				password = cookiePwd.getValue();
-			}
+	protected String loadPasswordFromCookie(String urlUuid, HttpHeaders headers) {
+		String headerPassword = headers.getHeaderString("linshare-anonymousurl-password");
+		if (headerPassword != null) {
+			return headerPassword;
 		}
-		return password;
+
+		Cookie cookie = headers.getCookies().get(urlUuid);
+		if (cookie == null) {
+			return noPasswordCookieValue;
+		}
+
+		String cookiePassword = cookie.getValue();
+		if (cookiePassword == null) {
+			return noPasswordCookieValue;
+		}
+
+		return cookiePassword;
 	}
 }

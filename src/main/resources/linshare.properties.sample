@@ -325,6 +325,9 @@ linshare.mode.production=true
 # Maximum Number of stored passwords
 # password.history.max.number=10
 
+# Cookie value for shares without password
+# no.password.cookie.value=_
+
 ## OIDC Parameters
 # oidc.on=false
 # oidc.introspectionUri was introduced in 4.1 and abandoned in 4.2 for issuerUri.
