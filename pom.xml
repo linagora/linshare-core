@@ -2719,6 +2719,60 @@
 		</profile>
 
 		<profile>
+			<!-- Profile to use additionally to the profile integration-local, to enable OIDC/SSO support -->
+			<id>enable-oidc</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.jetty.ee8</groupId>
+							<artifactId>jetty-ee8-maven-plugin</artifactId>
+							<configuration>
+								<systemProperties combine.children="append">
+									<oidc.on>true</oidc.on>
+									<oidc.opaqueToken.lengh>64</oidc.opaqueToken.lengh>
+									<oidc.issuerUri>https://auth.linshare.local</oidc.issuerUri>
+									<oidc.client.id>linshare</oidc.client.id>
+									<oidc.client.secret>${env.integration.oidc.client.secret}</oidc.client.secret>
+									<oidc.access.claim.value>linshare</oidc.access.claim.value>
+									<javax.net.ssl.trustStore>${project.basedir}/src/main/oidc-runtime-resources/linshare-keystore.pfx</javax.net.ssl.trustStore>
+									<javax.net.ssl.trustStorePassword>${env.integration.oidc.trustStorePassword}
+									</javax.net.ssl.trustStorePassword>
+								</systemProperties>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>enforce-conf-intg-env-oidc</id>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireProperty>
+											<property>env.integration.oidc.client.secret</property>
+											<message>You must define in your Maven environment the property 'env.integration.oidc.client.secret' to set the secret of the integration environment OIDC client!</message>
+										</requireProperty>
+										<requireProperty>
+											<property>env.integration.oidc.trustStorePassword</property>
+											<message>You must define in your Maven environment the property 'env.integration.oidc.trustStorePassword' to set the password of the integration environment OIDC trust store!</message>
+										</requireProperty>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
 			<id>update-version</id>
 			<build>
 				<plugins>
