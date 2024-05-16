@@ -748,12 +748,50 @@ public class UserServiceImpl implements UserService {
 						.getDomain().getUuid(), user.getMail());
 			}
 			if (existingUser != null) {
-				existingUser.setFirstName(user.getFirstName());
-				existingUser.setLastName(user.getLastName());
-				existingUser.setMail(user.getMail());
+				final Account systemAccount = userRepository.getBatchSystemAccount();
+				final UserAuditLogEntry log = new UserAuditLogEntry(systemAccount, actor.orElse(existingUser),
+						LogAction.UPDATE, AuditLogEntryType.USER, existingUser);
+				log.setResource(new UserMto(existingUser));
+
+				boolean hasChanged = false;
+
+				final String existingUserFirstName = existingUser.getFirstName();
+				final String userFirstName = user.getFirstName();
+				if (existingUserFirstName != null && userFirstName != null) {
+					if (!existingUserFirstName.equals(userFirstName)) {
+						existingUser.setFirstName(userFirstName);
+						hasChanged = true;
+					}
+				}
+
+				final String existingUserLastName = existingUser.getLastName();
+				final String userLastName = user.getLastName();
+				if (existingUserLastName != null && userLastName != null) {
+					if (!existingUserLastName.equals(userLastName)) {
+						existingUser.setLastName(userLastName);
+						hasChanged = true;
+					}
+				}
+
+				final String existingUserMail = existingUser.getMail();
+				final String userMail = user.getMail();
+				if (existingUserMail != null && userMail != null) {
+					if (!existingUserMail.equals(userMail)) {
+						existingUser.setMail(userMail);
+						hasChanged = true;
+					}
+				}
+
 				// update
 				logger.debug("userRepository.update(existingUser)");
-				user = userRepository.update(existingUser);
+				if (hasChanged) {
+					user = userRepository.update(existingUser);
+					log.setResourceUpdated(new UserMto(user));
+					log.setCause(LogActionCause.USER_UPDATE);
+					logEntryService.insert(log);
+				} else {
+					user = existingUser;
+				}
 			} else {
 				logger.debug("userRepository.create(user)");
 				// create
