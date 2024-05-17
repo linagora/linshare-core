@@ -1,0 +1,2 @@
+[*.java]
+ij_java_imports_layout = $*, |, java.**, |, jakarta.**, |, javax.**, |, org.**, |, com.**, |, *, |
