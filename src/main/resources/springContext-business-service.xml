@@ -143,6 +143,14 @@
 		<constructor-arg ref="allowedContactRepository" />
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="passwordService" />
+		<constructor-arg ref="mailingListBusinessService" />
+		<constructor-arg ref="uploadRequestGroupBusinessService" />
+		<constructor-arg ref="entryBusinessService" />
+		<constructor-arg ref="shareEntryGroupBusinessService" />
+		<constructor-arg ref="shareEntryBusinessService" />
+		<constructor-arg ref="sharedSpaceNodeBusinessService" />
+		<constructor-arg ref="workGroupNodeBusinessService" />
+		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 	</bean>
 
 	<bean id="uploadRequestBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestBusinessServiceImpl">

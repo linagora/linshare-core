@@ -33,6 +33,8 @@ public interface GuestRepository extends UserRepository<Guest> {
 	 */
 	List<String> findOutdatedGuestIdentifiers();
 
+	List<String> findAllGuests();
+
 	List<String> findGuestsAboutToExpire(int nbDaysBeforeExpiration);
 
 	 /** Search some guests.
@@ -49,6 +51,7 @@ public interface GuestRepository extends UserRepository<Guest> {
 	void evict(Guest entity);
 
 	Guest findByDomainAndMail(AbstractDomain domain, String mail);
+	Guest findByMail(final String mail);
 
 	List<String> findAllWithDeprecatedPasswordEncoding();
 

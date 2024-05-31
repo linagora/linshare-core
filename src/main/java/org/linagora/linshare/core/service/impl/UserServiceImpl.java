@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -58,6 +59,7 @@ import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
+import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
@@ -99,6 +101,8 @@ public class UserServiceImpl implements UserService {
 	/** User repository. */
 	private final GuestRepository guestRepository;
 
+	private final InternalRepository internalRepository;
+
 	private final AllowedContactRepository allowedContactRepository;
 
 	private final SharedSpaceMemberService ssMemberService;
@@ -133,7 +137,8 @@ public class UserServiceImpl implements UserService {
 			final JwtLongTimeBusinessService jwtLongTimeBusinessService,
 			final SharedSpaceMemberService ssMemberService,
 			final PasswordService passwordService,
-			final ModeratorBusinessService moderatorBusinessService) {
+			final ModeratorBusinessService moderatorBusinessService,
+			final InternalRepository internalRepository) {
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
@@ -150,6 +155,7 @@ public class UserServiceImpl implements UserService {
 		this.ssMemberService = ssMemberService;
 		this.passwordService = passwordService;
 		this.moderatorBusinessService = moderatorBusinessService;
+		this.internalRepository = internalRepository;
 	}
 
 	@Override
@@ -167,6 +173,12 @@ public class UserServiceImpl implements UserService {
 	public User findDeleted(SystemAccount actor, String uuid) {
 		Validate.notEmpty(uuid, "User uuid must be set.");
 		return userRepository.findDeleted(uuid);
+	}
+
+	@Override
+	public Internal findInternalUserWithEmail(final SystemAccount actor, final String mail) {
+		Validate.notEmpty(mail, "User mail must be set.");
+		return this.internalRepository.findByMail(mail);
 	}
 
 	@Override

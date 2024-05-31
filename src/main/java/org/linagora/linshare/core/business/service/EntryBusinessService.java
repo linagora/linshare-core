@@ -22,7 +22,10 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessException;
+
+import javax.annotation.Nonnull;
 
 public interface EntryBusinessService {
 
@@ -34,5 +37,6 @@ public interface EntryBusinessService {
 
 	List<AnonymousShareEntry> findAllMyAnonymousShareEntries(User owner,
 			DocumentEntry entry);
+	void transferEntriesFromGuestToInternal(@Nonnull final Guest guestAccount,@Nonnull final User owner);
 
 }

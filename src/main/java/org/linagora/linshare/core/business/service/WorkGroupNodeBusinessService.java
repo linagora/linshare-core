@@ -32,6 +32,8 @@ import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.utils.DocumentCount;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
+import javax.annotation.Nonnull;
+
 public interface WorkGroupNodeBusinessService {
 
 	List<DocumentCount> findTotalOccurenceOfMimeTypeByDomain(List<String> workgroupsByDomains, Date bDate, Date eDate);
@@ -59,5 +61,7 @@ public interface WorkGroupNodeBusinessService {
 	void updateRelatedWorkGroupNodeResources(WorkGroupNode workGroupNode, Date dateNow);
 
 	Long computeAllWorkgroupNodesSize(String workGroupUuid);
+
+	void transferWorkGroupFromGuestToInternal(@Nonnull final User guest, @Nonnull final User author);
 
 }

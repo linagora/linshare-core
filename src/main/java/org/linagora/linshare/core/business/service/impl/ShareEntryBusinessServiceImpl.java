@@ -19,11 +19,12 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
@@ -31,11 +32,13 @@ import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+
 public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService {
 
-	private final ShareEntryRepository shareEntryRepository ;
+	private final ShareEntryRepository shareEntryRepository;
 
-	private final DocumentEntryRepository documentEntryRepository ;
+	private final DocumentEntryRepository documentEntryRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareEntryBusinessServiceImpl.class);
 
@@ -54,22 +57,22 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	@Override
 	public ShareEntry create(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException {
 		ShareEntry shareEntity;
-		if(sharingNote == null) {
+		if (sharingNote == null) {
 			sharingNote = "";
 		}
 		ShareEntry current_share = shareEntryRepository.getShareEntry(documentEntry, sender, recipient);
-		if(current_share == null) {
+		if (current_share == null) {
 			// if not, we create one
 			logger.debug("Creation of a new share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
-			ShareEntry share= new ShareEntry(sender, documentEntry.getName(), sharingNote, recipient, documentEntry, expirationDate, shareEntryGroup);
+			ShareEntry share = new ShareEntry(sender, documentEntry.getName(), sharingNote, recipient, documentEntry, expirationDate, shareEntryGroup);
 			shareEntity = shareEntryRepository.create(share);
 			documentEntry.incrementShared();
 		} else {
 			// if it does, we update the expiration date
-			logger.debug("The share (" + documentEntry.getUuid() +") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
+			logger.debug("The share (" + documentEntry.getUuid() + ") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
 			shareEntity = current_share;
 			shareEntity.setExpirationDate(expirationDate);
-			if(!sharingNote.isEmpty()) {
+			if (!sharingNote.isEmpty()) {
 				shareEntity.setComment(sharingNote);
 			}
 			shareEntryRepository.update(shareEntity);
@@ -127,5 +130,25 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	@Override
 	public List<ShareRecipientStatistic> getTopSharesByFileCount(List<String> domainUuids, String beginDate, String endDate, boolean addAnonymousShares) {
 		return shareEntryRepository.getTopSharesByFileCount(domainUuids, beginDate, endDate, addAnonymousShares);
+	}
+
+	@Override
+	public void transferShareEntryFromGuestToInternal(@Nonnull final Guest guestAccount, @Nonnull final User owner) {
+		logger.info("Start transferring the share entry from guest to internal");
+		final List<ShareEntry> shareEntries = this.findAllMyRecievedShareEntries(guestAccount);
+		if (shareEntries != null) {
+			for (final ShareEntry shareEntry : shareEntries) {
+				try {
+					shareEntry.setRecipient(owner);
+					this.shareEntryRepository.update(shareEntry);
+					logger.debug("Share entry transferred successfully");
+				} catch (final BusinessException | IllegalArgumentException e) {
+					logger.error("An error occurred while transferring the share entry from guest to internal", e);
+					throw e;
+				}
+			}
+		} else {
+			logger.debug("Error: the list of share entry is null");
+		}
 	}
 }

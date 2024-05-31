@@ -72,4 +72,7 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{ 'accountUuid' : ?0, 'node.parentUuid' : ?1, 'pristine' : ?2 }")
 	List<SharedSpaceMember> findAllMembersByParentAndAccountAndPristine(String accountUuid, String parentUuid,
 			boolean pristine);
+
+	@Query("{ 'account.uuid' : ?0 }")
+	List<SharedSpaceMember> findByAccountUuid(final String accountUuid);
 }

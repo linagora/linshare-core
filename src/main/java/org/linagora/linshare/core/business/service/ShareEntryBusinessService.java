@@ -23,7 +23,10 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessException;
+
+import javax.annotation.Nonnull;
 
 public interface ShareEntryBusinessService {
 
@@ -46,4 +49,6 @@ public interface ShareEntryBusinessService {
 	List<ShareRecipientStatistic> getTopSharesByFileSize(List<String> domainUuids, String beginDate, String endDate, boolean addAnonymousShares);
 
 	List<ShareRecipientStatistic> getTopSharesByFileCount(List<String> domainUuids, String beginDate, String endDate, boolean addAnonymousShares);
+
+	void transferShareEntryFromGuestToInternal(@Nonnull final Guest guestAccount, @Nonnull final User owner);
 }

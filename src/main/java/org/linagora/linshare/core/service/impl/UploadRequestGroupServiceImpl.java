@@ -604,4 +604,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		return uploadRequestGroupBusinessService.computeEntriesSize(uploadRequestGroup);
 	}
 
+	@Override
+	public void transferUploadRequestGroupsFromGuestToInternal(final Account guest, final Account owner) {
+		this.uploadRequestGroupBusinessService.transferUploadRequestGroupsFromGuestToInternal(guest,owner);
+	}
 }

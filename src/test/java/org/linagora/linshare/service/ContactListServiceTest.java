@@ -15,6 +15,11 @@
  */
 package org.linagora.linshare.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -23,7 +28,6 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +40,7 @@ import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -43,6 +48,7 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.ContactListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +78,7 @@ public class ContactListServiceTest {
 
 	// default import.sql
 	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
+	private static final String DOMAIN_GUEST_IDENTIFIER = LinShareConstants.guestDomainIdentifier;
 
 	private static final String FIRST_NAME = "first name";
 	private static final String LAST_NAME = "last name";
@@ -86,7 +93,7 @@ public class ContactListServiceTest {
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
-	
+
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
@@ -96,12 +103,15 @@ public class ContactListServiceTest {
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
-	
+
 	@Autowired
 	private ContactListService contactListService;
 
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
+
+	@Autowired
+	private GuestRepository guestRepository;
 
 	private AbstractDomain domain;
 
@@ -119,15 +129,25 @@ public class ContactListServiceTest {
 
 	private ContactListContact contact2;
 
+	private Guest guest;
+
+	private AbstractDomain guest_domain;
+
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
+
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
+		guest_domain = abstractDomainRepository.findById(DOMAIN_GUEST_IDENTIFIER);
+
 		internal = new Internal(FIRST_NAME, LAST_NAME, MAIL, UID);
 		internal.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		internal.setDomain(domain);
 		accountRepository.create(internal);
+
+		this.guest = guestRepository.findByMail(LinShareTestConstants.GUEST_ACCOUNT);
+		this.guest.setDomain(guest_domain);
 
 		contactList1 = new ContactList();
 		contactList1.setIdentifier(identifier1);
@@ -150,7 +170,7 @@ public class ContactListServiceTest {
 		contact = newContact(UID, CONTACT_MAIL);
 		contact1 = newContact(UID1, CONTACT_MAIL1);
 		contact2 = newContact(UID2, CONTACT_MAIL2);
-		Set<ContactListContact> contacts = new HashSet<>();
+		final Set<ContactListContact> contacts = new HashSet<>();
 		contacts.add(contact);
 		contacts.add(contact1);
 		contacts.add(contact2);
@@ -159,6 +179,7 @@ public class ContactListServiceTest {
 
 		logger.debug("End setUp");
 	}
+
 
 	@AfterEach
 	public void tearDown() throws Exception {
@@ -182,11 +203,11 @@ public class ContactListServiceTest {
 		contactList.setDescription("EP_TEST_v233<script>alert(document.cookie)</script>");
 		contactList.setContactListContacts(new HashSet<ContactListContact>());
 		contactListService.create(internal, internal, contactList);
-		Assertions.assertEquals(contactList.getIdentifier(), "EP_TEST_v233");
-		Assertions.assertEquals(contactList.getDescription(), "EP_TEST_v233");
+		assertEquals(contactList.getIdentifier(), "EP_TEST_v233");
+		assertEquals(contactList.getDescription(), "EP_TEST_v233");
 		ContactList deletedContactList = contactListService.findByIdentifier(internal.getLsUuid(),
 				contactList.getUuid());
-		Assertions.assertNull(deletedContactList);
+		assertNull(deletedContactList);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -203,23 +224,23 @@ public class ContactListServiceTest {
 		contactListService.create(internal, internal, contactList);
 		contactList.setIdentifier("EP_TEST_v233<script>alert(document.cookie)</script>");
 		contactListService.update(internal, internal, contactList);
-		Assertions.assertEquals(contactList.getIdentifier(), "EP_TEST_v233");
-		Assertions.assertEquals(contactList.getDescription(), "EP_TEST_v233");
+		assertEquals(contactList.getIdentifier(), "EP_TEST_v233");
+		assertEquals(contactList.getDescription(), "EP_TEST_v233");
 		ContactList deletedContactList = contactListService.findByIdentifier(internal.getLsUuid(),
 				contactList.getUuid());
-		Assertions.assertNull(deletedContactList);
+		assertNull(deletedContactList);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testfindMailingList1ByMemberEmail() throws BusinessException {
 		List<ContactList> contactLists = contactListService.findAllByMemberEmail(internal, internal, null, CONTACT_MAIL);
-		Assertions.assertEquals(contactLists.size(), 1, "just one list contains the member who has the mentioned email");
+		assertEquals(contactLists.size(), 1, "just one list contains the member who has the mentioned email");
 		ContactList duplicatedContactList = contactListService.duplicate(internal, internal, contactLists.get(0), "contactList duplicated");
-		Assertions.assertEquals(3, duplicatedContactList.getContactListContacts().size());
+		assertEquals(3, duplicatedContactList.getContactListContacts().size());
 		contactListService.deleteList(internal.getLsUuid(), duplicatedContactList.getUuid());
 		ContactList deletedContactList = contactListService.findByIdentifier(internal.getLsUuid(), duplicatedContactList.getUuid());
-		Assertions.assertNull(deletedContactList);
+		assertNull(deletedContactList);
 	}
 
 	@Test
@@ -235,11 +256,11 @@ public class ContactListServiceTest {
 		contactList.setPublic(false);
 		contactList.setDescription("fofo");
 		contactList.setContactListContacts(new HashSet<ContactListContact>());
-		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
 			contactListService.create(internal, internal, contactList);
 		});
-		Assertions.assertEquals(BusinessErrorCode.FORBIDDEN, exception.getErrorCode());
-		Assertions.assertEquals("You are not authorized to create an entry.", exception.getMessage());
+		assertEquals(BusinessErrorCode.FORBIDDEN, exception.getErrorCode());
+		assertEquals("You are not authorized to create an entry.", exception.getMessage());
 	}
 
 	/**
@@ -252,18 +273,17 @@ public class ContactListServiceTest {
 		canCreateContactListFunctionality.getActivationPolicy().setStatus(false);
 		functionalityRepository.update(canCreateContactListFunctionality);
 		ContactList duplicatedContactList = contactListService.duplicate(internal, internal, contactList1, "Copy");
-		Assertions.assertAll("Duplication fails", () -> {
-			Assertions.assertEquals(duplicatedContactList.getDomain(), contactList1.getDomain());
-			Assertions.assertEquals(duplicatedContactList.getDescription(), contactList1.getDescription());
-			Assertions.assertEquals(duplicatedContactList.getOwner(), contactList1.getOwner());
-			Assertions.assertEquals(duplicatedContactList.isPublic(), contactList1.isPublic());
+		assertAll("Duplication fails", () -> {
+			assertEquals(duplicatedContactList.getDomain(), contactList1.getDomain());
+			assertEquals(duplicatedContactList.getDescription(), contactList1.getDescription());
+			assertEquals(duplicatedContactList.getOwner(), contactList1.getOwner());
+			assertEquals(duplicatedContactList.isPublic(), contactList1.isPublic());
 		});
-		// When the list is private and the actor is not the owner of original list
 		contactList1.setPublic(false);
-		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
 			contactListService.duplicate(john, john, contactList1, "Copy");
 		});
-		Assertions.assertEquals(BusinessErrorCode.CONTACT_LIST_DUPLICATION_FORBIDDEN, exception.getErrorCode());
+		assertEquals(BusinessErrorCode.CONTACT_LIST_DUPLICATION_FORBIDDEN, exception.getErrorCode());
 	}
 
 	// helpers
@@ -276,5 +296,15 @@ public class ContactListServiceTest {
 		newContact.setCreationDate(new Date());
 		newContact.setModificationDate(new Date());
 		return newContact;
+	}
+
+	@Test
+	public void testUpdateGuestAccountDomainId() throws BusinessException {
+
+		final List<ContactList> contacts = contactListService.findAllListManagedByUser(guest.getLsUuid());
+		for (final ContactList contactList : contacts) {
+			this.contactListService.transferContactListFromGuestToInternal(guest, internal);
+			assertEquals(internal.getDomain().getPersistenceId(), contactList.getDomain().getPersistenceId());
+		}
 	}
 }

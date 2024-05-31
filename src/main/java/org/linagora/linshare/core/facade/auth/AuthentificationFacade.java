@@ -19,9 +19,13 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
+
+import javax.annotation.Nonnull;
 
 public interface AuthentificationFacade {
 
@@ -64,4 +68,8 @@ public interface AuthentificationFacade {
 	public boolean isJwtLongTimeFunctionalityEnabled(String domainUuid);
 
 	OIDCUserProviderDto findOidcProvider(List<String> domainDiscriminators);
+
+	void convertGuestToInternalUser(@Nonnull final SystemAccount systemAccount, @Nonnull final Account authUser, @Nonnull final User guestUser);
+
+	void deleteUser(@Nonnull final SystemAccount systemAccount, @Nonnull final String uuid) throws BusinessException;
 }

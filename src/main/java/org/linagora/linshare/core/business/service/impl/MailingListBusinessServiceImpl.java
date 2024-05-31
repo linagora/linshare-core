@@ -19,17 +19,20 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.ContactList;
-import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 public class MailingListBusinessServiceImpl implements MailingListBusinessService {
 
@@ -121,6 +124,28 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 		}
 		List<AbstractDomain> domains = domainPermissionBusinessService.getMyAdministratedDomains(user);
 		return listRepository.findAllByDomains(domains);
+	}
+
+	@Override
+	public void transferContactListFromGuestToInternal(@Nonnull final Guest guest, @Nonnull final Account authUser) {
+		logger.info("Start transferring the contact list from guest to internal");
+		final List<ContactList> contacts = this.findAllListByUser(guest);
+		if (contacts != null) {
+			final AbstractDomain domain = authUser.getDomain();
+			for (final ContactList contactList : contacts) {
+				try {
+					contactList.setDomain(domain);
+					contactList.setOwner((User) authUser);
+					this.listRepository.update(contactList);
+					logger.debug("Contact list transferred successfully");
+				} catch (final BusinessException | IllegalArgumentException e) {
+					logger.error("An error occurred while transferring the contact list from guest to internal", e);
+					throw e;
+				}
+			}
+		} else {
+			logger.debug("Error: Contact list is null");
+		}
 	}
 
 	@Override

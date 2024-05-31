@@ -18,8 +18,11 @@ package org.linagora.linshare.core.business.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
+
+import javax.annotation.Nonnull;
 
 public interface ShareEntryGroupBusinessService {
 
@@ -40,4 +43,6 @@ public interface ShareEntryGroupBusinessService {
 	List<String> findAllToPurge();
 
 	List<ShareEntryGroup> findAll(Account owner) throws BusinessException;
+
+	void transferShareEntryGroupFromGuestToInternal(@Nonnull final Guest guest, @Nonnull final Account owner);
 }

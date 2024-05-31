@@ -81,8 +81,6 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		preChecks(authUser, actor);
 		Validate.notNull(moderator, "Moderator must be set.");
 		Validate.notNull(moderator.getAccount(), "Moderator's account should be set");
-		Validate.notNull(moderator.getGuest(), "Moderator's guest should be set");
-		Validate.notEmpty(moderator.getGuest().getLsUuid(), "Guest's uuid must be set");
 		checkCreatePermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_CREATE, moderator, onGuestCreation);
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
 		List<Moderator> moderators = moderatorBusinessService.findAllByGuest(guest, null, null);
@@ -177,7 +175,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		Validate.notEmpty(guestUuid, "Guest's uuid must be set.");
 		Guest guest = guestBusinessService.findByLsUuid(guestUuid);
 		checkListPermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATORS_CANNOT_GET, null, guest);
-		if(Objects.isNull(guest)) {
+		if (Objects.isNull(guest)) {
 			String errMsg = String.format("Guest with uuid: %1$s not found, cannot get its moderators list", guestUuid);
 			logger.debug(errMsg);
 			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND, errMsg);

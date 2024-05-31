@@ -24,12 +24,19 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
 import org.linagora.linshare.core.repository.EntryRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 public class EntryBusinessServiceImpl implements EntryBusinessService {
+
+	private static final Logger logger = LoggerFactory.getLogger(EntryBusinessServiceImpl.class);
 
 	private final EntryRepository entryRepository;
 
@@ -69,4 +76,25 @@ public class EntryBusinessServiceImpl implements EntryBusinessService {
 			DocumentEntry entry) {
 		return anonymousShareEntryRepository.findAllMyAnonymousShareEntries(owner, entry);
 	}
+
+	@Override
+	public void transferEntriesFromGuestToInternal(@Nonnull final Guest guestAccount,@Nonnull final User owner) {
+		final List<Entry> entries = entryRepository.findAllMyEntries(guestAccount);
+		if (entries != null) {
+			logger.debug("Start transferring entries from guest to internal");
+			for (final Entry entry : entries) {
+				try {
+					entry.setEntryOwner(owner);
+					entryRepository.update(entry);
+					logger.debug("the entry is transferred successfully");
+				} catch (final BusinessException | IllegalArgumentException e) {
+					logger.error("An error occurred while transferring entries from guest to internal");
+					throw e;
+				}
+			}
+		} else {
+			logger.debug("entry list is null");
+		}
+	}
+
 }

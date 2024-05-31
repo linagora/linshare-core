@@ -33,4 +33,6 @@ public interface EntryRepository extends AbstractRepository<Entry> {
 	public List<Entry> getOutdatedEntry();
 
 	public List<Entry> findAllMyShareEntries(User owner);
+
+	public List<Entry> findAllMyEntries(final User owner);
 }

@@ -139,6 +139,10 @@
 	<b:bean id="oidcAuthenticationTokenDetailsFactory" class="org.linagora.linshare.auth.oidc.OidcAuthenticationTokenDetailsFactory">
 		<b:constructor-arg ref="authentificationFacade" />
 		<b:constructor-arg value="${oidc.access.claim.value}"/>
+		<b:constructor-arg ref="guestRepository" />
+		<b:constructor-arg ref="accountRepository" />
+		<b:constructor-arg ref="userService" />
+		<b:constructor-arg value="${linshare.user.guest.conversion.enable}"/>
 	</b:bean>
 
 	<b:bean id="oidcOpaqueAuthenticationProvider" class="org.linagora.linshare.auth.oidc.OidcOpaqueAuthenticationProvider">

@@ -38,4 +38,7 @@ public interface SharedSpaceNodeMongoRepository extends MongoRepository<SharedSp
 
 	@Query(value = "{ 'domainUuid' : ?0 , 'parentUuid' : ?1, nodeType: 'WORK_GROUP' }", count = true)
 	Long countNestedWorkgroups(String domainUuid, String parentUuid);
+
+	@Query("{ 'author.uuid' : ?0 }")
+	List<SharedSpaceNode> findByAuthorUuid(final String authorUuid);
 }

@@ -45,12 +45,13 @@ import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.light.AuditDownloadLightEntity;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.NodeMetadataMto;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.linagora.linshare.utils.DocumentCount;
@@ -72,6 +73,8 @@ import org.springframework.data.mongodb.core.query.Update;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
+import javax.annotation.Nonnull;
+
 public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessService {
 
 	protected Logger logger = LoggerFactory.getLogger(WorkGroupNodeBusinessServiceImpl.class);
@@ -85,7 +88,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 	protected final DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService;
 
 	protected final MongoTemplate mongoTemplate;
-	
+
 	protected final WorkGroupNodeMongoRepository repository;
 
 	public WorkGroupNodeBusinessServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
@@ -225,12 +228,12 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 	private Criteria filterCriteria(Object minValue, Object maxValue, String field) {
 		Criteria criteria = new Criteria();
 		if (minValue != null && maxValue != null) {
-			 criteria = Criteria.where(field).gte(minValue).lte(maxValue);
+			criteria = Criteria.where(field).gte(minValue).lte(maxValue);
 		} else if (minValue != null) {
-			criteria =  Criteria.where(field).gte(minValue);
-		} else if (maxValue != null){
+			criteria = Criteria.where(field).gte(minValue);
+		} else if (maxValue != null) {
 			criteria = Criteria.where(field).lte(maxValue);
-		} 
+		}
 		return criteria;
 	}
 
@@ -254,7 +257,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		}
 		return typesQuery;
 	}
-	
+
 	@Override
 	public List<WorkGroupNode> findAllSubDocuments(WorkGroup workGroup, String pattern) {
 		Query query = new Query();
@@ -345,6 +348,7 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 
 	/**
 	 * Transform a path from uuid,uuid.. to /nodeName1/NodeName2..
+	 *
 	 * @return String
 	 */
 	private String getGlobalPath(Map<String, WorkGroupNode> nodes, String path, WorkGroupNode root) {
@@ -417,5 +421,27 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 			return 0L;
 		}
 		return result.getSize();
+	}
+
+	@Override
+	public void transferWorkGroupFromGuestToInternal(@Nonnull final User guest, @Nonnull final User author) {
+		final List<WorkGroupNode> workGroupNodes = this.repository.findByLastAuthorUuid(guest.getLsUuid());
+		if (workGroupNodes != null) {
+			logger.debug("start sharing workgroup from guest to internal user");
+			try {
+				for (final WorkGroupNode workGroupNode : workGroupNodes) {
+					final AccountMto newAuthor = new AccountMto(author);
+					workGroupNode.setLastAuthor(newAuthor);
+
+					this.repository.save(workGroupNode);
+					logger.debug("the work group is shared successfully");
+				}
+			} catch (final BusinessException | IllegalArgumentException e) {
+				logger.error("An error occurred while sharing the work group", e);
+				throw e;
+			}
+		} else {
+			logger.debug("the list of work group is null");
+		}
 	}
 }

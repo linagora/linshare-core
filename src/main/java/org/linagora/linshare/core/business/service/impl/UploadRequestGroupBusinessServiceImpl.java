@@ -23,9 +23,15 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 public class UploadRequestGroupBusinessServiceImpl implements
 		UploadRequestGroupBusinessService {
+
+	private static final Logger logger = LoggerFactory.getLogger(UploadRequestGroupBusinessServiceImpl.class);
 
 	private final UploadRequestGroupRepository uploadRequestGroupRepository;
 
@@ -82,5 +88,26 @@ public class UploadRequestGroupBusinessServiceImpl implements
 	@Override
 	public Long computeEntriesSize(UploadRequestGroup uploadRequestGroup) {
 		return uploadRequestGroupRepository.computeEntriesSize(uploadRequestGroup);
+	}
+
+	@Override
+	public void transferUploadRequestGroupsFromGuestToInternal(@Nonnull final Account guest, @Nonnull final Account owner) {
+		final List<UploadRequestGroup> uploadRequestGroups = this.uploadRequestGroupRepository.findAllByAccountAndDomain(guest, guest.getDomain());
+		if (uploadRequestGroups != null && !uploadRequestGroups.isEmpty()) {
+			logger.debug("Start transferring the upload request groups from guest to internal");
+			for (final UploadRequestGroup uploadRequestGroup : uploadRequestGroups) {
+				try {
+					uploadRequestGroup.setAbstractDomain(owner.getDomain());
+					uploadRequestGroup.setOwner(owner);
+					this.uploadRequestGroupRepository.update(uploadRequestGroup);
+					logger.debug("Upload request group transferred successfully");
+				} catch (final BusinessException | IllegalArgumentException e) {
+					logger.error("An error occurred while transferring upload request group from guest to internal", e);
+					throw e;
+				}
+			}
+		} else {
+			logger.debug("Upload request groups list is null or empty");
+		}
 	}
 }

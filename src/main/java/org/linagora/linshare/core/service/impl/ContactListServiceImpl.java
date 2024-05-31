@@ -29,6 +29,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.MailingListResourceAccessControl;
@@ -85,6 +86,11 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 				LogAction.CREATE, AuditLogEntryType.CONTACTS_LISTS, res);
 		logEntryService.insert(log);
 		return res;
+	}
+
+	@Override
+	public void transferContactListFromGuestToInternal(final Guest guest, final Account authUser) {
+		this.contactListBusinessService.transferContactListFromGuestToInternal(guest,authUser);
 	}
 
 	@Override

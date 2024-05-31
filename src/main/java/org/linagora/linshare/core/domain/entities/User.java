@@ -83,6 +83,22 @@ public abstract class User extends Account {
 		this.externalMailLocale = Language.ENGLISH;
 	}
 
+	public User(final String firstName, final String lastName, final String mail,final String lsUuid) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.setMail(mail);
+		this.lsUuid = lsUuid;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+		this.role = Role.SIMPLE;
+		this.enable = true;
+		this.destroyed = 0;
+		this.canUpload = true;
+		this.canCreateGuest = true;
+		this.mailLocale = Language.ENGLISH;
+		this.externalMailLocale = Language.ENGLISH;
+	}
+
 	public User(UserDto userDto) {
 		this.lsUuid = userDto.getUuid();
 		this.firstName = userDto.getFirstName();

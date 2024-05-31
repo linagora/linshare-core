@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
@@ -26,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+
+import javax.annotation.Nonnull;
 
 public class ShareEntryGroupBusinessServiceImpl
 		implements ShareEntryGroupBusinessService {
@@ -90,4 +93,23 @@ public class ShareEntryGroupBusinessServiceImpl
 		return repository.findAll(owner);
 	}
 
+	@Override
+	public void transferShareEntryGroupFromGuestToInternal(@Nonnull final Guest guest, @Nonnull final Account owner) {
+		logger.info("Start transferring the share entry group from guest to internal");
+		final List<ShareEntryGroup> entriesGroup = this.findAll(guest);
+		if (entriesGroup != null) {
+			for (final ShareEntryGroup shareEntryGroup : entriesGroup) {
+				try {
+					shareEntryGroup.setOwner(owner);
+					this.repository.update(shareEntryGroup);
+					logger.debug("Share entry group transferred successfully");
+				} catch (final BusinessException | IllegalArgumentException e) {
+					logger.error("An error occurred while transferring the entry group from guest to internal");
+					throw e;
+				}
+			}
+		} else {
+			logger.debug("the list of entry group is null");
+		}
+	}
 }

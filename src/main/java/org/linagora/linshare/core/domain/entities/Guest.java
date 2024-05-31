@@ -70,6 +70,14 @@ public class Guest extends User {
 		this.role = Role.SIMPLE;
 	}
 
+	public Guest(final String firstName, final String lastName, final String mail, final String lsUuid) {
+		super(firstName, lastName, mail,lsUuid);
+		this.restricted = false;
+		this.comment = "";
+		this.canCreateGuest = false;
+		this.role = Role.SIMPLE;
+	}
+
 	@Override
 	public AccountType getAccountType() {
 		return AccountType.GUEST;

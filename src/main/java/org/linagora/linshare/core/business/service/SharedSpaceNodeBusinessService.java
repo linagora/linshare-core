@@ -17,8 +17,11 @@ package org.linagora.linshare.core.business.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+
+import javax.annotation.Nonnull;
 
 public interface SharedSpaceNodeBusinessService {
 
@@ -45,4 +48,6 @@ public interface SharedSpaceNodeBusinessService {
 	 * Used for old Admins API only
 	 */
 	List<SharedSpaceNode> findAllRootWorkgroups();
+
+	void transferWorkspaceFromGuestToInternal(@Nonnull final User guest, @Nonnull final User author);
 }

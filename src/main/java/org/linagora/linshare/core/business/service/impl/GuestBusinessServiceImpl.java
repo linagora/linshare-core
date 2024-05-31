@@ -19,8 +19,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
+import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
+import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.business.service.PasswordService;
+import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
+import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
+import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -35,11 +45,15 @@ import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 
 public class GuestBusinessServiceImpl implements GuestBusinessService {
+
+	private static final Logger logger = LoggerFactory.getLogger(GuestBusinessServiceImpl.class);
 
 	private final GuestRepository guestRepository;
 
@@ -48,19 +62,43 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	private final AllowedContactRepository allowedContactRepository;
 
 	private final PasswordService passwordService;
+	private final MailingListBusinessService mailingListBusinessServiceImpl;
 
 	private final RecipientFavouriteRepository recipientFavouriteRepository;
+	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
+	private final EntryBusinessService entryBusinessService;
+	private final ShareEntryGroupBusinessService shareEntryGroupBusiness;
+	private final ShareEntryBusinessService shareEntryBusinessService;
+	private final SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService;
+	private final WorkGroupNodeBusinessService workGroupNodeBusinessService;
+	private final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
 
 	public GuestBusinessServiceImpl(final GuestRepository guestRepository,
 			final UserRepository<User> userRepository,
 			final AllowedContactRepository allowedContactRepository,
 			final RecipientFavouriteRepository recipientFavouriteRepository,
-			final PasswordService passwordService) {
+			final PasswordService passwordService,
+			final MailingListBusinessServiceImpl mailingListBusinessServiceImpl,
+			final UploadRequestGroupBusinessServiceImpl uploadRequestGroupBusinessService,
+			final EntryBusinessService entryBusinessService,
+			final ShareEntryGroupBusinessService shareEntryGroupBusiness,
+			final ShareEntryBusinessService shareEntryBusinessService,
+			final SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService,
+			final WorkGroupNodeBusinessService workGroupNodeBusinessService,
+			final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
 		this.guestRepository = guestRepository;
 		this.userRepository = userRepository;
 		this.allowedContactRepository = allowedContactRepository;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
 		this.passwordService = passwordService;
+		this.mailingListBusinessServiceImpl = mailingListBusinessServiceImpl;
+		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
+		this.entryBusinessService = entryBusinessService;
+		this.shareEntryGroupBusiness = shareEntryGroupBusiness;
+		this.shareEntryBusinessService = shareEntryBusinessService;
+		this.sharedSpaceNodeBusinessService = sharedSpaceNodeBusinessService;
+		this.workGroupNodeBusinessService = workGroupNodeBusinessService;
+		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
 	}
 
 	@Override
@@ -99,6 +137,11 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	@Override
 	public List<String> findOutdatedGuestIdentifiers() {
 		return guestRepository.findOutdatedGuestIdentifiers();
+	}
+
+	@Override
+	public List<String> findAllGuests() {
+		return this.guestRepository.findAllGuests();
 	}
 
 	@Override
@@ -277,5 +320,75 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			// no need to filter by domains since we want only guests which moderatorAccount is moderator.
 			return guestRepository.findAll(authorizedDomains, moderatorAccount.get(), moderatorRole, pattern);
 		}
+	}
+
+	@Override
+	public Account convertGuestToInternalUser(@Nonnull final Account internalAccount,
+			@Nonnull final Guest guestAccount) {
+		logger.info("Starting conversion of guest to internal user for user: {}", guestAccount.getMail());
+
+		// Check if guest account is null
+		if (guestAccount == null) {
+			logger.error("No guest account found for user: {}", guestAccount.getMail());
+			throw new BusinessException(BusinessErrorCode.GUEST_CONVERSION_FAILED,
+					"No guest account found for the user.");
+		}
+
+		// Transfer the objects of guest account to internal
+		this.transferContactListFromGuestToInternal(guestAccount, internalAccount);
+		this.transferUploadRequestGroupsFromGuestToInternal(guestAccount, internalAccount);
+		this.transferEntriesFromGuestToInternal(guestAccount, internalAccount);
+		this.transferShareEntryFromGuestToInternal(guestAccount, internalAccount);
+		this.transferShareEntryGroupFromGuestToInternal(guestAccount, internalAccount);
+		this.transferWorkspaceFromGuestToInternal(guestAccount, internalAccount);
+		this.transferWorkGroupFromGuestToInternal(guestAccount, internalAccount);
+		this.transferSpaceMemberFromGuestToInternal(guestAccount, internalAccount);
+
+		logger.debug("Guest conversion to internal user completed successfully for user: {}",
+				internalAccount.getMail());
+		return internalAccount;
+	}
+
+	private void transferSpaceMemberFromGuestToInternal(@Nonnull final Guest guestAccount,
+			@Nonnull final Account internalAccount) {
+		this.sharedSpaceMemberBusinessService.transferSharedSpaceMemberFromGuestToInternal(guestAccount,
+				(User) internalAccount);
+	}
+
+	private void transferWorkGroupFromGuestToInternal(@Nonnull final Guest guestAccount,
+			@Nonnull final Account internalAccount) {
+		this.workGroupNodeBusinessService.transferWorkGroupFromGuestToInternal(guestAccount, (User) internalAccount);
+	}
+
+	private void transferWorkspaceFromGuestToInternal(@Nonnull final Guest guestAccount,
+			@Nonnull final Account internalAccount) {
+		this.sharedSpaceNodeBusinessService.transferWorkspaceFromGuestToInternal(guestAccount, (User) internalAccount);
+	}
+
+	private void transferShareEntryFromGuestToInternal(@Nonnull final Guest guestAccount,
+			@Nonnull final Account internalAccount) {
+		this.shareEntryBusinessService.transferShareEntryFromGuestToInternal(guestAccount, (User) internalAccount);
+	}
+
+	private void transferShareEntryGroupFromGuestToInternal(@Nonnull final Guest guestAccount,
+			@Nonnull final Account internalAccount) {
+		this.shareEntryGroupBusiness.transferShareEntryGroupFromGuestToInternal(guestAccount, internalAccount);
+	}
+
+	private void transferEntriesFromGuestToInternal(@Nonnull final Guest guestAccount,
+			@Nonnull final Account internalAccount) {
+		this.entryBusinessService.transferEntriesFromGuestToInternal(guestAccount, (User) internalAccount);
+	}
+
+	private void transferContactListFromGuestToInternal(@Nonnull final Guest guestAccount,
+			@Nonnull final Account authUser) {
+		logger.debug("Transferring mailing lists.");
+		this.mailingListBusinessServiceImpl.transferContactListFromGuestToInternal(guestAccount, authUser);
+	}
+
+	private void transferUploadRequestGroupsFromGuestToInternal(@Nonnull final Guest guestAccount,
+			@Nonnull final Account authUser) {
+		logger.debug("Transferring upload request groups.");
+		this.uploadRequestGroupBusinessService.transferUploadRequestGroupsFromGuestToInternal(guestAccount, authUser);
 	}
 }

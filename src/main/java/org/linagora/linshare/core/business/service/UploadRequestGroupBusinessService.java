@@ -22,6 +22,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import javax.annotation.Nonnull;
+
 public interface UploadRequestGroupBusinessService {
 
 	List<UploadRequestGroup> findAll(Account owner, List<UploadRequestStatus> uploadRequestStatus);
@@ -43,4 +45,6 @@ public interface UploadRequestGroupBusinessService {
 	Integer countNbrUploadedFiles(UploadRequestGroup uploadRequestGroup);
 
 	Long computeEntriesSize(UploadRequestGroup uploadRequestGroup);
+
+	void transferUploadRequestGroupsFromGuestToInternal(@Nonnull final Account guest, @Nonnull final Account owner);
 }

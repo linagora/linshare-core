@@ -26,6 +26,7 @@ import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
 
@@ -172,6 +173,8 @@ public interface UserService {
 	User findAccountsReadyToPurge(SystemAccount actor, String uuid);
 
 	User findDeleted(SystemAccount actor, String uuid);
+
+	Internal findInternalUserWithEmail(final SystemAccount actor, final String mail);
 
 	boolean updateUserEmail(Account actor, String currentEmail, String newEmail);
 

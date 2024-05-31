@@ -24,6 +24,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -128,5 +129,13 @@ public class UploadRequestGroupRepositoryImpl extends
 			Restrictions.eq("status", UploadRequestStatus.CLOSED)
 		));
 		return DataAccessUtils.longResult(findByCriteria(det));
+	}
+
+	@Override
+	public List<UploadRequestGroup> findAllByAccountAndDomain(final Account owner, final AbstractDomain abstractDomain) {
+		final DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("owner", owner));
+		det.add(Restrictions.eq("abstractDomain", abstractDomain));
+		return this.findByCriteria(det);
 	}
 }

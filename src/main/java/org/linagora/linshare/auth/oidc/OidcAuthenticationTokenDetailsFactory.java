@@ -23,9 +23,16 @@ import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationExceptionCode;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
+import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -42,28 +49,66 @@ import java.util.List;
  * Loading data from the LinShare database by the information from the oAUth2 provider.
  */
 public class OidcAuthenticationTokenDetailsFactory {
-
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private AuthentificationFacade authentificationFacade;
 
 	private String linshareAccessClaimValue;
+	private final GuestRepository guestRepository;
+	private final boolean enableGuestConversion;
+	protected final AccountRepository<Account> accountRepository;
+	private final UserService userService;
 
-	public OidcAuthenticationTokenDetailsFactory(AuthentificationFacade authentificationFacade,
-												 String linshareAccessClaimValue) {
-		this.authentificationFacade  = authentificationFacade;
+	public OidcAuthenticationTokenDetailsFactory(final AuthentificationFacade authentificationFacade,
+												 final String linshareAccessClaimValue,
+												 final GuestRepository guestRepository,
+												 final AccountRepository<Account> accountRepository,
+												 final UserService userService,
+												 final boolean enableGuestConversion) {
+		this.authentificationFacade = authentificationFacade;
 		this.linshareAccessClaimValue = linshareAccessClaimValue;
+		this.guestRepository = guestRepository;
+		this.accountRepository = accountRepository;
+		this.userService = userService;
+		this.enableGuestConversion = enableGuestConversion;
 	}
 
 	@NotNull
-	UsernamePasswordAuthenticationToken getAuthenticationToken(OidcLinShareUserClaims claims) {
+	UsernamePasswordAuthenticationToken getAuthenticationToken(final OidcLinShareUserClaims claims) {
 		Validate.notNull(claims, "Missing user claims.");
-
-		User foundUser = getUserFromClaims(claims);
+		final SystemAccount actor = getSystemAccount();
+		final User foundUser = getUserFromClaims(claims);
 		Validate.notNull(foundUser, "User should have been set or created by now.");
-		logger.info(String.format("Successful authentication of  %1$s with OIDC opaque token : %2$s", foundUser.getLsUuid(), claims.getEmail()));
+		logger.info(String.format("Successful authentication of %1$s with OIDC opaque token : %2$s", foundUser.getLsUuid(), claims.getEmail()));
+		logger.debug("Checking if guest conversion is enabled");
+
+		if (enableGuestConversion) {
+			final Guest guestAccount = guestRepository.findByMail(foundUser.getMail());
+			final Internal internalUser = userService.findInternalUserWithEmail(actor, foundUser.getMail());
+
+			if (guestAccount != null && internalUser != null) {
+				logger.debug("Guest user found: {} with account type: {}", guestAccount.getMail(), guestAccount.getAccountType());
+				authentificationFacade.convertGuestToInternalUser(actor, foundUser, guestAccount);
+				logger.info("Guest converted to internal user: {}", foundUser.getMail());
+				logger.debug("Deleting the guest");
+				authentificationFacade.deleteUser(actor, guestAccount.getLsUuid());
+			} else {
+				if (guestAccount == null) {
+					logger.debug("No guest account found for user: {}", foundUser.getMail());
+				}
+				if (internalUser == null) {
+					logger.debug("No internal user found for user: {}", foundUser.getMail());
+				}
+			}
+		} else {
+			logger.info("Guest conversion is not enabled. Cannot convert guest user: {}", foundUser.getMail());
+		}
 
 		return buildAuthenticationToken(foundUser);
+	}
+
+	protected SystemAccount getSystemAccount() {
+		return accountRepository.getBatchSystemAccount();
 	}
 
 	@NotNull

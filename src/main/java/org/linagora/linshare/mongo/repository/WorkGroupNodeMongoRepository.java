@@ -54,4 +54,6 @@ public interface WorkGroupNodeMongoRepository extends MongoRepository<WorkGroupN
 
 	WorkGroupNode deleteByWorkGroupAndParent(WorkGroup workGroup, WorkGroupNode workGroupNode);
 
+	@Query("{ 'lastAuthor.uuid' : ?0 }")
+	List<WorkGroupNode> findByLastAuthorUuid(final String lastAuthorUuid);
 }

@@ -74,6 +74,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mongodb.client.result.UpdateResult;
 
+import javax.annotation.Nonnull;
+
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -586,6 +588,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	/**
 	 * This method will count the orphan sharedSpaceNodes
+	 *
 	 * @return {@link Long}
 	 */
 	private Long countOrphanNodes(List<AggregationOperation> nodeOperations) {
@@ -600,9 +603,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return count;
 	}
 
-	
 	/**
 	 * This method will return all SharedSpaceNodeNested uuids
+	 *
 	 * @return {@link List} list of string.
 	 */
 	private Set<String> getNestedNodeUuids() {
@@ -618,6 +621,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	/**
 	 * This method will return aggregation operation of root sharedSpaceNodes which does not exist in SharedSpaceNodeNestedUuids
+	 *
 	 * @return {@link List} list of AggregationOperation.
 	 */
 	private List<AggregationOperation> getNodeAggregations(Set<String> sharedSpacesUuids) {
@@ -681,5 +685,28 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		container.validateTotalPagesCount(count);
 		List<SharedSpaceMember> members = mongoTemplate.find(query, SharedSpaceMember.class);
 		return container.loadData(members);
+	}
+
+	@Override
+	public void transferSharedSpaceMemberFromGuestToInternal(@Nonnull final User guest, @Nonnull final User author) {
+		logger.info("start sharing space node member from guest to internal user");
+		final List<SharedSpaceMember> sharedSpaceMembers = this.repository.findByAccountUuid(guest.getLsUuid());
+		if (!sharedSpaceMembers.isEmpty()) {
+			for (final SharedSpaceMember sharedSpaceMember : sharedSpaceMembers) {
+				try {
+					final SharedSpaceAccount newAuthor = new SharedSpaceAccount(author);
+					sharedSpaceMember.setAccount(newAuthor);
+					SharedSpaceNodeNested sharedSpaceNodeNested = sharedSpaceMember.getNode();
+					sharedSpaceNodeNested.setDomainUuid(author.getDomain().getUuid());
+					this.repository.save(sharedSpaceMember);
+					logger.debug("the shared space member is shared successfully");
+				} catch (final BusinessException | IllegalArgumentException e) {
+					logger.error("An error occurred while updating share space member", e);
+					throw e;
+				}
+			}
+		} else {
+			logger.debug("the list of shared space member is empty");
+		}
 	}
 }

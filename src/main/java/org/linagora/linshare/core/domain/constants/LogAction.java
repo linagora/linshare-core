@@ -28,6 +28,7 @@ public enum LogAction {
 	DOWNLOAD,
 	SUCCESS,
 	FAILURE,
+	CONVERT,
 	PURGE;
 
 	public static LogAction fromString(String s) {

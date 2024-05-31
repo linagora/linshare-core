@@ -20,6 +20,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -100,4 +101,6 @@ public interface ContactListService {
 	List<ContactList> findAll(Account actor, User owner, Boolean mine);
 	
 	List<ContactList> findAllByMemberEmail(Account actor, User owner, Boolean mine, String email);
+
+	void transferContactListFromGuestToInternal(final Guest guest, final Account authUser);
 }

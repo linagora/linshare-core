@@ -18,6 +18,7 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 
@@ -41,4 +42,6 @@ public interface UploadRequestGroupRepository extends
 	public Long computeEntriesSize(UploadRequestGroup uploadRequestGroup);
 
 	Long computeURGcount(Account owner);
+
+	List<UploadRequestGroup>findAllByAccountAndDomain(final Account owner, final AbstractDomain abstractDomain);
 }

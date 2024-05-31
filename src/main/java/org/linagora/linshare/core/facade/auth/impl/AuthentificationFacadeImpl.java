@@ -27,6 +27,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
@@ -37,9 +38,12 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.mongo.entities.logs.AuthenticationAuditLogEntryUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
@@ -59,11 +63,14 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
+	private final GuestService guestService;
+
 	public AuthentificationFacadeImpl(UserService userService, LogEntryService logEntryService,
 			AbstractDomainService abstractDomainService, UserProviderService userProviderService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			OIDCUserProviderRepository oidcUserProviderRepository,
-			UserRepository<User> userRepository) {
+			UserRepository<User> userRepository,
+			final GuestService guestService) {
 		super();
 		this.userService = userService;
 		this.logEntryService = logEntryService;
@@ -72,6 +79,7 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.oidcUserProviderRepository = oidcUserProviderRepository;
+		this.guestService = guestService;
 	}
 
 	@Override
@@ -261,5 +269,17 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 			};
 		}
 		return new OIDCUserProviderDto(userProvider.get(0));
+	}
+
+	@Override
+	public void convertGuestToInternalUser(@Nonnull final SystemAccount systemAccount,
+										   @Nonnull final Account authUser,
+										   @Nonnull final User guestUser){
+		this.guestService.convertGuestToInternalUser(systemAccount, authUser, guestUser);
+	}
+
+	@Override
+	public void deleteUser(@Nonnull final SystemAccount systemAccount, @Nonnull final String uuid) throws BusinessException {
+		this.guestService.deleteUser(systemAccount, uuid);
 	}
 }

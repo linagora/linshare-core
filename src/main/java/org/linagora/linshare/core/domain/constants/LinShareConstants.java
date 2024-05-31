@@ -21,7 +21,7 @@ public class LinShareConstants {
 	 * Default application root domain identifier
 	 */
 	public static final String rootDomainIdentifier = "LinShareRootDomain";
-
+	public static final String guestDomainIdentifier = "GuestDomain";
 	/**
 	 * Default application root email address
 	 */

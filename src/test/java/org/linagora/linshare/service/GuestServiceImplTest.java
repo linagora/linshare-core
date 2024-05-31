@@ -14,15 +14,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.linagora.linshare.service;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +36,8 @@ import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -39,15 +45,26 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.Moderator;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.PasswordHistory;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.ModeratorRepository;
 import org.linagora.linshare.core.repository.PasswordHistoryRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
+import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.repository.MailingListRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
@@ -56,12 +73,14 @@ import org.linagora.linshare.core.service.ModeratorService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.ResetGuestPasswordService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -91,10 +110,11 @@ import com.google.common.collect.Lists;
 @DirtiesContext
 public class GuestServiceImplTest {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(GuestServiceImplTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(GuestServiceImplTest.class);
 
-	private static String guestDomainName1 = "guestDomainName1";
+	private static final String guestDomainName1 = "guestDomainName1";
+	
+	private static final String DOMAIN_GUEST_IDENTIFIER = LinShareConstants.guestDomainIdentifier;
 
 	@Autowired
 	private GuestService guestService;
@@ -141,7 +161,26 @@ public class GuestServiceImplTest {
 	@Autowired
 	private ModeratorRepository moderatorRepository;
 
+	@Qualifier("userRepository")
+	@Autowired
+	private UserRepository<User> userRepository;
+
+	@Autowired
+	private  AccountRepository<Account> accountRepository;
+
+	@Autowired
+	private GuestRepository guestRepository;
+
+	@Autowired
+	private MailingListRepository mailingListRepository;
+
+	@Autowired
+	private UploadRequestGroupService uploadRequestGroupService;
+
+	private AbstractDomain guest_domain;
+
 	private User root;
+	private User root_convert;
 
 	private User owner1;
 
@@ -149,12 +188,24 @@ public class GuestServiceImplTest {
 	
 	private User owner3;
 
-	private Guest guest;
+	private SystemAccount systemAccount;
 
+	private Guest guest;
+	private Guest guest_converted;
+
+	private ContactList contactList1, contactList2;
+	private static String identifier1 = "TestContactList1";
+
+	private static String identifier2 = "TestContactList2";
 	private final static String FIRST_PASSWORD ="Root2017@linshare";
 	private final static String SECOND_PASSWORD ="Root2018@linshare";
 	private final static String THIRD_PASSWORD ="Root2019@linshare";
 	private final static String LAST_PASSWORD ="Root2020@linshare";
+	private UploadRequest ure;
+	private UploadRequest ureq;
+	private Contact yoda, external2;
+	private List<Contact> contactList;
+	private Account john;
 
 	public GuestServiceImplTest() {
 		super();
@@ -166,9 +217,11 @@ public class GuestServiceImplTest {
 		root = rootUserRepository
 				.findByLsUuid("root@localhost.localdomain@test");
 
-		AbstractDomain subDomain = abstractDomainRepository
-				.findById(LoadingServiceTestDatas.sqlSubDomain);
+		AbstractDomain subDomain = this.abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
+		root_convert = this.userRepository.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
+		john = this.userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		owner1 = new Internal("John", "Doe", "user1@linshare.org", null);
+		systemAccount = accountRepository.getBatchSystemAccount();
 		owner1.setDomain(subDomain);
 		owner1.setRole(Role.ADMIN);
 		owner1.setCanCreateGuest(true);
@@ -193,8 +246,55 @@ public class GuestServiceImplTest {
 		functionalityService.update(root, LoadingServiceTestDatas.sqlSubDomain,
 				functionality);
 		guest = new Guest("Guest", "Doe", "guest1@linshare.org");
-		guest.setCmisLocale("en");
+		guest_converted = this.guestRepository.findByMail(LinShareTestConstants.GUEST_ACCOUNT);
+		guest_converted.setCmisLocale("en");
+		guest_domain = this.abstractDomainRepository.findById(DOMAIN_GUEST_IDENTIFIER);
+		guest_converted.setDomain(guest_domain);
+		contactList1 = new ContactList();
+		contactList1.setIdentifier(identifier1);
+		contactList1.setOwner(guest_converted);
+		contactList1.setDomain(guest_domain);
+		contactList1.setPublic(true);
+		contactList1.setDescription("yoyo");
+		contactList1.setContactListContacts(new HashSet<>());
+		this.mailingListRepository.create(contactList1);
+
+		contactList2 = new ContactList();
+		contactList2.setIdentifier(identifier2);
+		contactList2.setOwner(guest_converted);
+		contactList2.setDomain(guest_domain);
+		contactList2.setPublic(false);
+		contactList2.setDescription("fofo");
+		contactList2.setContactListContacts(new HashSet<ContactListContact>());
+		this.mailingListRepository.create(contactList2);
+		yoda = new Contact("yoda@linshare.org");
+		external2 = new Contact("external2@linshare.org");
+		// UPLOAD REQUEST CREATE
+		ure = initUploadRequest();
+		ureq = initUploadRequest();
+		contactList = Lists.newArrayList(yoda, external2);
+
+		final UploadRequestGroup uploadRequestGroup1 = uploadRequestGroupService.create(guest_converted, guest_converted, ure, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		final UploadRequestGroup uploadRequestGroup2 = uploadRequestGroupService.create(guest_converted, guest_converted, ureq, Lists.newArrayList(external2), "This is a subject2",
+				"This is a body", false);
+		ure = uploadRequestGroup1.getUploadRequests().iterator().next();
+		ureq = uploadRequestGroup2.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
+	}
+
+	private UploadRequest initUploadRequest() {
+		final UploadRequest uploadRequest = new UploadRequest();
+		uploadRequest.setCanClose(true);
+		uploadRequest.setMaxDepositSize((long) 100000);
+		uploadRequest.setMaxFileCount(Integer.valueOf(3));
+		uploadRequest.setMaxFileSize((long) 100000);
+		uploadRequest.setProtectedByPassword(false);
+		uploadRequest.setCanEditExpiryDate(true);
+		uploadRequest.setCanDelete(true);
+		uploadRequest.setLocale(Language.ENGLISH);
+		uploadRequest.setActivationDate(null);
+		return uploadRequest;
 	}
 
 	@AfterEach
@@ -210,11 +310,11 @@ public class GuestServiceImplTest {
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
-		Assertions.assertNotNull(guest);
-		Assertions.assertEquals(Role.SIMPLE, guest.getRole());
+		assertNotNull(guest);
+		assertEquals(Role.SIMPLE, guest.getRole());
 		AccountQuota aq = quotaService.findByRelatedAccount(guest);
-		Assertions.assertNotNull(aq.getDomainShared());
-		Assertions.assertNotNull(aq.getMaxFileSize());
+		assertNotNull(aq.getDomainShared());
+		assertNotNull(aq.getMaxFileSize());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -223,10 +323,10 @@ public class GuestServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setCmisLocale("en");
-		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
 			guestService.create(root, root, guest, null);
 		});
-		Assertions.assertEquals(BusinessErrorCode.GUEST_FORBIDDEN, exception.getErrorCode());
+		assertEquals(BusinessErrorCode.GUEST_FORBIDDEN, exception.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -237,10 +337,10 @@ public class GuestServiceImplTest {
 				"EP_TEST_v233<script>alert(document.cookie)</script>", "guest1@linshare.org");
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
-		Assertions.assertNotNull(guest);
-		Assertions.assertEquals(Role.SIMPLE, guest.getRole());
-		Assertions.assertEquals(guest.getFirstName(), "EP_TEST_v233");
-		Assertions.assertEquals(guest.getLastName(), "EP_TEST_v233");
+		assertNotNull(guest);
+		assertEquals(Role.SIMPLE, guest.getRole());
+		assertEquals(guest.getFirstName(), "EP_TEST_v233");
+		assertEquals(guest.getLastName(), "EP_TEST_v233");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -258,7 +358,7 @@ public class GuestServiceImplTest {
 		} catch (BusinessException e) {
 			logger.debug("Can not create an internal user as guest");
 		}
-		Assertions.assertEquals(size, guestService.findAll(owner1, owner1, Optional.empty(), pattern, role).size());
+		assertEquals(size, guestService.findAll(owner1, owner1, Optional.empty(), pattern, role).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -276,9 +376,9 @@ public class GuestServiceImplTest {
 		guest.setFirstName("First");
 		guest.setLastName("Last");
 		Guest update = guestService.update(owner1, owner1, guest, null);
-		Assertions.assertEquals(Role.SIMPLE, update.getRole());
-		Assertions.assertEquals("First", update.getFirstName());
-		Assertions.assertEquals("Last", update.getLastName());
+		assertEquals(Role.SIMPLE, update.getRole());
+		assertEquals("First", update.getFirstName());
+		assertEquals("Last", update.getLastName());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -294,12 +394,12 @@ public class GuestServiceImplTest {
 		newExpiryDate.add(Calendar.MONTH, func.getMaxValue() + 2); // the new expiration date is over the maximum value setted in the functionality.
 		guest.setExpirationDate(newExpiryDate.getTime());
 		guest = guestService.update(root, root, guest, null);
-		Assertions.assertEquals(newExpiryDate.getTime(), guest.getExpirationDate());
+		assertEquals(newExpiryDate.getTime(), guest.getExpirationDate());
 	}
 
 	@Test
 	public void testUpdateExpirationDateByUser() throws BusinessException {
-		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
 			Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 			guest.setCmisLocale("en");
 			guest = guestService.create(owner2, owner2, guest, null);
@@ -311,7 +411,7 @@ public class GuestServiceImplTest {
 			guest.setExpirationDate(newExpiryDate.getTime());
 			guestService.update(owner2, owner2, guest, null);
 		});
-		Assertions.assertEquals(BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID, exception.getErrorCode());
+		assertEquals(BusinessErrorCode.GUEST_EXPIRY_DATE_INVALID, exception.getErrorCode());
 	}
 
 	@Test
@@ -326,9 +426,9 @@ public class GuestServiceImplTest {
 		guest.setFirstName("EP_TEST_v233<script>alert(document.cookie)</script>");
 		guest.setLastName("EP_TEST_v233<script>alert(document.cookie)</script>");
 		Guest update = guestService.update(owner1, owner1, guest, null);
-		Assertions.assertEquals(Role.SIMPLE, update.getRole());
-		Assertions.assertEquals(update.getFirstName(), "EP_TEST_v233");
-		Assertions.assertEquals(update.getLastName(), "EP_TEST_v233");
+		assertEquals(Role.SIMPLE, update.getRole());
+		assertEquals(update.getFirstName(), "EP_TEST_v233");
+		assertEquals(update.getLastName(), "EP_TEST_v233");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -337,14 +437,14 @@ public class GuestServiceImplTest {
 	public void testChangePassword() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		guest = guestService.create(owner1, owner1, guest, null);
-		Assertions.assertNotNull(guest);
+		assertNotNull(guest);
 		ResetGuestPassword reset = new ResetGuestPassword(guest);
 		reset.setPassword(FIRST_PASSWORD);
 		guestPasswordMongoRepository.save(reset);
 		resetGuestPasswordService.update(guest, guest, reset);
-		Assertions.assertTrue(passwordService.matches(FIRST_PASSWORD, guest.getPassword()));
+		assertTrue(passwordService.matches(FIRST_PASSWORD, guest.getPassword()));
 		userService.changePassword(guest, guest, FIRST_PASSWORD, SECOND_PASSWORD);
-		Assertions.assertTrue(passwordService.matches(SECOND_PASSWORD, guest.getPassword()));
+		assertTrue(passwordService.matches(SECOND_PASSWORD, guest.getPassword()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -352,19 +452,19 @@ public class GuestServiceImplTest {
 	public void testStoreOldAndNewPassword() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		guest = guestService.create(owner1, owner1, guest, null);
-		Assertions.assertNotNull(guest);
+		assertNotNull(guest);
 		ResetGuestPassword reset = new ResetGuestPassword(guest);
 		reset.setPassword(FIRST_PASSWORD);
 		guestPasswordMongoRepository.save(reset);
 		resetGuestPasswordService.update(guest, guest, reset);
 		List<PasswordHistory> histories = historyRepository.findAllByAccount(guest);
-		Assertions.assertTrue(histories.size() == 1);
-		Assertions.assertEquals(histories.iterator().next().getPassword(), guest.getPassword());
-		Assertions.assertTrue(passwordService.matches(FIRST_PASSWORD, guest.getPassword()));
+		assertTrue(histories.size() == 1);
+		assertEquals(histories.iterator().next().getPassword(), guest.getPassword());
+		assertTrue(passwordService.matches(FIRST_PASSWORD, guest.getPassword()));
 		userService.changePassword(guest, guest, FIRST_PASSWORD, SECOND_PASSWORD);
-		Assertions.assertTrue(passwordService.matches(SECOND_PASSWORD, guest.getPassword()));
+		assertTrue(passwordService.matches(SECOND_PASSWORD, guest.getPassword()));
 		histories = historyRepository.findAllByAccount(guest);
-		Assertions.assertTrue(histories.size() == 2);
+		assertTrue(histories.size() == 2);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -373,20 +473,20 @@ public class GuestServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		passwordServiceImpl.setMaxSavedPasswordNumber(3);
 		guest = guestService.create(owner1, owner1, guest, null);
-		Assertions.assertNotNull(guest);
+		assertNotNull(guest);
 		ResetGuestPassword reset = new ResetGuestPassword(guest);
 		reset.setPassword(FIRST_PASSWORD);
 		guestPasswordMongoRepository.save(reset);
 		resetGuestPasswordService.update(guest, guest, reset);
 		String firstHashedPassword = guest.getPassword();
-		Assertions.assertTrue(passwordService.matches(FIRST_PASSWORD, guest.getPassword()));
+		assertTrue(passwordService.matches(FIRST_PASSWORD, guest.getPassword()));
 		userService.changePassword(guest, guest, FIRST_PASSWORD, SECOND_PASSWORD);
-		Assertions.assertTrue(passwordService.matches(SECOND_PASSWORD, guest.getPassword()));
+		assertTrue(passwordService.matches(SECOND_PASSWORD, guest.getPassword()));
 		userService.changePassword(guest, guest, SECOND_PASSWORD, THIRD_PASSWORD);
 		userService.changePassword(guest, guest, THIRD_PASSWORD, LAST_PASSWORD);
 		List<PasswordHistory> histories = historyRepository.findAllByAccount(guest);
 		for (PasswordHistory passwordHistory : histories) {
-			Assertions.assertFalse(passwordHistory.getPassword().equals(firstHashedPassword));
+			assertFalse(passwordHistory.getPassword().equals(firstHashedPassword));
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -395,16 +495,16 @@ public class GuestServiceImplTest {
 	public void testChangeSamePasswordFail() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		guest = guestService.create(owner1, owner1, guest, null);
-		Assertions.assertNotNull(guest);
+		assertNotNull(guest);
 		ResetGuestPassword reset = new ResetGuestPassword(guest);
 		reset.setPassword(FIRST_PASSWORD);
 		guestPasswordMongoRepository.save(reset);
 		resetGuestPasswordService.update(guest, guest, reset);
-		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
 			userService.changePassword(guest, guest, FIRST_PASSWORD, FIRST_PASSWORD);
 		});
-		Assertions.assertEquals(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED, exception.getErrorCode());
-		Assertions.assertEquals(
+		assertEquals(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_ALREADY_USED, exception.getErrorCode());
+		assertEquals(
 				"The new password you entered is the same as your old passwords, Enter a different password please",
 				exception.getMessage());
 	}
@@ -419,8 +519,8 @@ public class GuestServiceImplTest {
 		guest.setDomain(guestDomain);
 		guest = guestService.create(owner1, owner1, guest, null);
 		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
-		Assertions.assertNotNull(find);
-		Assertions.assertEquals(Role.SIMPLE, find.getRole());
+		assertNotNull(find);
+		assertEquals(Role.SIMPLE, find.getRole());
 		
 		// updateGuestDomain
 		AbstractDomain domain = abstractDomainRepository.findById(guestDomainName1);
@@ -438,7 +538,7 @@ public class GuestServiceImplTest {
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
 		guestService.triggerResetPassword(guest.getLsUuid());
-		Assertions.assertFalse(passwordService.matches(oldPassword, guest.getPassword()));
+		assertFalse(passwordService.matches(oldPassword, guest.getPassword()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -455,10 +555,10 @@ public class GuestServiceImplTest {
 		restrictedContacts.add("user2@linshare.org");
 		restrictedContacts.add("user1@linshare.org");
 		guest = guestService.create(owner1, owner1, guest, restrictedContacts);
-		Assertions.assertTrue(guest.isRestricted());
-		Assertions.assertTrue(guest.isGuest());
+		assertTrue(guest.isRestricted());
+		assertTrue(guest.isGuest());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
-		Assertions.assertEquals(3, ac.size());
+		assertEquals(3, ac.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -476,10 +576,10 @@ public class GuestServiceImplTest {
 		// This one is not an internal or a guest user.So it will be skip.
 		restrictedContacts.add("user-do-not-exist@linshare.org");
 		guest = guestService.create(owner1, owner1, guest, restrictedContacts);
-		Assertions.assertTrue(guest.isRestricted());
-		Assertions.assertTrue(guest.isGuest());
+		assertTrue(guest.isRestricted());
+		assertTrue(guest.isGuest());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
-		Assertions.assertEquals(2, ac.size());
+		assertEquals(2, ac.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -495,14 +595,14 @@ public class GuestServiceImplTest {
 		List<String> restrictedContacts = Lists.newArrayList();
 		restrictedContacts.add("user3@linshare.org");
 		restrictedContacts.add("user2@linshare.org");
-		restrictedContacts.add("user1@linshare.org");
+		restrictedContacts.add("user11@linshare.org");
 		guest = guestService.create(owner1, owner1, guest, restrictedContacts);
 
 		restrictedContacts = Lists.newArrayList();
 		restrictedContacts.add("user1@linshare.org");
 		guest = guestService.update(owner1, owner1, guest, restrictedContacts);
 		List<AllowedContact> ac = guestService.load(owner1, guest);
-		Assertions.assertEquals(1, ac.size());
+		assertEquals(1, ac.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	@Test
@@ -520,16 +620,16 @@ public class GuestServiceImplTest {
 		restrictedContacts.add("user1@linshare.org");
 		guest = guestService.create(owner1, owner1, guest, restrictedContacts);
 
-		Assertions.assertTrue(guest.isRestricted());
+		assertTrue(guest.isRestricted());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
-		Assertions.assertEquals(3, ac.size());
+		assertEquals(3, ac.size());
 
 		guest.setRestricted(false);
 		guest = guestService.update(owner1, owner1, guest, restrictedContacts);
-		Assertions.assertFalse(guest.isRestricted());
+		assertFalse(guest.isRestricted());
 
 		ac = guestService.load(owner1, guest);
-		Assertions.assertEquals(0, ac.size());
+		assertEquals(0, ac.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -564,6 +664,15 @@ public class GuestServiceImplTest {
 		guest = guestService.delete(owner2, owner2, guest.getLsUuid());
 		moderators = moderatorRepository.findAllByGuest(guest, null, null);
 		assertThat(moderators.size()).isEqualTo(0);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testConvertGuestToInternalUser() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		this.guestService.convertGuestToInternalUser(systemAccount, owner1, guest_converted);
+		assertThat(guest_converted.getEntries()).isEqualTo(owner1.getEntries());
+		this.guestService.deleteUser(systemAccount,guest_converted.getLsUuid());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

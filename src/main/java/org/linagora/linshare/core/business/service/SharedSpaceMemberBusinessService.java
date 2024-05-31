@@ -21,6 +21,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.SharedSpaceMemberField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -31,6 +32,8 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.utils.PageContainer;
 import org.springframework.data.domain.Sort;
+
+import javax.annotation.Nonnull;
 
 public interface SharedSpaceMemberBusinessService {
 
@@ -132,4 +135,6 @@ public interface SharedSpaceMemberBusinessService {
 
 	PageContainer<SharedSpaceMember> findAllMembersWithPagination(String sharedSpaceNodeUuid, String accountUuid,
 			Set<String> roles, String email, String firstName, String lastName, String pattern, AccountType type, SortOrder sortOrder, SharedSpaceMemberField sortField, PageContainer<SharedSpaceMember> container);
+
+	void transferSharedSpaceMemberFromGuestToInternal(@Nonnull final User guest,@Nonnull final User author);
 }

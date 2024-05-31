@@ -20,20 +20,28 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import javax.annotation.Nonnull;
+
 public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusinessService {
 
+	private final Logger logger = LoggerFactory.getLogger(SharedSpaceNodeBusinessServiceImpl.class);
+
 	protected SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
-	
+
 	protected MongoTemplate mongoTemplate;
 
 	public SharedSpaceNodeBusinessServiceImpl(SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
@@ -101,7 +109,7 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	}
 
 	@Override
-	public List <SharedSpaceNode> searchByName(String name) throws BusinessException {
+	public List<SharedSpaceNode> searchByName(String name) throws BusinessException {
 		return sharedSpaceNodeMongoRepository.findByName(name);
 	}
 
@@ -111,5 +119,27 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 		query.addCriteria(Criteria.where("nodeType").is(NodeType.WORK_GROUP));
 		query.addCriteria(Criteria.where("parentUuid").is(null));
 		return mongoTemplate.find(query, SharedSpaceNode.class);
+	}
+
+	@Override
+	public void transferWorkspaceFromGuestToInternal(@Nonnull final User guest, @Nonnull final User author) {
+		logger.info("start sharing space node from guest to internal user");
+		final List<SharedSpaceNode> sharedSpaceNodes = this.sharedSpaceNodeMongoRepository.findByAuthorUuid(guest.getLsUuid());
+		if (sharedSpaceNodes != null && !sharedSpaceNodes.isEmpty()) {
+			for (final SharedSpaceNode sharedSpaceNode : sharedSpaceNodes) {
+				try {
+					final SharedSpaceAccount newAuthor = new SharedSpaceAccount(author);
+					sharedSpaceNode.setAuthor(newAuthor);
+					sharedSpaceNode.setDomainUuid(author.getDomain().getUuid());
+					this.sharedSpaceNodeMongoRepository.save(sharedSpaceNode);
+					logger.debug("the space node is shared successfully");
+				} catch (final BusinessException | IllegalArgumentException e) {
+					logger.error("An error occurred while updating share space node", e);
+					throw e;
+				}
+			}
+		} else {
+			logger.debug("the list of shared space node is empty or null");
+		}
 	}
 }

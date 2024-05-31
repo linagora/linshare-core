@@ -52,4 +52,6 @@ public interface UploadRequestGroupService {
 	Integer countNbrUploadedFiles(UploadRequestGroup uploadRequestGroup);
 
 	Long computeEntriesSize(UploadRequestGroup uploadRequestGroup);
+
+	void transferUploadRequestGroupsFromGuestToInternal(final Account guest, final Account owner);
 }

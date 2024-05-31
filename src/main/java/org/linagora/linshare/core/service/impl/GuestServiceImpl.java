@@ -50,6 +50,7 @@ import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswor
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
@@ -65,6 +66,8 @@ import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+
+import javax.annotation.Nonnull;
 
 public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		implements GuestService {
@@ -92,6 +95,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	protected final ModeratorService moderatorService;
 
 	protected final AccountRepository<Account> accountRepository;
+	private final GuestRepository guestRepository;
 
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
@@ -106,7 +110,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			final ModeratorService moderatorService,
-			final AccountRepository<Account> accountRepository) {
+			final AccountRepository<Account> accountRepository,
+			final GuestRepository guestRepository) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -120,6 +125,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.resetGuestPasswordMongoRepository = resetGuestPasswordMongoRepository;
 		this.moderatorService = moderatorService;
 		this.accountRepository = accountRepository;
+		this.guestRepository = guestRepository;
 	}
 
 	@Override
@@ -489,5 +495,17 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		List<Guest> guests = guestBusinessService.findAll(authorizedDomains, moderatorRole, userToFilterBy, pattern);
 		return guests;
+	}
+
+	@Override
+	public void convertGuestToInternalUser(@Nonnull final SystemAccount systemAccount,
+										   @Nonnull final Account authUser,
+										   @Nonnull final User guestUser){
+		this.guestBusinessService.convertGuestToInternalUser(authUser,(Guest)guestUser);
+		// Log the conversion action for the user and admin
+		final UserAuditLogEntry logUser = new UserAuditLogEntry(authUser, systemAccount, LogAction.CONVERT, AuditLogEntryType.USER,guestUser);
+		logUser.setCause(LogActionCause.GUEST_CONVERTING);
+		logUser.setResourceUpdated(new UserMto((User)authUser ));
+		logEntryService.insert(logUser);
 	}
 }

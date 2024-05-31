@@ -14,6 +14,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.linagora.linshare.service;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +33,6 @@ import javax.transaction.Transactional;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -42,11 +46,14 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
+import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -62,7 +69,6 @@ import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({
-	
 	"/import-tests-upload-request.sql" })
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
@@ -88,7 +94,7 @@ public class UploadRequestGroupServiceImplTest {
 
 	@Autowired
 	private UploadRequestGroupService uploadRequestGroupService;
-	
+
 	@Autowired
 	private UploadRequestService uploadRequestService;
 
@@ -98,15 +104,24 @@ public class UploadRequestGroupServiceImplTest {
 	@Autowired
 	private UploadRequestEntryService uploadRequestEntryService;
 
+	@Autowired
+	private UploadRequestGroupRepository uploadRequestGroupRepository;
+
+	@Autowired
+	private GuestRepository guestRepository;
+
 	private UploadRequest urInit;
 
 	private UploadRequest ure;
+	private UploadRequest ureq;
 
 	private User john;
 
 	private Contact yoda, external2;
-	
+
 	private List<Contact> contactList;
+
+	private Guest guest;
 
 	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 
@@ -122,13 +137,21 @@ public class UploadRequestGroupServiceImplTest {
 		yoda = repository.findByMail("yoda@linshare.org");
 		external2 = repository.findByMail("external2@linshare.org");
 		john.setDomain(subDomain);
+		guest = this.guestRepository.findByMail(LinShareTestConstants.GUEST_ACCOUNT);
 		urInit = initUploadRequest();
 		// UPLOAD REQUEST CREATE
-		ure = initUploadRequest();
+		ure = this.initUploadRequest();
+		ureq = this.initUploadRequest();
 		contactList = Lists.newArrayList(yoda, external2);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
+		final UploadRequestGroup uploadRequestGroup1 = uploadRequestGroupService.create(guest, guest, ure, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		final UploadRequestGroup uploadRequestGroup2 = uploadRequestGroupService.create(guest, guest, ureq, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
 		ure = uploadRequestGroup.getUploadRequests().iterator().next();
+		ureq = uploadRequestGroup2.getUploadRequests().iterator().next();
+
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -144,8 +167,8 @@ public class UploadRequestGroupServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, urInit, contactList, "This is a subject",
 				"This is a body", true);
-		Assertions.assertNotNull(uploadRequestGroup);
-		Assertions.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1, "URG Contains more than one UR");
+		assertNotNull(uploadRequestGroup);
+		assertEquals(uploadRequestGroup.getUploadRequests().size(), 1, "URG Contains more than one UR");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -155,9 +178,9 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, urInit, contactList,
 				"EP_TEST_v233<script>alert(document.cookie)</script>",
 				"EP_TEST_v233<script>alert(document.cookie)</script>", true);
-		Assertions.assertNotNull(uploadRequestGroup);
-		Assertions.assertEquals("EP_TEST_v233", uploadRequestGroup.getSubject());
-		Assertions.assertEquals("EP_TEST_v233", uploadRequestGroup.getBody());
+		assertNotNull(uploadRequestGroup);
+		assertEquals("EP_TEST_v233", uploadRequestGroup.getSubject());
+		assertEquals("EP_TEST_v233", uploadRequestGroup.getBody());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -167,8 +190,8 @@ public class UploadRequestGroupServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, urInit,
 				contactList, "This is a subject", "This is a body", false);
-		Assertions.assertNotNull(uploadRequestGroup);
-		Assertions.assertEquals(uploadRequestGroup.getUploadRequests().size(), 2, "URG should contains 2 UR");
+		assertNotNull(uploadRequestGroup);
+		assertEquals(uploadRequestGroup.getUploadRequests().size(), 2, "URG should contains 2 UR");
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -176,7 +199,7 @@ public class UploadRequestGroupServiceImplTest {
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<UploadRequestGroup> groups = uploadRequestGroupService.findAll(john, john, null);
-		Assertions.assertNotNull(groups.get(0));
+		assertNotNull(groups.get(0));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -190,7 +213,7 @@ public class UploadRequestGroupServiceImplTest {
 		ure.setActivationDate(tomorrow);
 		uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		List<UploadRequestGroup> groups = uploadRequestGroupService.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED));
-		Assertions.assertEquals(uploadRequestGroupService.findAll(john, john, null).size() - 1, groups.size());
+		assertEquals(uploadRequestGroupService.findAll(john, john, null).size() - 1, groups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -200,26 +223,26 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit, contactList,
 				"This is a subject", "This is a body", true);
 		UploadRequest ur = group.getUploadRequests().iterator().next();
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, ur.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, ur.getStatus());
 		// Update upload request group status
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, ur.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, ur.getStatus());
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.ARCHIVED, true);
-		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
-		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, ur.getStatus());
+		assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
+		assertEquals(UploadRequestStatus.ARCHIVED, ur.getStatus());
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.DELETED, false);
-		Assertions.assertEquals(UploadRequestStatus.DELETED, group.getStatus());
-		Assertions.assertEquals(UploadRequestStatus.DELETED, ur.getStatus());
-		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+		assertEquals(UploadRequestStatus.DELETED, group.getStatus());
+		assertEquals(UploadRequestStatus.DELETED, ur.getStatus());
+		BusinessException e = assertThrows(BusinessException.class, () -> {
 			uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
 		});
-		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_STATUS_BAD_TRANSITON, e.getErrorCode());
-		BusinessException e1 = Assertions.assertThrows(BusinessException.class, () -> {
+		assertEquals(BusinessErrorCode.UPLOAD_REQUEST_STATUS_BAD_TRANSITON, e.getErrorCode());
+		final BusinessException e1 = assertThrows(BusinessException.class, () -> {
 			uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.DELETED, false);
 		});
-		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_GROUP_STATUS_NOT_MODIFIED, e1.getErrorCode());
+		assertEquals(BusinessErrorCode.UPLOAD_REQUEST_GROUP_STATUS_NOT_MODIFIED, e1.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -228,23 +251,23 @@ public class UploadRequestGroupServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit, Lists.newArrayList(yoda, external2),
 				"This is a subject", "This is a body", false);
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
 		Set<UploadRequest> urs = group.getUploadRequests();
 		assertStatus(urs, UploadRequestStatus.ENABLED);
 		// Update upload request group status
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
 		assertStatus(urs, UploadRequestStatus.CLOSED);
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.ARCHIVED, true);
-		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
+		assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
 		assertStatus(urs, UploadRequestStatus.ARCHIVED);
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.DELETED, false);
-		Assertions.assertEquals(UploadRequestStatus.DELETED, group.getStatus());
+		assertEquals(UploadRequestStatus.DELETED, group.getStatus());
 		assertStatus(urs, UploadRequestStatus.DELETED);
-		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+		final BusinessException e = assertThrows(BusinessException.class, () -> {
 			uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
 		});
-		Assertions.assertEquals(BusinessErrorCode.UPLOAD_REQUEST_STATUS_BAD_TRANSITON, e.getErrorCode());
+		assertEquals(BusinessErrorCode.UPLOAD_REQUEST_STATUS_BAD_TRANSITON, e.getErrorCode());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -257,10 +280,10 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequest uploadRequest = initUploadRequest();
 		uploadRequest.setActivationDate(tomorrow);
 		UploadRequestGroup group = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Assertions.assertEquals(UploadRequestStatus.CREATED, group.getStatus());
+		assertEquals(UploadRequestStatus.CREATED, group.getStatus());
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CANCELED, false);
-		Assertions.assertEquals(UploadRequestStatus.CANCELED, group.getStatus());
-		Assertions.assertTrue(group.getUploadRequests().iterator().next().isCanceled());
+		assertEquals(UploadRequestStatus.CANCELED, group.getStatus());
+		assertTrue(group.getUploadRequests().iterator().next().isCanceled());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -270,13 +293,13 @@ public class UploadRequestGroupServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit, contactList, "This is a subject",
 				"This is a body", true);
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
 		UploadRequest ur = group.getUploadRequests().iterator().next();
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, ur.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, ur.getStatus());
 		uploadRequestService.updateStatus(john, john, ur.getUuid(), UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, ur.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, ur.getStatus());
 		// Update upload request group status
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -286,19 +309,19 @@ public class UploadRequestGroupServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup groupIndiv = uploadRequestGroupService.create(john, john, urInit, contactList, "This is a subject",
 				"This is a body", false);
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, groupIndiv.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, groupIndiv.getStatus());
 		assertStatus(groupIndiv.getUploadRequests(), UploadRequestStatus.ENABLED);
 		UploadRequest ur1 = groupIndiv.getUploadRequests().iterator().next();
 		uploadRequestService.updateStatus(john, john, ur1.getUuid(), UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, ur1.getStatus());
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, groupIndiv.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, ur1.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, groupIndiv.getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	/**
 	 * Test ability to close (not automcatical) an URG in individual mode when all
 	 * nested UR are closed
-	 * 
+	 *
 	 * @throws BusinessException
 	 */
 	@Test
@@ -306,7 +329,7 @@ public class UploadRequestGroupServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit,
 				contactList, "This is a subject", "This is a body", false);
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
 		Set<UploadRequest> urs = group.getUploadRequests();
 		assertStatus(urs, UploadRequestStatus.ENABLED);
 		// Close all nested URs
@@ -316,7 +339,7 @@ public class UploadRequestGroupServiceImplTest {
 		}
 		assertStatus(urs, UploadRequestStatus.CLOSED);
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -325,7 +348,7 @@ public class UploadRequestGroupServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit, contactList,
 				"This is a subject", "This is a body", false);
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
 		Set<UploadRequest> urs = group.getUploadRequests();
 		assertStatus(urs, UploadRequestStatus.ENABLED);
 		// Close all nested URs
@@ -334,20 +357,20 @@ public class UploadRequestGroupServiceImplTest {
 		}
 		assertStatus(urs, UploadRequestStatus.CLOSED);
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
 		// Archive all nested URs
 		for (UploadRequest uploadRequest : urs) {
 			uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.ARCHIVED, false);
 		}
 		assertStatus(urs, UploadRequestStatus.ARCHIVED);
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.ARCHIVED, false);
-		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
+		assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	/**
 	 * Test ability to close URG individual with only one closed UR
-	 * 
+	 *
 	 * @throws BusinessException
 	 */
 	@Test
@@ -355,15 +378,15 @@ public class UploadRequestGroupServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.create(john, john, urInit,
 				contactList, "This is a subject", "This is a body", false);
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
 		Set<UploadRequest> urs = group.getUploadRequests();
 		assertStatus(urs, UploadRequestStatus.ENABLED);
 		// Close one nested UR
 		UploadRequest uploadRequest_1 = group.getUploadRequests().iterator().next();
 		uploadRequestService.updateStatus(john, john, uploadRequest_1.getUuid(),UploadRequestStatus.CLOSED,false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, uploadRequest_1.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, uploadRequest_1.getStatus());
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
 		assertStatus(urs, UploadRequestStatus.CLOSED);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -377,11 +400,11 @@ public class UploadRequestGroupServiceImplTest {
 		group.setCanClose(false);
 		group.setMaxFileCount(Integer.valueOf(5));
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.update(john, john, group, false);
-		Assertions.assertEquals(false, uploadRequestGroup.getCanClose());
-		Assertions.assertEquals(Integer.valueOf(5), uploadRequestGroup.getMaxFileCount());
+		assertEquals(false, uploadRequestGroup.getCanClose());
+		assertEquals(Integer.valueOf(5), uploadRequestGroup.getMaxFileCount());
 		UploadRequest uploadRequest = uploadRequests.get(0);
-		Assertions.assertEquals(false, uploadRequest.isCanClose());
-		Assertions.assertEquals(Integer.valueOf(5), uploadRequest.getMaxFileCount());
+		assertEquals(false, uploadRequest.isCanClose());
+		assertEquals(Integer.valueOf(5), uploadRequest.getMaxFileCount());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -392,8 +415,8 @@ public class UploadRequestGroupServiceImplTest {
 		group.setSubject("EP_TEST_v233<script>alert(document.cookie)</script>");
 		group.setBody("EP_TEST_v233<script>alert(document.cookie)</script>");
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.update(john, john, group, false);
-		Assertions.assertEquals("EP_TEST_v233", uploadRequestGroup.getSubject());
-		Assertions.assertEquals("EP_TEST_v233", uploadRequestGroup.getBody());
+		assertEquals("EP_TEST_v233", uploadRequestGroup.getSubject());
+		assertEquals("EP_TEST_v233", uploadRequestGroup.getBody());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -402,17 +425,17 @@ public class UploadRequestGroupServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.find(john, john, ure.getUploadRequestGroup().getUuid());
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
-		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+		assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
 			uploadRequestGroupService.update(john, john, group, false);
 		});
-		Assertions.assertEquals(exception.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_GROUP_UPDATE_FORBIDDEN);
+		assertEquals(exception.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_GROUP_UPDATE_FORBIDDEN);
 		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.ARCHIVED, false);
-		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
-		BusinessException exception2 = Assertions.assertThrows(BusinessException.class, () -> {
+		assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
+		final BusinessException exception2 = assertThrows(BusinessException.class, () -> {
 			uploadRequestGroupService.update(john, john, group, false);
 		});
-		Assertions.assertEquals(exception2.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_GROUP_UPDATE_FORBIDDEN);
+		assertEquals(exception2.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_GROUP_UPDATE_FORBIDDEN);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -422,9 +445,9 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequestGroup group = uploadRequestGroupService.find(john, john, ure.getUploadRequestGroup().getUuid());
 		group.setMaxDepositSize(Long.valueOf(0));
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.update(john, john, group, false);
-		Assertions.assertEquals(0, uploadRequestGroup.getMaxDepositSize());
+		assertEquals(0, uploadRequestGroup.getMaxDepositSize());
 		UploadRequest uploadRequest = group.getUploadRequests().iterator().next();
-		Assertions.assertEquals(0, uploadRequest.getMaxDepositSize());
+		assertEquals(0, uploadRequest.getMaxDepositSize());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -435,44 +458,44 @@ public class UploadRequestGroupServiceImplTest {
 				"This is a body", true);
 		UploadRequest uploadRequest = urg.getUploadRequests().iterator().next();
 		// in Collective mode the UR is always pristine
-		Assertions.assertTrue(urg.isCollective());
-		Assertions.assertTrue(uploadRequest.isPristine());
-		Assertions.assertEquals(3, urg.getMaxFileCount());
-		Assertions.assertEquals(3, uploadRequest.getMaxFileCount());
+		assertTrue(urg.isCollective());
+		assertTrue(uploadRequest.isPristine());
+		assertEquals(3, urg.getMaxFileCount());
+		assertEquals(3, uploadRequest.getMaxFileCount());
 		// update from UploadRequestService should raise an exception
 		uploadRequest.setMaxFileCount(2);
-		BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
+		final BusinessException e = assertThrows(BusinessException.class, () -> {
 			uploadRequestService.update(john, john, uploadRequest.getUuid(), uploadRequest, false);
 		});
-		Assertions.assertEquals(e.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_NOT_UPDATABLE_GROUP_MODE);
+		assertEquals(e.getErrorCode(), BusinessErrorCode.UPLOAD_REQUEST_NOT_UPDATABLE_GROUP_MODE);
 		urg.setMaxFileCount(2);
 		// No matter value of force always update the UR
 		urg = uploadRequestGroupService.update(john, john, urg, false);
-		Assertions.assertEquals(2, uploadRequest.getMaxFileCount());
+		assertEquals(2, uploadRequest.getMaxFileCount());
 		urg.setMaxFileCount(5);
 		urg = uploadRequestGroupService.update(john, john, urg, true);
-		Assertions.assertEquals(5, uploadRequest.getMaxFileCount());
+		assertEquals(5, uploadRequest.getMaxFileCount());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void updateWithForceIndividualGroup() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup urg = uploadRequestGroupService.create(john, john, urInit, contactList, "This is a subject",
 				"This is a body", false);
 		List<UploadRequest> uploadRequests = uploadRequestService.findAll(john, john, urg, null);
-		// assert initial conditions 
-		Assertions.assertFalse(urg.isCollective());
+		// assert initial conditions
+		assertFalse(urg.isCollective());
 		for (UploadRequest uploadRequest : uploadRequests) {
-			Assertions.assertTrue(uploadRequest.isPristine());
-			Assertions.assertEquals(3, uploadRequest.getMaxFileCount());
+			assertTrue(uploadRequest.isPristine());
+			assertEquals(3, uploadRequest.getMaxFileCount());
 		}
 		// update the group without force | expected pristine URs will be changed
 		urg.setMaxFileCount(Integer.valueOf(2));
 		urg = uploadRequestGroupService.update(john, john, urg, false);
 		for (UploadRequest uploadRequest : uploadRequests) {
-			Assertions.assertTrue(uploadRequest.isPristine());
-			Assertions.assertEquals(2, uploadRequest.getMaxFileCount());
+			assertTrue(uploadRequest.isPristine());
+			assertEquals(2, uploadRequest.getMaxFileCount());
 		}
 		// update one nested UR
 		UploadRequest uploadRequest1 = uploadRequests.get(0);
@@ -480,19 +503,19 @@ public class UploadRequestGroupServiceImplTest {
 		uploadRequest1.setMaxFileCount(5);
 		// update via the uploadRequestService endpoint
 		uploadRequest1 = uploadRequestService.update(john, john, uploadRequest1.getUuid(), uploadRequest1, false);
-		Assertions.assertEquals(Integer.valueOf(5), uploadRequest1.getMaxFileCount());
-		// expected | UR should be dirty (not pristine) 
-		Assertions.assertFalse(uploadRequest1.isPristine());
+		assertEquals(Integer.valueOf(5), uploadRequest1.getMaxFileCount());
+		// expected | UR should be dirty (not pristine)
+		assertFalse(uploadRequest1.isPristine());
 		// update the group without force | expected only pristine URs should be changed
 		urg.setMaxFileCount(7);
 		urg = uploadRequestGroupService.update(john, john, urg, false);
-		Assertions.assertEquals(Integer.valueOf(5), uploadRequest1.getMaxFileCount());
-		Assertions.assertEquals(Integer.valueOf(7), uploadRequest2.getMaxFileCount());
+		assertEquals(Integer.valueOf(5), uploadRequest1.getMaxFileCount());
+		assertEquals(Integer.valueOf(7), uploadRequest2.getMaxFileCount());
 		// update the group with force | expected all URs should be changed
 		urg.setMaxFileCount(6);
 		urg = uploadRequestGroupService.update(john, john, urg, true);
-		Assertions.assertEquals(Integer.valueOf(6), uploadRequest1.getMaxFileCount());
-		Assertions.assertEquals(Integer.valueOf(6), uploadRequest2.getMaxFileCount());
+		assertEquals(Integer.valueOf(6), uploadRequest1.getMaxFileCount());
+		assertEquals(Integer.valueOf(6), uploadRequest2.getMaxFileCount());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -502,18 +525,18 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, urInit, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		UploadRequest createdUploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		// Update upload request group status
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
 				UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
 				UploadRequestStatus.ARCHIVED, false);
-		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		assertEquals(UploadRequestStatus.ARCHIVED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		// Try with copy false
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
 				UploadRequestStatus.PURGED, false);
-		Assertions.assertEquals(UploadRequestStatus.PURGED,
+		assertEquals(UploadRequestStatus.PURGED,
 				createdUploadRequest.getUploadRequestGroup().getStatus(), "The given upload request has not a PURGED status");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -524,18 +547,18 @@ public class UploadRequestGroupServiceImplTest {
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, urInit, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		UploadRequest createdUploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		// Update upload request group status
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
 				UploadRequestStatus.CLOSED, false);
-		Assertions.assertEquals(UploadRequestStatus.CLOSED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		assertEquals(UploadRequestStatus.CLOSED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
 				UploadRequestStatus.ARCHIVED, false);
-		Assertions.assertEquals(UploadRequestStatus.ARCHIVED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		assertEquals(UploadRequestStatus.ARCHIVED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		// Try with copy true
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
 				UploadRequestStatus.PURGED, true);
-		Assertions.assertEquals(UploadRequestStatus.PURGED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		assertEquals(UploadRequestStatus.PURGED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -544,7 +567,7 @@ public class UploadRequestGroupServiceImplTest {
 		// On this test we will return the nbr of uploaded files and used space on an
 		// URG
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Assertions.assertEquals(UploadRequestStatus.ENABLED, ure.getStatus());
+		assertEquals(UploadRequestStatus.ENABLED, ure.getStatus());
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		File tempFile2 = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
@@ -555,8 +578,8 @@ public class UploadRequestGroupServiceImplTest {
 				"Second Upload request entry", "Second URE", false, null,
 				ure.getUploadRequestURLs().iterator().next());
 		UploadRequestGroup uploadRequestGroup = ure.getUploadRequestGroup();
-		Assertions.assertEquals(2, uploadRequestGroupService.countNbrUploadedFiles(uploadRequestGroup));
-		Assertions.assertEquals(uploadRequestEntry.getSize() + uploadRequestEntry2.getSize(),
+		assertEquals(2, uploadRequestGroupService.countNbrUploadedFiles(uploadRequestGroup));
+		assertEquals(uploadRequestEntry.getSize() + uploadRequestEntry2.getSize(),
 				uploadRequestGroupService.computeEntriesSize(uploadRequestGroup));
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -578,9 +601,16 @@ public class UploadRequestGroupServiceImplTest {
 	
 	private void assertStatus(Set<UploadRequest> urs, UploadRequestStatus status) {
 		for (UploadRequest ur : urs) {
-			Assertions.assertEquals(status, ur.getStatus());
+			assertEquals(status, ur.getStatus());
 		}
 	}
 
-
+	@Test
+	public void testUpdateGuestAccountDomainId() {
+		final List<UploadRequestGroup>requestGroups = uploadRequestGroupRepository.findAllByAccountAndDomain(guest, guest.getDomain());
+		for (final UploadRequestGroup uploadRequestGroup : requestGroups){
+			this.uploadRequestGroupService.transferUploadRequestGroupsFromGuestToInternal(guest, john);
+			assertEquals(uploadRequestGroup.getAbstractDomain(), john.getDomain());
+		}
+	}
 }

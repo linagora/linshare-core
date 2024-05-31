@@ -87,4 +87,12 @@ public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry>
 		list.addAll(findByCriteria(criteria));
 		return list;
 	}
+
+	@Override
+	public List<Entry> findAllMyEntries(final User owner) {
+		final DetachedCriteria criteria = DetachedCriteria.forClass(Entry.class);
+		criteria.add(Restrictions.eq("entryOwner", owner));
+		final List<Entry> entries = this.findByCriteria(criteria);
+		return entries;
+	}
 }

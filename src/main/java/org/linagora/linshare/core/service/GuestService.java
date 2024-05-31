@@ -27,6 +27,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import javax.annotation.Nonnull;
+
 public interface GuestService {
 
 	/**
@@ -135,4 +137,6 @@ public interface GuestService {
 	 */
 	List<Guest> findAll(Account authUser, User actor, Optional<User> userToFilterBy, Optional<String> pattern,
 			Optional<ModeratorRole> moderatorRole);
+
+	void convertGuestToInternalUser(@Nonnull final SystemAccount systemAccount,@Nonnull final Account authUser,@Nonnull final User guestUser);
 }

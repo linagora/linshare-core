@@ -28,6 +28,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import javax.annotation.Nonnull;
+
 public interface GuestBusinessService {
 
 	Guest findByLsUuid2(String lsUuid) throws BusinessException;
@@ -41,6 +43,7 @@ public interface GuestBusinessService {
 	Guest findByMail(String mail) throws BusinessException;
 
 	List<String> findOutdatedGuestIdentifiers();
+	List<String> findAllGuests();
 
 	Guest create(Account actor, Guest guest, AbstractDomain domain,
 			List<User> allowedContacts)
@@ -62,4 +65,6 @@ public interface GuestBusinessService {
 	List<Guest> findAll(List<AbstractDomain> authorizedDomains,
 			Optional<ModeratorRole> moderatorRole, Optional<User> moderatorAccount,
 			Optional<String> pattern);
+
+	Account convertGuestToInternalUser(@Nonnull final Account internalAccount, @Nonnull final Guest guestAccount) ;
 }

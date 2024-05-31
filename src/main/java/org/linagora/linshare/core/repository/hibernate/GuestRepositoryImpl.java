@@ -77,6 +77,15 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	}
 
 	@Override
+	public List<String> findAllGuests() {
+		final DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("mail"));
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		final List<String> list = this.listByCriteria(criteria);
+		return list;
+	}
+
+	@Override
 	public List<String> findGuestsAboutToExpire(int nbDaysBeforeExpiration) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.setProjection(Projections.property("lsUuid"));
@@ -190,6 +199,14 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		criteria.add(Restrictions.eq("domain", domain));
 		criteria.add(Restrictions.eq("mail", mail));
 		return DataAccessUtils.singleResult(findByCriteria(criteria));
+	}
+
+	@Override
+	public Guest findByMail(final String mail) {
+		final DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		criteria.add(Restrictions.eq("mail", mail));
+		return DataAccessUtils.singleResult(this.findByCriteria(criteria));
 	}
 
 	@SuppressWarnings("unchecked")
