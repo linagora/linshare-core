@@ -24,7 +24,7 @@ public interface UploadRequestUrlBusinessService {
 
 	UploadRequestUrl findByUuid(String uuid);
 
-	UploadRequestUrl create(UploadRequest request, Boolean passwordProtected, Contact contact) throws BusinessException;
+	UploadRequestUrl create(UploadRequest request, Contact contact) throws BusinessException;
 
 	UploadRequestUrl update(UploadRequestUrl url) throws BusinessException;
 }

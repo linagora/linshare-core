@@ -25,6 +25,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 import com.google.common.collect.Sets;
 
+/**
+ * This class represent an upload request created by a user.
+ * If {@link #collective} is true, this entity is linked to one unique {@link UploadRequest}.
+ * Otherwise, this entity is linked to one or more {@link UploadRequest}.
+ */
 public class UploadRequestGroup {
 
 	private long id;

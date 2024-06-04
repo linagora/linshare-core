@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="    
-	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
-	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
-	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
-	default-autowire="no">
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
+	   default-autowire="no">
 
 	<bean id="domainBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainBusinessServiceImpl">
 		<constructor-arg ref="abstractDomainRepository" />
@@ -155,6 +151,8 @@
 
 	<bean id="uploadRequestBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestBusinessServiceImpl">
 		<constructor-arg ref="uploadRequestRepository" />
+		<constructor-arg ref="uploadRequestUrlRepository"/>
+		<constructor-arg ref="passwordService"/>
 	</bean>
 
 	<bean id="uploadRequestEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestEntryBusinessServiceImpl">

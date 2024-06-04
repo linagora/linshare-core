@@ -17,6 +17,7 @@ package org.linagora.linshare.core.business.service.impl;
 
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
@@ -53,7 +54,7 @@ public class UploadRequestUrlBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadRequestUrl create(UploadRequest request, Boolean passwordProtected, Contact contact)
+	public UploadRequestUrl create(UploadRequest request, Contact contact)
 			throws BusinessException {
 		Contact recipient = contactRepository.find(contact);
 		if (recipient == null) {
@@ -61,7 +62,7 @@ public class UploadRequestUrlBusinessServiceImpl implements
 		}
 
 		UploadRequestUrl url = new UploadRequestUrl(request, baseUrl, recipient);
-		if (passwordProtected) {
+		if (request.isProtectedByPassword() && UploadRequestStatus.ENABLED.equals(request.getStatus())) {
 			String password = passwordService.generatePassword();
 			// We store it temporary in this object for mail notification.
 			url.setTemporaryPlainTextPassword(password);

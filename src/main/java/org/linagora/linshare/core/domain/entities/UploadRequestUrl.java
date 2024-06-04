@@ -22,6 +22,10 @@ import org.linagora.linshare.core.domain.constants.Language;
 
 import com.google.common.collect.Sets;
 
+/**
+ * This class represents an URL that can be used to upload files to a specific upload request.
+ * Uploaded files on the URL are represented by {@link UploadRequestEntry} objects, on the {@link #uploadRequestEntries}.
+ */
 public class UploadRequestUrl {
 
 	private long id;

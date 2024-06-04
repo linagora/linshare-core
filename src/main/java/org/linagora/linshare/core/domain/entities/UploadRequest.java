@@ -24,6 +24,12 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 import com.google.common.collect.Sets;
 
+/**
+ * This class represents the space where one user or more can upload files in response to an upload request.
+ * If the linked {@link UploadRequestGroup} is collective, only one user can upload files.
+ * Otherwise, one or more users can upload files, depending on the {@link UploadRequestGroup}.
+ * For each user accessing the upload request, a unique {@link UploadRequestUrl} is generated.
+ */
 public class UploadRequest implements Cloneable {
 
 	private long id;

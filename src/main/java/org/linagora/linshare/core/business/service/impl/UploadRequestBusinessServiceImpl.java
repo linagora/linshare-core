@@ -18,23 +18,32 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
+import org.linagora.linshare.core.repository.UploadRequestUrlRepository;
 
 public class UploadRequestBusinessServiceImpl implements
 		UploadRequestBusinessService {
 
 	private final UploadRequestRepository uploadRequestRepository;
 
-	public UploadRequestBusinessServiceImpl(
-			final UploadRequestRepository uploadRequestRepository) {
+	private final UploadRequestUrlRepository uploadRequestUrlRepository;
+
+	private final PasswordService passwordService;
+
+	public UploadRequestBusinessServiceImpl(final UploadRequestRepository uploadRequestRepository,
+											final UploadRequestUrlRepository uploadRequestUrlRepository, final PasswordService passwordService) {
 		super();
 		this.uploadRequestRepository = uploadRequestRepository;
+		this.uploadRequestUrlRepository = uploadRequestUrlRepository;
+		this.passwordService = passwordService;
 	}
 
 	@Override
@@ -66,6 +75,15 @@ public class UploadRequestBusinessServiceImpl implements
 
 	@Override
 	public UploadRequest updateStatus(UploadRequest req, UploadRequestStatus status) throws BusinessException {
+		if (UploadRequestStatus.CREATED.equals(req.getStatus()) && UploadRequestStatus.ENABLED.equals(status)) {
+			for (final UploadRequestUrl url : req.getUploadRequestURLs()) {
+				final String password = passwordService.generatePassword();
+				// We store it temporary in this object for mail notification.
+				url.setTemporaryPlainTextPassword(password);
+				url.setPassword(passwordService.encode((password)));
+				uploadRequestUrlRepository.update(url);
+			}
+		}
 		req.updateStatus(status);
 		req = uploadRequestRepository.update(req);
 		return req;
