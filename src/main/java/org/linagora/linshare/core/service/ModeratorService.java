@@ -24,6 +24,8 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.ModeratorDto;
 
+import javax.annotation.Nonnull;
+
 public interface ModeratorService {
 
 	Moderator create(Account authUser, Account actor, Moderator moderator, boolean onGuestCreation);
@@ -31,13 +33,14 @@ public interface ModeratorService {
 	Moderator find(Account authUser, Account actor, String uuid);
 
 	/**
-	 * It will return the Moderator instance for the current actor and guest.
-	 * @param authUser
-	 * @param actor
-	 * @param guestUuid
-	 * @return
+	 * Returns the Moderator instance for the given actor and guest.
+	 *
+	 * @param authUser The authenticated user.
+	 * @param actor The actor account.
+	 * @param guest The guest account, must not be null.
+	 * @return An Optional containing the Moderator if found, or an empty Optional otherwise.
 	 */
-	Optional<Moderator> findByActorAndGuest(Account authUser, Account actor, String guestUuid);
+	Optional<Moderator> findByActorAndGuest(final Account authUser, final Account actor, final @Nonnull Guest guest);
 
 	Moderator update(Account authUser, Account actor, Moderator moderator, ModeratorDto dto);
 

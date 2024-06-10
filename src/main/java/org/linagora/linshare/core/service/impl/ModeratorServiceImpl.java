@@ -48,6 +48,8 @@ import org.linagora.linshare.mongo.entities.mto.ModeratorMto;
 
 import com.google.common.collect.Lists;
 
+import javax.annotation.Nonnull;
+
 public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator> implements ModeratorService {
 
 	private ModeratorBusinessService moderatorBusinessService;
@@ -111,10 +113,8 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 	}
 
 	@Override
-	public Optional<Moderator> findByActorAndGuest(Account authUser, Account actor, String guestUuid) {
+	public Optional<Moderator> findByActorAndGuest(final Account authUser, final Account actor, final @Nonnull Guest guest) {
 		preChecks(authUser, actor);
-		Validate.notEmpty(guestUuid, "Guest uuid must be set.");
-		Guest guest = this.guestBusinessService.findByLsUuid2(guestUuid);
 		Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(actor, guest);
 		if (moderator.isPresent()) {
 			checkReadPermission(authUser, actor, Moderator.class, BusinessErrorCode.GUEST_MODERATOR_CANNOT_GET, moderator.get());

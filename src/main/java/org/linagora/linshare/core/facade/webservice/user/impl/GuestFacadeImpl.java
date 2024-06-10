@@ -220,7 +220,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	private GuestDto addModeratorRoletoGuestDto(Version version, Account authUser, Account actor, Guest guest, GuestDto dto) {
 		if(version.isGreaterThanOrEquals(Version.V5)) {
 			dto.setMyRole(GuestModeratorRole.NONE);
-			Optional<Moderator> moderator = moderatorService.findByActorAndGuest(authUser, actor, guest.getLsUuid());
+			final Optional<Moderator> moderator = moderatorService.findByActorAndGuest(authUser, actor, guest);
 			if (moderator.isPresent()) {
 				dto.setMyModeratorRole(moderator.get().getRole());
 			}
