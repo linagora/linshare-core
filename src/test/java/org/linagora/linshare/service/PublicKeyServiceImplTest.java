@@ -74,7 +74,7 @@ public class PublicKeyServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		rootDomain = root.getDomain();
 		logger.debug(LinShareTestConstants.END_SETUP);

@@ -132,7 +132,8 @@ public class SharedSpaceNodeServiceImplWorkSpaceTest {
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		activateWorkGroupCreation();
-		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		final Account root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN,
+				LinShareTestConstants.ROOT_ACCOUNT);
 		authUser = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		adminWorkSpaceRole = ssRoleService.getWorkSpaceAdmin(root, root);

@@ -167,7 +167,7 @@ public class UserServiceImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		amy = userRepository.findByMail(LinShareTestConstants.AMY_WOLSH_ACCOUNT);
 		amy.setRole(Role.ADMIN);

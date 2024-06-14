@@ -146,7 +146,7 @@ public class SharedSpaceMemberServiceImplTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		system = userRepository.getBatchSystemAccount();
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);

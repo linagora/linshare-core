@@ -37,10 +37,10 @@ public interface AccountRepository<U extends Account> extends
 	boolean exist(String lsUuid);
 
 	List<U> findByDomain(String domain);
-	
-	U findByMailAndDomain(String domain, String mail);
 
-	U findByExternalUidAndDomain(String domain, @NotNull String externalUid);
+	U findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail);
+
+	U findByDomainAndExternalUid(@NotNull final String domainUuid, @NotNull final String externalUid);
 
 	SystemAccount getBatchSystemAccount();
 

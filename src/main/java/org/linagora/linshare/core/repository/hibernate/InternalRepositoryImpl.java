@@ -20,6 +20,7 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.InternalRepository;
@@ -79,12 +80,13 @@ public class InternalRepositoryImpl extends GenericUserRepositoryImpl<Internal>
 	}
 
 	@Override
-	public Internal findByLoginAndDomain(String domain, String login) {
-		Internal u = super.findByMailAndDomain(domain, login);
+	public Internal findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail) {
+		final Internal u = super.findByDomainAndMail(domainUuid, mail);
 		if (u == null && multidomain) {
-			u = findByDomainAndLdapUid(domain, login);
+			return findByDomainAndLdapUid(domainUuid, mail);
+		} else {
+			return u;
 		}
-		return u;
 	}
 
 	@Override

@@ -57,9 +57,4 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User>
 			throw e;
 		}
 	}
-
-	@Override
-	public User findByLoginAndDomain(String domain, String login) {
-		return super.findByMailAndDomain(domain, login);
-	}
 }

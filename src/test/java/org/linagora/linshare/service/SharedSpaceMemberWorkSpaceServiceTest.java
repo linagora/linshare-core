@@ -112,7 +112,8 @@ public class SharedSpaceMemberWorkSpaceServiceTest {
 	@BeforeEach
 	public void init() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		final Account root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN,
+				LinShareTestConstants.ROOT_ACCOUNT);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		adminWorkgroupRole = ssRoleService.getAdmin(root, root);

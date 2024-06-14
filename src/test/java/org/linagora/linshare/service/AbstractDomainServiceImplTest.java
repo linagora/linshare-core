@@ -128,7 +128,7 @@ public class AbstractDomainServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		domain = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT).getDomain();
 		ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
-		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		current = welcomeService.find((User) root, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();

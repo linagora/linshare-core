@@ -46,20 +46,20 @@ import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
-import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findUserInDB(String domain, String mail) {
-		return userRepository.findByMailAndDomain(domain, mail);
+		return userRepository.findByDomainAndMail(domain, mail);
 	}
 
 	@Override
@@ -753,11 +753,9 @@ public class UserServiceImpl implements UserService {
 			logger.debug("domain id:" + user.getDomainId());
 			User existingUser;
 			if (useExternalUid) {
-				existingUser = userRepository.findByExternalUidAndDomain(user.getDomain().getUuid(), user.getLdapUid());
-
+				existingUser = userRepository.findByDomainAndExternalUid(user.getDomain().getUuid(), user.getLdapUid());
 			} else {
-				existingUser = userRepository.findByMailAndDomain(user
-						.getDomain().getUuid(), user.getMail());
+				existingUser = userRepository.findByDomainAndMail(user.getDomain().getUuid(), user.getMail());
 			}
 			if (existingUser != null) {
 				final Account systemAccount = userRepository.getBatchSystemAccount();
@@ -862,8 +860,7 @@ public class UserServiceImpl implements UserService {
 	private User findOrCreateUserWithoutRestriction(
 			AbstractDomain abstractDomain, String mail, Optional<Account> actor)
 			throws BusinessException {
-		User user = userRepository.findByMailAndDomain(
-				abstractDomain.getUuid(), mail);
+		User user = userRepository.findByDomainAndMail(abstractDomain.getUuid(), mail);
 		if (user == null) {
 			// user was not found in database.
 			// looking for it in userProvider (LDAP).
@@ -930,7 +927,7 @@ public class UserServiceImpl implements UserService {
 	public User findOrCreateUser(String mail, String domainId)
 			throws BusinessException {
 		// AccountRepository<Account>
-		User user = userRepository.findByMailAndDomain(domainId, mail);
+		User user = userRepository.findByDomainAndMail(domainId, mail);
 
 		if (user == null) {
 			List<User> users = abstractDomainService

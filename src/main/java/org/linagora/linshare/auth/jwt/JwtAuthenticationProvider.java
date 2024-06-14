@@ -134,7 +134,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			foundUser = authentificationFacade.findByLogin(email);
 			domains = authentificationFacade.getAllDomains();
 		} else {
-			foundUser = authentificationFacade.findByLoginAndDomain(domainUuid, email);
+			foundUser = authentificationFacade.findByDomainAndMail(domainUuid, email);
 			domains = authentificationFacade.getAllSubDomainIdentifiers(domainUuid);
 		}
 		if (foundUser == null) {

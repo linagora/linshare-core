@@ -99,7 +99,7 @@ public class MailAttachmentServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		admin = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		admin = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

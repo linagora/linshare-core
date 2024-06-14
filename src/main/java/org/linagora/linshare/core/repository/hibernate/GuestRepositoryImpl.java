@@ -172,11 +172,6 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		}
 	}
 
-	@Override
-	public Guest findByLoginAndDomain(String domain, String login) {
-		return super.findByMailAndDomain(domain, login);
-	}
-
 	/**
 	 * Find all guests mails, those passwords are encoded in not bcrypt
 	 * @return {@link List} mails of guests

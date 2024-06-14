@@ -88,7 +88,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	}
 	
 	@Override
-	public U findByMailAndDomain(String domainUuid, String mail) {
+	public U findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.uuid", domainUuid));
@@ -106,7 +106,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	}
 
 	@Override
-	public U findByExternalUidAndDomain(String domainUuid, @NotNull String externalUid) {
+	public U findByDomainAndExternalUid(@NotNull final String domainUuid, @NotNull final String externalUid) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.uuid", domainUuid));

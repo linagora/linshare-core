@@ -71,7 +71,7 @@ public class TechnicalAccountBusinessServiceImpl implements
 		account.setCreationDate(new Date());
 		account.setModificationDate(new Date());
 		if (account.getMail() != null) {
-			if (technicalAccountRepository.findByMailAndDomain(domainId, account.getMail()) != null) {
+			if (technicalAccountRepository.findByDomainAndMail(domainId, account.getMail()) != null) {
 				throw new BusinessException(BusinessErrorCode.TECHNICAL_ACCOUNT_ALREADY_EXISTS,
 						"Technical account already exists");
 			}

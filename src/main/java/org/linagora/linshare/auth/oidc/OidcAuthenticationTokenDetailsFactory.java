@@ -15,20 +15,22 @@
  */
 package org.linagora.linshare.auth.oidc;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.auth.AuthRole;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationExceptionCode;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
+import org.linagora.linshare.core.facade.webservice.adminv5.dto.DomainLightDto;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
@@ -41,9 +43,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Loading data from the LinShare database by the information from the oAUth2 provider.
@@ -77,7 +76,7 @@ public class OidcAuthenticationTokenDetailsFactory {
 	UsernamePasswordAuthenticationToken getAuthenticationToken(final OidcLinShareUserClaims claims) {
 		Validate.notNull(claims, "Missing user claims.");
 		final SystemAccount actor = getSystemAccount();
-		final User foundUser = getUserFromClaims(claims);
+		final User foundUser = getUserFromDomainProvider(claims);
 		Validate.notNull(foundUser, "User should have been set or created by now.");
 		logger.info(String.format("Successful authentication of %1$s with OIDC opaque token : %2$s", foundUser.getLsUuid(), claims.getEmail()));
 		logger.debug("Checking if guest conversion is enabled");
@@ -120,73 +119,6 @@ public class OidcAuthenticationTokenDetailsFactory {
 		return new UsernamePasswordAuthenticationToken(userDetail, null, grantedAuthorities);
 	}
 
-	private User getUserFromClaims(OidcLinShareUserClaims claims) {
-		try {
-			Validate.notEmpty(claims.getExternalUid(), "Missing external_uid claim.");
-			return getUserFromExternalUid(claims.getExternalUid());
-		} catch (NullPointerException | IllegalArgumentException e) {
-			throwMissingClaimException(e);
-		}
-		return null;
-	}
-
-
-	private User getUserFromMail(String email) {
-		User foundUser = authentificationFacade.findByLogin(email);
-		if (foundUser == null) {
-			// looking through user providers.
-			Iterator<String> domains = authentificationFacade.getAllDomains().iterator();
-			while (domains.hasNext() && foundUser == null) {
-				String domain = domains.next();
-				logger.trace("searching into domain: {}", domain);
-				foundUser = authentificationFacade.userProviderSearchForAuth(domain, email);
-			}
-		}
-		if (foundUser == null) {
-			logger.error("User not found: " + email);
-			throw new UsernameNotFoundException("Could not find user account : " + email);
-		}
-		try {
-			// loading/creating the real entity
-			foundUser = authentificationFacade.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
-		} catch (BusinessException e) {
-			logger.error(e.getMessage(), e);
-			throw new AuthenticationServiceException(
-					"Could not create user account : "
-					+ foundUser.getDomainId() + " : "
-					+ foundUser.getMail(), e);
-		}
-		return foundUser;
-	}
-
-	private User getUserFromExternalUid(@NotNull String externalUid) {
-		User foundUser = authentificationFacade.findByExternalUid(externalUid);
-		if (foundUser == null) {
-			// looking through user providers.
-			Iterator<String> domains = authentificationFacade.getAllDomains().iterator();
-			while (domains.hasNext() && foundUser == null) {
-				String domain = domains.next();
-				logger.trace("searching into domain: {}", domain);
-				foundUser = authentificationFacade.userProviderSearchForAuth(domain, externalUid);
-			}
-		}
-		if (foundUser == null) {
-			logger.error("User not found: " + externalUid);
-			throw new UsernameNotFoundException("Could not find user account : " + externalUid);
-		}
-		try {
-			// loading/creating the real entity
-			foundUser = authentificationFacade.findOrCreateUserByExternalUid(foundUser.getDomainId(), externalUid);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage(), e);
-			throw new AuthenticationServiceException(
-					"Could not create user account : "
-							+ foundUser.getDomainId() + " : "
-							+ foundUser.getMail(), e);
-		}
-		return foundUser;
-	}
-
 	@NotNull
 	private User getUserFromDomainProvider(OidcLinShareUserClaims claims) {
 		OIDCUserProviderDto providerDto = authentificationFacade.findOidcProvider(List.of(claims.getDomainDiscriminator()));
@@ -201,13 +133,19 @@ public class OidcAuthenticationTokenDetailsFactory {
 			// It won't be used if the profile already exists.
 			// If we use an opaque token we should transmit it to extract user data later
 			// loading/creating the real entity
-			User foundUser = authentificationFacade.findOrCreateUserByExternalUid(validatedUser.getDomainId(), claims.getExternalUid());
-			String externalUid = claims.getExternalUid();
-			if (!foundUser.getLdapUid().equals(externalUid)) {
-				if (providerDto.getCheckExternalUserID() ) {
+			final String externalUid = claims.getExternalUid();
+			assert externalUid != null;
+			final User foundUser;
+			if (providerDto.getCheckExternalUserID()) {
+				foundUser = authentificationFacade.findOrCreateUserByExternalUid(validatedUser.getDomainId(),
+						claims.getExternalUid());
+				if (!foundUser.getLdapUid().equals(externalUid)) {
 					logger.error("External uid has changed, same email but probably a different user. external_uid={}, {}", externalUid, foundUser);
 					throw new UsernameNotFoundException("Access rejected, external uid does not match with existing profile");
-				} else {
+				}
+			} else {
+				foundUser = authentificationFacade.findOrCreateUser(validatedUser.getDomainId(), claims.getEmail());
+				if (!foundUser.getLdapUid().equals(externalUid)) {
 					logger.debug("External uid has changed, same email but probably a different user. {}, {}", externalUid, foundUser);
 				}
 			}
@@ -215,21 +153,22 @@ public class OidcAuthenticationTokenDetailsFactory {
 		} catch (BusinessException e) {
 			logger.error(e.getMessage(), e);
 			throw new AuthenticationServiceException(
-					"Could not create user account : "
-					+ validatedUser.getDomainId() + " : "
-					+ validatedUser.getMail(), e);
+					"Could not create user account : " + validatedUser.getDomainId() + " : " + validatedUser.getMail(),
+					e);
 		}
 	}
 
+
 	@NotNull
 	private User validateUserFromDbOrUserProvider(OidcLinShareUserClaims claims, OIDCUserProviderDto providerDto) {
+		final boolean useExternalUid = providerDto.getCheckExternalUserID();
 		String email = claims.getEmail();
 		Validate.notEmpty(email, "Missing email claim.");
 
 		String identifier = email;
 
 		// Optional validation
-		if (providerDto.getCheckExternalUserID() ) {
+		if (useExternalUid) {
 			identifier = claims.getExternalUid();
 			Validate.notEmpty(identifier, "Missing external_uid claim.");
 		}
@@ -241,9 +180,20 @@ public class OidcAuthenticationTokenDetailsFactory {
 				throwAccessNotGrantedException(identifier);
 			}
 		}
+
+		DomainLightDto domain = providerDto.getDomain();
+		Validate.notNull(domain, "Missing domain for user.");
+		Validate.notEmpty(domain.getUuid(), "Missing domain uuid for user.");
+
 		// looking in the db first.
 		User foundUser;
-		foundUser = authentificationFacade.findByLoginAndDomain(providerDto.getDomain().getUuid(), email);
+		if (useExternalUid) {
+			foundUser = authentificationFacade.findByDomainAndMail(providerDto.getDomain().getUuid(), identifier);
+		} else {
+			foundUser = authentificationFacade.findByDomainAndExternalUid(providerDto.getDomain().getUuid(),
+					identifier);
+		}
+
 		if (foundUser == null) {
 			// looking through user provider.
 			foundUser = authentificationFacade.userProviderSearchForAuth(providerDto.getDomain().getUuid(), identifier);

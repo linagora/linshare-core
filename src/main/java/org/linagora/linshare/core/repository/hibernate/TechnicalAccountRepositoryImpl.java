@@ -32,13 +32,9 @@ public class TechnicalAccountRepositoryImpl extends GenericUserRepositoryImpl<Te
 		return super.create(entity);
 	}
 
+	// TODO seems to be unused
 	@Override
 	public TechnicalAccount findByLogin(String login) {
-		return super.findByLsUuid(login);
-	}
-
-	@Override
-	public TechnicalAccount findByLoginAndDomain(String domain, String login) {
 		return super.findByLsUuid(login);
 	}
 }

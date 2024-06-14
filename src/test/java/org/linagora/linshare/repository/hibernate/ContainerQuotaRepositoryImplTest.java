@@ -92,8 +92,8 @@ public class ContainerQuotaRepositoryImplTest {
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
-		inconsistent = userRepository.findByMailAndDomain(LinShareTestConstants.TOP_DOMAIN, "inconsistent-user1@linshare.org");
-		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		inconsistent = userRepository.findByDomainAndMail(LinShareTestConstants.TOP_DOMAIN, "inconsistent-user1@linshare.org");
+		root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		guestDomain = domainRepository.findById(LinShareTestConstants.GUEST_DOMAIN);
 		topDomain = domainRepository.findById(LinShareTestConstants.TOP_DOMAIN);
 	}

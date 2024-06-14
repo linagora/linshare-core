@@ -142,7 +142,7 @@ public class ShareNewShareEmailBuilderTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		owner = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		actor = (Account) owner;
-		admin = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		admin = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

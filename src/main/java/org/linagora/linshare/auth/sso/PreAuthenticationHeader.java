@@ -116,7 +116,7 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 					foundUser = authentificationFacade.findByLogin(authenticationHeader);
 					domains = authentificationFacade.getAllDomains();
 				} else {
-					foundUser = authentificationFacade.findByLoginAndDomain(domainIdentifier, authenticationHeader);
+					foundUser = authentificationFacade.findByDomainAndMail(domainIdentifier, authenticationHeader);
 					domains = authentificationFacade.getAllSubDomainIdentifiers(domainIdentifier);
 				}
 				if (foundUser == null) {

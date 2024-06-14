@@ -108,7 +108,7 @@ public class NestedSharedSpaceNodeTest {
 	@BeforeEach
 	public void init() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		Account root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		john = userRepository.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
 		foo = userRepository.findByMail(LinShareTestConstants.FOO_ACCOUNT);

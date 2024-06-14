@@ -152,7 +152,8 @@ public class LDAPGroupSyncServiceImplTest {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
 		systemAccount = userRepository.getBatchSystemAccount();
-		Account root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		final Account root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN,
+				LinShareTestConstants.ROOT_ACCOUNT);
 		domain = abstractDomainService.findById(LinShareTestConstants.TOP_DOMAIN);
 		attributes = new HashMap<String, LdapAttribute>();
 		attributes.put(GroupLdapPattern.GROUP_NAME, new LdapAttribute(GroupLdapPattern.GROUP_NAME, "cn"));

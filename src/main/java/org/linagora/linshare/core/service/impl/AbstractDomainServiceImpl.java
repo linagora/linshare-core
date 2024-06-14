@@ -58,7 +58,6 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.core.service.WorkSpaceProviderService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GroupProviderService;
@@ -66,6 +65,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
+import org.linagora.linshare.core.service.WorkSpaceProviderService;
 import org.linagora.linshare.mongo.entities.logs.DomainAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.DomainMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
@@ -673,7 +673,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 				}
 				// For each user, we set the domain which he came from.
 				for (User ldapUser : ldapUserList) {
-					User userDb = userRepository.findByMailAndDomain(
+					final User userDb = userRepository.findByDomainAndMail(
 							d.getUuid(), ldapUser.getMail());
 					if (userDb != null) {
 						users.add(userDb);

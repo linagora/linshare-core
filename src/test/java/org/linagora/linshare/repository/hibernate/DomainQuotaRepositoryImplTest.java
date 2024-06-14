@@ -85,7 +85,7 @@ public class DomainQuotaRepositoryImplTest {
 	@BeforeEach
 	public void setUp() {
 		jane = userRepository.findByMail(LinShareTestConstants.JANE_ACCOUNT);
-		root = userRepository.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		guestDomain = domainRepository.findById(LinShareTestConstants.GUEST_DOMAIN);
 		topDomain = domainRepository.findById(LinShareTestConstants.TOP_DOMAIN);
 	}

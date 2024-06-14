@@ -102,7 +102,7 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		root = userRepository.findByLoginAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		root = userRepository.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		GroupLdapPatternDto groupPatternDto = new GroupLdapPatternDto();
 		groupPatternDto.setDescription("description");
 		groupPatternDto.setLabel("New Pattern");

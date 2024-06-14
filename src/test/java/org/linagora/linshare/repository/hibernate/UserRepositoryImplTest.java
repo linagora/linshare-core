@@ -37,15 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
@@ -143,8 +135,8 @@ public class UserRepositoryImplTest {
 		u.setDomain(domain);
 		
 		userRepository.create(u);
-		
-		User userFound = userRepository.findByMailAndDomain(DOMAIN_IDENTIFIER,MAIL4);
+
+		final User userFound = userRepository.findByDomainAndMail(DOMAIN_IDENTIFIER, MAIL4);
 		Assertions.assertNotNull(userFound);
 		Assertions.assertEquals(FIRST_NAME4,userFound.getFirstName());
 	}

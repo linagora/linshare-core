@@ -59,12 +59,14 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
      */
 	T findByLogin(String login);
 
-	/** Find a user using its domain and login.
-     * @param domain : domain identifier
-     * @param login : ie mail or ldap uid.
-     * @return  user, null if not found.
-     */
-	T findByLoginAndDomain(String domain, String login);
+	/**
+	 * Find a user using its domain and mail.
+	 *
+	 * @param domainUuid : domain identifier
+	 * @param mail       : user mail
+	 * @return user, null if not found.
+	 */
+	T findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail);
 
 	PageContainer<T> findAll(List<AbstractDomain> domains, Order sortOrder, String mail, String firstName, String lastName,
 							 Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,

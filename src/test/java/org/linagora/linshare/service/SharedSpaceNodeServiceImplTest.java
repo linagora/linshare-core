@@ -161,7 +161,7 @@ public class SharedSpaceNodeServiceImplTest {
 	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		root = userRepo.findByMailAndDomain(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
+		root = userRepo.findByDomainAndMail(LinShareTestConstants.ROOT_DOMAIN, LinShareTestConstants.ROOT_ACCOUNT);
 		john = userRepo.findByMail(LinShareTestConstants.JOHN_ACCOUNT);
 		foo = userRepo.findByMail(LinShareTestConstants.FOO_ACCOUNT);
 		jane= userRepo.findByMail(LinShareTestConstants.JANE_ACCOUNT);

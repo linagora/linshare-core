@@ -256,7 +256,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	@Override
 	public boolean exist(String domainId, String mail) {
-		return guestRepository.findByMailAndDomain(domainId, mail) == null;
+		return guestRepository.findByDomainAndMail(domainId, mail) == null;
 	}
 
 	@Override

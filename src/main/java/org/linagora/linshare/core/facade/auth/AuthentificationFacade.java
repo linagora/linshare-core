@@ -17,6 +17,8 @@ package org.linagora.linshare.core.facade.auth;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -24,8 +26,6 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
-
-import javax.annotation.Nonnull;
 
 public interface AuthentificationFacade {
 
@@ -37,9 +37,9 @@ public interface AuthentificationFacade {
 
 	User findByLogin(String login);
 
-	User findByExternalUid(@NotNull String externalUid);
+	User findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail);
 
-	User findByLoginAndDomain(String domain, String login);
+	User findByDomainAndExternalUid(@NotNull final String domainUuid, @NotNull final String externalUid);
 
 	boolean userExist(String lsUuid);
 

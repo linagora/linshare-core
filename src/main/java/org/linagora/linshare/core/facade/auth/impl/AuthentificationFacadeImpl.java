@@ -17,6 +17,8 @@ package org.linagora.linshare.core.facade.auth.impl;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationExceptionCode;
@@ -26,8 +28,8 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.OIDCUserProviderDto;
@@ -35,15 +37,13 @@ import org.linagora.linshare.core.repository.OIDCUserProviderRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.mongo.entities.logs.AuthenticationAuditLogEntryUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 
 public class AuthentificationFacadeImpl implements AuthentificationFacade {
 
@@ -186,21 +186,13 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
-	public User findByExternalUid(@NotNull String externalUid) {
-		User user = userRepository.findByExternalUid(externalUid);
-		// Ugly but needed until we find a more elegant solution :(
-		if (user != null) {
-			user.getDomain().getUuid();
-		}
-		return user;
+	public User findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail) {
+		return userRepository.findByDomainAndMail(domainUuid, mail);
 	}
 
 	@Override
-	public User findByLoginAndDomain(String domain, String login) {
-		User internal = userRepository.findByLoginAndDomain(domain, login);
-		// Ugly but needed until we find a more elegant solution :(
-		if (internal != null) internal.getDomain().getUuid();
-		return internal;
+	public User findByDomainAndExternalUid(@NotNull final String domainUuid, @NotNull final String externalUid) {
+		return userRepository.findByDomainAndExternalUid(domainUuid, externalUid);
 	}
 
 	private User updateUser(User user) throws BusinessException {

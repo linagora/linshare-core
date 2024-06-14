@@ -16,7 +16,12 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -629,32 +634,31 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	@Override
 	public Boolean isUserExist(AbstractDomain domain, UserProvider up, String mail)
 			throws BusinessException {
-		if (up != null) {
-			UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
-			if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
-				LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
-				Boolean result = false;
-				try {
-					result = ldapQueryService.isUserExist(
-							ldapUserProvider.getLdapConnection(), ldapUserProvider.getBaseDn(),
-							ldapUserProvider.getPattern(), mail);
-				} catch (NamingException | IOException | CommunicationException e) {
-					logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
-				}
-				return result;
-			} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
-				User user = userRepository.findByMailAndDomain(domain.getUuid(), mail);
-				if (user != null)
-					return true;
-			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
-				return twakeUserProviderService.isUserExist(domain, (TwakeUserProvider) userProvider, mail);
-			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
-				return twakeGuestUserProviderService.isUserExist(domain, (TwakeGuestUserProvider) userProvider, mail);
-			} else {
-				logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
-			}
+		if (up == null) {
+			return false;
 		}
-		return false;
+
+		UserProvider userProvider = userProviderRepository.findByUuid(up.getUuid());
+		if (UserProviderType.LDAP_PROVIDER.equals(up.getType())) {
+			LdapUserProvider ldapUserProvider = (LdapUserProvider) userProvider;
+			try {
+				return ldapQueryService.isUserExist(ldapUserProvider.getLdapConnection(), ldapUserProvider.getBaseDn(),
+						ldapUserProvider.getPattern(), mail);
+			} catch (NamingException | IOException | CommunicationException e) {
+				logger.error("Error happen while connecting to ldap " + ldapUserProvider.getLdapConnection(), e);
+				return false;
+			}
+		} else if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
+			final User user = userRepository.findByDomainAndMail(domain.getUuid(), mail);
+			return user != null;
+		} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
+			return twakeUserProviderService.isUserExist(domain, (TwakeUserProvider) userProvider, mail);
+		} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
+			return twakeGuestUserProviderService.isUserExist(domain, (TwakeGuestUserProvider) userProvider, mail);
+		} else {
+			logger.error("Unsupported UserProviderType : " + up.getType().toString() + ", id : " + up.getId());
+			return false;
+		}
 	}
 
 	@Override
