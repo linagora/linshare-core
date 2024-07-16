@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
@@ -114,7 +114,7 @@ public class LDAPUserQueryServiceImpl extends LDAPQueryServiceImpl implements LD
 	}
 
 	@Override
-	public User getUserByUid(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, @NotNull String uid) throws BusinessException, NamingException, IOException {
+	public User getUserByUid(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, @Nonnull String uid) throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
 		Map<String, Object> vars = new HashMap<String, Object>();

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -77,7 +77,7 @@ public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements Au
 				.collect(Collectors.toSet());
 	}
 
-	@NotNull
+	@Nonnull
 	private static Optional<AccountType> getCheckedAccountType(String accountType) {
 		try {
 			return Strings.isNullOrEmpty(accountType)

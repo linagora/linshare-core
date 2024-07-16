@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import javax.transaction.Transactional;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -169,7 +169,7 @@ public class GuestDelegationRestServiceImplTest {
 				.hasMessage("You are not authorized to create an entry.");
 	}
 
-	@NotNull
+	@Nonnull
 	private GuestDto getGuestDto() {
 		GuestDto guestDto = GuestDto.toDto().apply(guestUser);
 		guestDto.setUuid(null);

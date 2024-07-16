@@ -25,7 +25,7 @@ import org.apache.commons.lang3.Validate;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.dao.JcloudObjectStorageFileDataStore;
 import org.linagora.linshare.core.dao.impl.DefaultJcloudFileDataStoreImpl;
 import org.linagora.linshare.core.dao.impl.FileSystemJcloudFileDataStoreImpl;
@@ -85,7 +85,7 @@ public class JcloudObjectStorageFileDataStoreFactory {
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	private Properties getProperties() {
 		Properties properties = new Properties();
 

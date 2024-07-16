@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
@@ -446,7 +446,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return container.loadData(performQuery(query));
 	}
 
-	@NotNull
+	@Nonnull
 	private List<AuditLogEntry> performQuery(Query query) {
 		long startTime = System.currentTimeMillis();
 		List<AuditLogEntry> data = mongoTemplate.find(query, AuditLogEntry.class);
@@ -462,7 +462,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		container.validateTotalPagesCount(count);
 	}
 
-	@NotNull
+	@Nonnull
 	private Query getQuery(Account authUser, AbstractDomain domain, boolean includeNestedDomains, Set<String> domains,
 						   Set<LogAction> logActions, Set<AuditLogEntryType> resourceTypes, Set<AuditGroupLogEntryType> resourceGroups,
 						   Set<AuditLogEntryType> excludedTypes, Optional<String> authUserUuid, Optional<String> actorUuid,
@@ -529,7 +529,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return query;
 	}
 
-	@NotNull
+	@Nonnull
 	private static DateRange getPeriod(Optional<String> beginDate, Optional<String> endDate) {
 		Optional<LocalDate> begin = Optional.empty();
 		Optional<LocalDate> end = Optional.empty();

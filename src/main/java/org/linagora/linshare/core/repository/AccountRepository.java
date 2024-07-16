@@ -18,7 +18,7 @@ package org.linagora.linshare.core.repository;
 import java.util.Date;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 
@@ -38,9 +38,9 @@ public interface AccountRepository<U extends Account> extends
 
 	List<U> findByDomain(String domain);
 
-	U findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail);
+	U findByDomainAndMail(@Nonnull final String domainUuid, @Nonnull final String mail);
 
-	U findByDomainAndExternalUid(@NotNull final String domainUuid, @NotNull final String externalUid);
+	U findByDomainAndExternalUid(@Nonnull final String domainUuid, @Nonnull final String externalUid);
 
 	SystemAccount getBatchSystemAccount();
 

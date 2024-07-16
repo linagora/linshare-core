@@ -26,7 +26,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -81,7 +81,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	}
 
 	@Override
-	public U findByExternalUid(@NotNull String externalUid) {
+	public U findByExternalUid(@Nonnull String externalUid) {
 		DetachedCriteria criteria = DetachedCriteria
 				.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("ldapUid", externalUid));

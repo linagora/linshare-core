@@ -31,7 +31,7 @@ import javax.transaction.Transactional;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -374,7 +374,7 @@ public class DocumentDelegationRestServiceImplTest {
                 .hasMessage("You are not authorized to get this entry.");
     }
 
-    @NotNull
+    @Nonnull
     private static DocumentDto getDocumentDto() {
         DocumentDto document = new DocumentDto();
         document.setName("test");

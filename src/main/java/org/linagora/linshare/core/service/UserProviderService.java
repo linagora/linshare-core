@@ -17,7 +17,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -44,7 +44,7 @@ public interface UserProviderService {
 
 	User findUser(AbstractDomain domain, UserProvider userProvider, String mail) throws BusinessException;
 
-	User findUserByExternalUid(AbstractDomain domain, UserProvider userProvider, @NotNull String externalUid) throws BusinessException;
+	User findUserByExternalUid(AbstractDomain domain, UserProvider userProvider, @Nonnull String externalUid) throws BusinessException;
 	Boolean isUserExist(AbstractDomain domain, UserProvider userProvider, String mail) throws BusinessException;
 
 	List<User> searchUser(AbstractDomain domain, UserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException;

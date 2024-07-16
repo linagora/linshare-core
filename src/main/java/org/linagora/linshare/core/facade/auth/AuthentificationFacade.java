@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -33,13 +33,13 @@ public interface AuthentificationFacade {
 
 	User findOrCreateUser(String domainIdentifier, String mail) throws BusinessException;
 
-	User findOrCreateUserByExternalUid(String domainIdentifier, @NotNull String externalUid) throws BusinessException;
+	User findOrCreateUserByExternalUid(String domainIdentifier, @Nonnull String externalUid) throws BusinessException;
 
 	User findByLogin(String login);
 
-	User findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail);
+	User findByDomainAndMail(@Nonnull final String domainUuid, @Nonnull final String mail);
 
-	User findByDomainAndExternalUid(@NotNull final String domainUuid, @NotNull final String externalUid);
+	User findByDomainAndExternalUid(@Nonnull final String domainUuid, @Nonnull final String externalUid);
 
 	boolean userExist(String lsUuid);
 

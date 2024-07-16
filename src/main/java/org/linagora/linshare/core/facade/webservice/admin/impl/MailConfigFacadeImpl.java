@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -93,7 +93,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		return new MailConfigDto(config, getOverrideReadonly(), getAssociatedDomainsLightDto(config));
 	}
 
-	@NotNull
+	@Nonnull
 	private Set<DomainLightDto> getAssociatedDomainsLightDto(MailConfig config) {
 		return mailConfigService.findAllAssociatedDomains(config)
 				.stream().map(DomainLightDto::new).collect(Collectors.toSet());

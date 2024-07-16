@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.SearchType;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
@@ -103,7 +103,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 		return userSet;
 	}
 
-	@NotNull
+	@Nonnull
 	private static Optional<AccountType> getCheckedAccountType(String accountType) {
 		try {
 			return Strings.isNullOrEmpty(accountType)

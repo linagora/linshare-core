@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.hibernate.criterion.Order;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -42,7 +42,7 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
 	 * @param externalUid
 	 * @return  user, null if not found.
 	 */
-	T findByExternalUid(@NotNull String externalUid);
+	T findByExternalUid(@Nonnull String externalUid);
     
     /**
      * Return a list of mails beginning with the text
@@ -66,7 +66,7 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
 	 * @param mail       : user mail
 	 * @return user, null if not found.
 	 */
-	T findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail);
+	T findByDomainAndMail(@Nonnull final String domainUuid, @Nonnull final String mail);
 
 	PageContainer<T> findAll(List<AbstractDomain> domains, Order sortOrder, String mail, String firstName, String lastName,
 							 Boolean restricted, Boolean canCreateGuest, Boolean canUpload, Role role, AccountType type,

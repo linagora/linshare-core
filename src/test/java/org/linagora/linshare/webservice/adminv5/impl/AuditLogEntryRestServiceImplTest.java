@@ -25,7 +25,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -511,7 +511,7 @@ public class AuditLogEntryRestServiceImplTest {
                 .hasMessage("begin date (" + getDate(1) + ") must be before end date (" + getDate(-1) + ")");
     }
 
-    @NotNull
+    @Nonnull
     private DocumentEntry generateFakeDocument() {
         Document aDocument = new Document("fakeZipDocument", "fake.zip", "application/zip", Calendar.getInstance(), null, john, false, false, 10000L);
         DocumentEntry documentEntry = new DocumentEntry(john, "test", "test", aDocument);
@@ -521,7 +521,7 @@ public class AuditLogEntryRestServiceImplTest {
         return documentEntry;
     }
 
-    @NotNull
+    @Nonnull
     private ShareEntry generateFakeShareEntry(DocumentEntry documentEntry) {
         ShareEntryGroup shareEntryGroup = new ShareEntryGroup(john, "test group");
         Calendar date = Calendar.getInstance();

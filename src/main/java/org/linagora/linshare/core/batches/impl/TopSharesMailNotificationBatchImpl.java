@@ -31,7 +31,7 @@ import javax.activation.FileDataSource;
 import javax.mail.SendFailedException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -132,7 +132,7 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
         return context;
     }
 
-    @NotNull
+    @Nonnull
     private Map<String, File> getCsvFiles(BatchRunContext batchRunContext) {
         Map<String, File> attachments = new HashMap<String, File>();
         try {
@@ -264,7 +264,7 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
         return DATE_FORMAT_TIMESTAMP.format(getYesterdayBeginCalendar().getTime());
     }
 
-    @NotNull
+    @Nonnull
     private static Calendar getYesterdayBeginCalendar() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(GregorianCalendar.DATE, -1);
@@ -279,7 +279,7 @@ public class TopSharesMailNotificationBatchImpl extends GenericBatchImpl {
         return DATE_FORMAT_TIMESTAMP.format(getYesterdayEndCalendar().getTime());
     }
 
-    @NotNull
+    @Nonnull
     private static Calendar getYesterdayEndCalendar() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(GregorianCalendar.DATE, -1);

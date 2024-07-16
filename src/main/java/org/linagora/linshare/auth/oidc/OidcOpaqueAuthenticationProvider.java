@@ -16,7 +16,7 @@
 package org.linagora.linshare.auth.oidc;
 
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -88,7 +88,7 @@ public class OidcOpaqueAuthenticationProvider implements AuthenticationProvider 
 		return oidcAuthenticationTokenDetailsFactory.getAuthenticationToken(claims);
 	}
 
-	@NotNull
+	@Nonnull
 	private OidcLinShareUserClaims getOidcLinShareUserClaims(String token) {
 		BearerTokenAuthenticationToken authToken = new BearerTokenAuthenticationToken(token);
 

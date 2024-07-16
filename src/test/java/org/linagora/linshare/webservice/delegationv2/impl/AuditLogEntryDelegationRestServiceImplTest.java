@@ -24,7 +24,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -197,7 +197,7 @@ public class AuditLogEntryDelegationRestServiceImplTest {
         assertThat(rootLogs.size()).isEqualTo(2);
     }
 
-    @NotNull
+    @Nonnull
     private DocumentEntry generateFakeDocument() {
         Document aDocument = new Document("fakeZip", "fake.zip", "application/zip", Calendar.getInstance(), null, john, false, false, 10000L);
         DocumentEntry documentEntry = new DocumentEntry(john, "test", "test", aDocument);

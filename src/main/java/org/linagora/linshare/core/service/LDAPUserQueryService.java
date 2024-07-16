@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
@@ -39,7 +39,7 @@ public interface LDAPUserQueryService {
 	
 	public User getUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail) throws BusinessException, NamingException,	IOException;
 
-	public User getUserByUid(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, @NotNull String externalUid) throws BusinessException, NamingException,	IOException;
+	public User getUserByUid(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, @Nonnull String externalUid) throws BusinessException, NamingException,	IOException;
 
 
 	public List<User> completeUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String pattern) throws BusinessException, NamingException, IOException;

@@ -27,7 +27,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.batches.impl.gdpr.GDPRConstants;
 import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -88,7 +88,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	}
 	
 	@Override
-	public U findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail) {
+	public U findByDomainAndMail(@Nonnull final String domainUuid, @Nonnull final String mail) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.uuid", domainUuid));
@@ -106,7 +106,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	}
 
 	@Override
-	public U findByDomainAndExternalUid(@NotNull final String domainUuid, @NotNull final String externalUid) {
+	public U findByDomainAndExternalUid(@Nonnull final String domainUuid, @Nonnull final String externalUid) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.uuid", domainUuid));

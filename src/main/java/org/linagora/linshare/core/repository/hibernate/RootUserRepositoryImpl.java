@@ -15,7 +15,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.Root;
 import org.linagora.linshare.core.repository.RootUserRepository;
@@ -33,7 +33,7 @@ public class RootUserRepositoryImpl  extends GenericUserRepositoryImpl<Root> imp
 	}
 
 	@Override
-	public Root findByDomainAndMail(@NotNull final String domainUuid, @NotNull final String mail) {
+	public Root findByDomainAndMail(@Nonnull final String domainUuid, @Nonnull final String mail) {
 		return super.findByDomainAndMail(LinShareConstants.rootDomainIdentifier, mail);
 	}
 }

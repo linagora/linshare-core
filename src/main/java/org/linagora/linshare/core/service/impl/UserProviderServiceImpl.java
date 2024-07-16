@@ -28,8 +28,8 @@ import javax.naming.NamingException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.criterion.Order;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.linagora.linshare.auth.oidc.OidcLinShareUserClaims;
 import org.linagora.linshare.auth.oidc.OidcTokenWithClaims;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -347,7 +347,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	}
 
 	@Override
-	public User findUserByExternalUid(AbstractDomain domain, UserProvider up, @NotNull String externalUid)
+	public User findUserByExternalUid(AbstractDomain domain, UserProvider up, @Nonnull String externalUid)
 			throws BusinessException {
 		if (up == null) {
 			return null;
@@ -626,7 +626,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		return users;
 	}
 
-	@NotNull
+	@Nonnull
 	private static String getBaseDn(AbstractDomain domain) {
 		return "ou=" + domain.getLabel().toLowerCase() + ",dc=linshare,dc=org";
 	}

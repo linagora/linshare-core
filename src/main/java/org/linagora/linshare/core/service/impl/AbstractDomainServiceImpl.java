@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -419,7 +419,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 	}
 
 	@Override
-	public User findUserWithoutRestrictionByExternalUid(AbstractDomain domain, @NotNull String externalUid)
+	public User findUserWithoutRestrictionByExternalUid(AbstractDomain domain, @Nonnull String externalUid)
 			throws BusinessException {
 		if (domain.getUserProvider() != null) {
 			return userProviderService.findUserByExternalUid(domain, domain.getUserProvider(), externalUid);
@@ -462,7 +462,7 @@ public class AbstractDomainServiceImpl extends DomainServiceCommonImpl implement
 	}
 
 	private List<User> findUserRecursivelyWithoutRestrictionByExternalUid(
-			AbstractDomain domain, @NotNull String externalUid) throws BusinessException {
+			AbstractDomain domain, @Nonnull String externalUid) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		try {
 			// TODO FMA

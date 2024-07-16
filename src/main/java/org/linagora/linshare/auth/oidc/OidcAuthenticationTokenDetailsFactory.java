@@ -18,7 +18,7 @@ package org.linagora.linshare.auth.oidc;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.auth.AuthRole;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.auth.exceptions.LinShareAuthenticationException;
@@ -72,7 +72,7 @@ public class OidcAuthenticationTokenDetailsFactory {
 		this.enableGuestConversion = enableGuestConversion;
 	}
 
-	@NotNull
+	@Nonnull
 	UsernamePasswordAuthenticationToken getAuthenticationToken(final OidcLinShareUserClaims claims) {
 		Validate.notNull(claims, "Missing user claims.");
 		final SystemAccount actor = getSystemAccount();
@@ -110,7 +110,7 @@ public class OidcAuthenticationTokenDetailsFactory {
 		return accountRepository.getBatchSystemAccount();
 	}
 
-	@NotNull
+	@Nonnull
 	private static UsernamePasswordAuthenticationToken buildAuthenticationToken(User foundUser) {
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
 		grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_AUTH_OIDC));
@@ -119,14 +119,14 @@ public class OidcAuthenticationTokenDetailsFactory {
 		return new UsernamePasswordAuthenticationToken(userDetail, null, grantedAuthorities);
 	}
 
-	@NotNull
+	@Nonnull
 	private User getUserFromDomainProvider(OidcLinShareUserClaims claims) {
 		OIDCUserProviderDto providerDto = authentificationFacade.findOidcProvider(List.of(claims.getDomainDiscriminator()));
 		User validatedUser = validateUserFromDbOrUserProvider(claims, providerDto);
 		return createOrUpdateUser(claims, providerDto, validatedUser);
 	}
 
-	@NotNull
+	@Nonnull
 	private User createOrUpdateUser(OidcLinShareUserClaims claims, OIDCUserProviderDto providerDto, User validatedUser) {
 		try {
 			// It means we are using a OIDC user provider, so we need to provide some extra properties to allow on-the-fly creation.
@@ -159,7 +159,7 @@ public class OidcAuthenticationTokenDetailsFactory {
 	}
 
 
-	@NotNull
+	@Nonnull
 	private User validateUserFromDbOrUserProvider(OidcLinShareUserClaims claims, OIDCUserProviderDto providerDto) {
 		final boolean useExternalUid = providerDto.getCheckExternalUserID();
 		String email = claims.getEmail();

@@ -17,7 +17,7 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.springframework.orm.hibernate5.HibernateTemplate;
@@ -48,7 +48,7 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User>
 	}
 
 	@Override
-	public User findByExternalUid(@NotNull String externalUid) {
+	public User findByExternalUid(@Nonnull String externalUid) {
 		try {
 			return super.findByExternalUid(externalUid);
 		} catch (IllegalStateException e) {

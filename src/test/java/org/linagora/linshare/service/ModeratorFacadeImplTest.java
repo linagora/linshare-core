@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Date;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -635,17 +635,17 @@ public class ModeratorFacadeImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	@NotNull
+	@Nonnull
 	private ModeratorDto getTestSimpleModeratorDto(AccountLightDto modAccount) {
 		return getTestModeratorDto(modAccount, ModeratorRole.SIMPLE);
 	}
 	
-	@NotNull
+	@Nonnull
 	private ModeratorDto getTestAdminModeratorDto(AccountLightDto modAccount) {
 		return getTestModeratorDto(modAccount, ModeratorRole.ADMIN);
 	}
 
-	@NotNull
+	@Nonnull
 	private ModeratorDto getTestModeratorDto(AccountLightDto modAccount, ModeratorRole role) {
 		return new ModeratorDto(
 				"dummy_uuid",
