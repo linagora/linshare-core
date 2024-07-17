@@ -61,7 +61,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
                <th:block data-th-replace="layout :: infoStandardArea(#{password},${password})"/>
             </div>
             <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+               <th:block data-th-replace="layout :: infoDateAreaWithHours(#{closureDate},${request.expirationDate})"/>
             </div>
            <div data-th-if="(${totalMaxDepotSize})">
                     <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>

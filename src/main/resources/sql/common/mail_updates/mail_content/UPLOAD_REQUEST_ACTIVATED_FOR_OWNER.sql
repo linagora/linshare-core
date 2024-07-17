@@ -32,7 +32,7 @@ UPDATE mail_content SET subject='[(#{subject(${subject})})]',body='<!DOCTYPE htm
          <!--/* Secondary content for  bottom email section */-->
          <section id="secondary-content">
             <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+               <th:block data-th-replace="layout :: infoDateAreaWithHours(#{closureDate},${request.expirationDate})"/>
             </div>
             <div data-th-if="(${isCollective})">
                <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>

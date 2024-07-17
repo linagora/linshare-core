@@ -42,10 +42,10 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
   <div data-th-if="${!#strings.isEmpty(request.activationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{activationDate},${request.activationDate})"/>
+               <th:block data-th-replace="layout :: infoDateAreaWithHours(#{activationDate},${request.activationDate})"/>
             </div>
      <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+               <th:block data-th-replace="layout :: infoDateAreaWithHours(#{closureDate},${request.expirationDate})"/>
             </div>
        <div data-th-if="(${totalMaxDepotSize})">
                <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>

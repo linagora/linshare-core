@@ -5,6 +5,7 @@ common.filesInShare=Fichiers joints
 common.recipients = Destinataires
 common.titleSharedThe= Partagé le
 date.format=d MMMM, yyyy
+date.formatWithHours=d MMMM, yyyy HH:mm
 productCompagny=Linagora
 productName=LinShare
 workGroupRightAdminTitle = Administration
@@ -22,6 +23,7 @@ common.filesInShare = Attached files
 common.recipients = Recipients
 common.titleSharedThe= Creation date
 date.format= MMMM d, yyyy
+date.formatWithHours= MMMM d, yyyy HH:mm
 productCompagny=Linagora
 productName=LinShare
 workGroupRightAdminTitle = Administrator
@@ -38,6 +40,7 @@ common.filesInShare = Прикрепленные файлы
 common.recipients = Получатели
 common.titleSharedThe= Дата создания
 date.format= d MMMM, yyyy
+date.formatWithHours= d MMMM, yyyy HH:mm
 productCompagny= Linagora
 productName=LinShare
 workGroupRightAdminTitle = Администратор
@@ -54,6 +57,7 @@ common.filesInShare = Tài liệu đính kèm
 common.recipients = Người nhận 
 common.titleSharedThe= NGày tạo 
 date.format= d MMMM, yyyy
+date.formatWithHours= d MMMM, yyyy HH:mm
 productCompagny= Linagora
 productName=LinShare
 workGroupRightAdminTitle = Quản trị viên 
@@ -372,6 +376,15 @@ border-top: 1px solid #e1e1e1;">
     <span style="font-weight:bold;" data-th-text="${titleInfo}">Shared the </span>
     <br />
     <span th:with="df=#{date.format}" data-th-text="${#dates.format(contentInfo,df)}">7th of November, 2018</span>
+  </div>
+</div>
+
+<!--/* Common date with hours display style */-->
+<div style="margin-bottom:17px;" data-th-fragment="infoDateAreaWithHours(titleInfo,contentInfo)">
+  <div data-th-if="${contentInfo != null}">
+    <span style="font-weight:bold;" data-th-text="${titleInfo}">Shared the </span>
+    <br />
+   <span th:with="dfwh=#{date.formatWithHours}" data-th-text="${#dates.format(contentInfo,dfwh)}">7th of November, 2018 at 10:30</span>
   </div>
 </div>
 
