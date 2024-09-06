@@ -90,7 +90,7 @@ build:
     - echo "RUN mvn -V jetty:start  -P h2,local,mongo-java-server > /dev/null" >> Dockerfile
     - echo "CMD mvn -V jetty:run -P h2,local,mongo-java-server -Dspring.profiles.active=default,jcloud,batches,tests" >> Dockerfile
     - echo "EXPOSE 8080" >> Dockerfile
-    - docker login --password-stdin -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}" docker-registry.linagora.com:5000
+    - docker login  -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}" docker-registry.linagora.com:5000
     - docker login -u "${HUB_DOCKER_USER}" -p "${HUB_DOCKER_RO_TOKEN}"
     - docker build . -t "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
     - docker push "${DOCKER_IMAGE_CORE_EMBEDDED}:${CI_COMMIT_REF_SLUG}"
