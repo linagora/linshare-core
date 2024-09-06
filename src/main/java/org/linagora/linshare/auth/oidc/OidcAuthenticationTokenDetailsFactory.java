@@ -78,7 +78,7 @@ public class OidcAuthenticationTokenDetailsFactory {
 		final SystemAccount actor = getSystemAccount();
 		final User foundUser = getUserFromDomainProvider(claims);
 		Validate.notNull(foundUser, "User should have been set or created by now.");
-		logger.info(String.format("Successful authentication of %1$s with OIDC opaque token : %2$s", foundUser.getLsUuid(), claims.getEmail()));
+		logger.info(String.format("Successful authentication of %1$s with OIDC token : %2$s", foundUser.getLsUuid(), claims.getEmail()));
 		logger.debug("Checking if guest conversion is enabled");
 
 		if (enableGuestConversion) {
