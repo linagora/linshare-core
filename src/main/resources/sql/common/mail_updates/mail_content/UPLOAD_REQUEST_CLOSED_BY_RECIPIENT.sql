@@ -37,8 +37,8 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
        <th:block data-th-replace="layout :: infoStandardArea(#{numFilesInDepot},
         #{totalUploaded(${documentsCount})})"/>
     </th:block>
-    <th:block data-th-replace="layout :: infoDateArea(#{invitationCreationDate},${request.activationDate})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{invitationClosureDate},${request.expirationDate})"/>
+    <th:block data-th-replace="layout :: infoDateAreaWithHours(#{invitationCreationDate},${request.activationDate})"/>
+    <th:block data-th-replace="layout :: infoDateAreaWithHours(#{invitationClosureDate},${request.expirationDate})"/>
   </section> <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>

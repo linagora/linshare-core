@@ -34,7 +34,7 @@ UPDATE mail_content SET subject='[( #{subject(${requestOwner.firstName}, ${reque
                <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
             </div>
             <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+               <th:block data-th-replace="layout :: infoDateAreaWithHours(#{closureDate},${request.expirationDate})"/>
             </div>
          </section>
          <!--/* End of Secondary content for bottom email section */-->
