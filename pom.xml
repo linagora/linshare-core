@@ -1621,12 +1621,12 @@
 				</executions>
 			</plugin>
 			<!-- mvn versions:display-dependency-updates -D allowMajorUpdates=false -DallowAnyUpdates=false -->
-			<plugin>
+			<!--<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
 				<version>2.11.0</version>
 				<configuration>
-					<!--<rulesUri>file:///${project.basedir}/src/dependencies/rules.xml</rulesUri>-->
+					<rulesUri>file:///${project.basedir}/src/dependencies/rules.xml</rulesUri>
 				</configuration>
 				<executions>
 					<execution>
@@ -1637,7 +1637,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 		</plugins>
 		<resources>
 			<resource>
