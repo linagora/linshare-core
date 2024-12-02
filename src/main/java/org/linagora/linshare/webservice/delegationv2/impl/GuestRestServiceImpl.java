@@ -31,6 +31,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountContactListDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.delegation.GuestFacade;
 import org.linagora.linshare.utils.Version;
@@ -43,7 +44,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Path("{actorUuid}/guests")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -169,5 +170,15 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 				@PathParam("uuid") String uuid)
 					throws BusinessException {
 		return guestFacade.delete(Version.V2, actorUuid, guest, uuid);
+	}
+
+	@GET
+	@Path("/{uuid}/contactLists")
+	@Produces(MediaType.APPLICATION_XML)
+	@Operation(summary = "Find the contact lists of the given guest.", responses = {
+			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountContactListDto.class))), responseCode = "200") })
+	@Override
+	public List<AccountContactListDto> findContactListByGuest( @Parameter(description = "The guest uuid.", required = true) @PathVariable("uuid") String uuid) {
+		return guestFacade.findContactListsByGuest(Version.V2, uuid);
 	}
 }

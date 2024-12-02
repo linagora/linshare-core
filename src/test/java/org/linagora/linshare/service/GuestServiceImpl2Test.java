@@ -116,13 +116,13 @@ public class GuestServiceImpl2Test {
 				functionality);
 		johnGuest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		johnGuest.setCmisLocale("en");
-		johnGuest = guestService.create(john, john, johnGuest, null);
+		johnGuest = guestService.create(john, john, johnGuest, null,null);
 		assertThat(johnGuest).isNotNull();
 		List<Moderator> johnGuestModerators = moderatorService.findAllByGuest(root, root, johnGuest.getLsUuid(), null, null);
 		assertThat(john).isEqualTo(johnGuestModerators.get(0).getAccount());
 		janeGuest = new Guest("Guest", "Smith", "guest2@linshare.org");
 		janeGuest.setCmisLocale("en");
-		janeGuest = guestService.create(jane, jane, janeGuest, null);
+		janeGuest = guestService.create(jane, jane, janeGuest, null, null);
 		assertThat(janeGuest).isNotNull();
 		Moderator johnModerator =new Moderator(ModeratorRole.SIMPLE, john, janeGuest);
 		johnModerator = moderatorService.create(jane, jane, johnModerator, false);
@@ -130,7 +130,7 @@ public class GuestServiceImpl2Test {
 		assertThat(janeGuestModerators.size()).isEqualTo(2);
 		fooGuest = new Guest("Guest", "Bar", "guest3@linshare.org");
 		fooGuest.setCmisLocale("en");
-		fooGuest = guestService.create(foo, foo, fooGuest, null);
+		fooGuest = guestService.create(foo, foo, fooGuest, null, null);
 		assertThat(fooGuest).isNotNull();
 		List<Moderator> fooGuestModerators = moderatorService.findAllByGuest(root, root, fooGuest.getLsUuid(), null, null);
 		assertThat(foo).isEqualTo(fooGuestModerators.get(0).getAccount());

@@ -9,7 +9,7 @@
 		</id>
 
 		<property access="field" name="isPublic" column="is_public" type="boolean" not-null="true" />
-		<property name="identifier" column="identifier" type="string" length="255" not-null="true" />
+		<property name="identifier" column="identifier" type="string" length="255" not-null="true" index="contact_list_identifier_index" />
 		<property name="description" column="description" type="text" />
 		<property name="creationDate" column="creation_date" type="timestamp" length="29" not-null="true" lazy="false" />
 		<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false" />

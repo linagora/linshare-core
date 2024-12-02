@@ -30,10 +30,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class StatisticDto {
 
 	@Schema(description = "Domain")
-	private DomainLightDto domain;
+	private CommonDomainLightDto domain;
 
 	@Schema(description = "ParentDomain")
-	private DomainLightDto parentDomain;
+	private CommonDomainLightDto parentDomain;
 
 	@Schema(description = "CreationDate")
 	private Date creationDate;
@@ -72,8 +72,8 @@ public class StatisticDto {
 	}
 
 	public StatisticDto(Statistic statistic){
-		this.domain = new DomainLightDto(statistic.getDomain());
-		this.parentDomain = new DomainLightDto(statistic.getParentDomain());
+		this.domain = new CommonDomainLightDto(statistic.getDomain());
+		this.parentDomain = new CommonDomainLightDto(statistic.getParentDomain());
 		this.creationDate = statistic.getCreationDate();
 		this.actualOperationSum = statistic.getActualOperationSum();
 		this.addOperationCount = statistic.getCreateOperationCount();
@@ -89,19 +89,19 @@ public class StatisticDto {
 		this.statisticDate = statistic.getStatisticDate();
 	}
 
-	public DomainLightDto getDomain() {
+	public CommonDomainLightDto getDomain() {
 		return domain;
 	}
 
-	public void setDomain(DomainLightDto domain) {
+	public void setDomain(CommonDomainLightDto domain) {
 		this.domain = domain;
 	}
 
-	public DomainLightDto getParentDomain() {
+	public CommonDomainLightDto getParentDomain() {
 		return parentDomain;
 	}
 
-	public void setParentDomain(DomainLightDto parentDomain) {
+	public void setParentDomain(CommonDomainLightDto parentDomain) {
 		this.parentDomain = parentDomain;
 	}
 

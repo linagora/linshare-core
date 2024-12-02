@@ -58,7 +58,7 @@ public class ContactListRestServiceImpl implements ContactListRestService {
 
 	@Path("/")
 	@GET
-	@Operation(summary = "Find all an user contact lists.", responses = {
+	@Operation(summary = "Find all contact lists matching given criteria. Each criteria is exclusive.", responses = {
 		@ApiResponse(
 			content = @Content(array = @ArraySchema(schema = @Schema(implementation = ContactListDto.class))),
 			responseCode = "200"
@@ -66,9 +66,13 @@ public class ContactListRestServiceImpl implements ContactListRestService {
 	})
 	@Override
 	public Set<ContactListDto> findAll(
+			@Parameter(description = "filter contact lists according to this pattern.", required = false) @QueryParam("pattern") String pattern,
 			@Parameter(description = "filter contact list by my contact list(true), others (false) or all (null).", required = false) @QueryParam("mine") Boolean mine,
 			@Parameter(description = "filter contact list by a contact email.", required = false) @QueryParam("contactMail") String contactMail)
 			throws BusinessException {
+		if (pattern != null && !pattern.isEmpty()) {
+			return contactListFacade.findContactListByPattern(null,pattern);
+		}
 		if (contactMail == null) {
 			return contactListFacade.findAll(null, mine);
 		}

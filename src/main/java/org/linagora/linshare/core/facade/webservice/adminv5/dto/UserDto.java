@@ -131,6 +131,9 @@ public class UserDto {
 	@Schema(description = "Restricted field shows that the user is able to share files just with a restricted list of users")
 	private Boolean restricted;
 
+	@Schema(description = "RestrictedContact field shows that the user is able to share files just with a restricted list of contact lists")
+	private Boolean restrictedContact;
+
 	@Schema(description = "Comment")
 	private String comment;
 
@@ -177,6 +180,7 @@ public class UserDto {
 			this.expirationDate = g.getExpirationDate();
 		} else {
 			this.restricted = false;
+			this.restrictedContact = false;
 		}
 		this.canUpload = user.isCanUpload();
 		this.canCreateGuest = user.isCanCreateGuest();
@@ -346,6 +350,14 @@ public class UserDto {
 
 	public void setRestricted(Boolean restricted) {
 		this.restricted = restricted;
+	}
+
+	public Boolean isRestrictedContact() {
+		return restrictedContact;
+	}
+
+	public void setRestrictedContact(Boolean restrictedContact) {
+		this.restrictedContact = restrictedContact;
 	}
 
 	public String getComment() {

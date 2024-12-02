@@ -145,10 +145,6 @@ public class ContactListServiceTest {
 		internal.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		internal.setDomain(domain);
 		accountRepository.create(internal);
-
-		this.guest = guestRepository.findByMail(LinShareTestConstants.GUEST_ACCOUNT);
-		this.guest.setDomain(guest_domain);
-
 		contactList1 = new ContactList();
 		contactList1.setIdentifier(identifier1);
 		contactList1.setOwner(internal);
@@ -300,7 +296,10 @@ public class ContactListServiceTest {
 
 	@Test
 	public void testUpdateGuestAccountDomainId() throws BusinessException {
-
+		guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+        guest.setCmisLocale("en-US");
+		guest.setDomain(guest_domain);
+		guestRepository.create(guest);
 		final List<ContactList> contacts = contactListService.findAllListManagedByUser(guest.getLsUuid());
 		for (final ContactList contactList : contacts) {
 			this.contactListService.transferContactListFromGuestToInternal(guest, internal);

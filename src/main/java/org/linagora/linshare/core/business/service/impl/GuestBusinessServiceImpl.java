@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
@@ -35,12 +36,16 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactListId;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountContactListsRepository;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
@@ -49,7 +54,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
-
 
 public class GuestBusinessServiceImpl implements GuestBusinessService {
 
@@ -72,12 +76,11 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	private final SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService;
 	private final WorkGroupNodeBusinessService workGroupNodeBusinessService;
 	private final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
+	private final AccountContactListsRepository accountContactListRepository;
 
-	public GuestBusinessServiceImpl(final GuestRepository guestRepository,
-			final UserRepository<User> userRepository,
+	public GuestBusinessServiceImpl(final GuestRepository guestRepository, final UserRepository<User> userRepository,
 			final AllowedContactRepository allowedContactRepository,
-			final RecipientFavouriteRepository recipientFavouriteRepository,
-			final PasswordService passwordService,
+			final RecipientFavouriteRepository recipientFavouriteRepository, final PasswordService passwordService,
 			final MailingListBusinessServiceImpl mailingListBusinessServiceImpl,
 			final UploadRequestGroupBusinessServiceImpl uploadRequestGroupBusinessService,
 			final EntryBusinessService entryBusinessService,
@@ -85,7 +88,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			final ShareEntryBusinessService shareEntryBusinessService,
 			final SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService,
 			final WorkGroupNodeBusinessService workGroupNodeBusinessService,
-			final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
+			final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
+			final AccountContactListsRepository accountContactListRepository) {
 		this.guestRepository = guestRepository;
 		this.userRepository = userRepository;
 		this.allowedContactRepository = allowedContactRepository;
@@ -99,6 +103,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		this.sharedSpaceNodeBusinessService = sharedSpaceNodeBusinessService;
 		this.workGroupNodeBusinessService = workGroupNodeBusinessService;
 		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
+		this.accountContactListRepository = accountContactListRepository;
 	}
 
 	@Override
@@ -145,8 +150,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public Guest create(Account actor, Guest guest,
-			AbstractDomain domain, List<User> allowedContacts) throws BusinessException {
+	public Guest create(Account actor, Guest guest, AbstractDomain domain, List<User> allowedContacts,
+			List<ContactList> contactLists) throws BusinessException {
 		String password = passwordService.generatePassword();
 		String hashedPassword = passwordService.encode(password);
 		guest.setMail(guest.getMail().toLowerCase());
@@ -159,28 +164,60 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			guest.setExternalMailLocale(domain.getExternalMailLocale());
 		}
 		guest.setPassword(hashedPassword);
-		Guest create = guestRepository.create(guest);
+		Guest guestCreated = guestRepository.create(guest);
 		Set<AllowedContact> allowedContactsToAdd = Sets.newHashSet();
-		if (create.isRestricted()) {
+		Set<AccountContactLists> accountContactListToAdd = Sets.newHashSet();
+		if (guestCreated.isRestricted()) {
 			if (allowedContacts == null || allowedContacts.isEmpty()) {
 				throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not create a restricted guest without a list of contacts.");
 			} else {
 				for (User contact : allowedContacts) {
-					AllowedContact allowedContact = new AllowedContact(create,
+					AllowedContact allowedContact = new AllowedContact(guestCreated,
 							contact);
 					allowedContactRepository.create(allowedContact);
 					allowedContactsToAdd.add(allowedContact);
 				}
 			}
 		}
-		create.addContacts(allowedContactsToAdd);
-		return create;
+			if (contactLists != null && !contactLists.isEmpty()) {
+
+				contactLists.stream().distinct().forEach(contactList -> {
+					AccountContactListId accountContactListId = new AccountContactListId(guestCreated,
+							contactList);
+					AccountContactLists accountContactList = new AccountContactLists();
+					accountContactList.setId(accountContactListId);
+					accountContactList.setAccount(guestCreated);
+					accountContactList.setContactList(contactList);
+					accountContactListRepository.create(accountContactList);
+					accountContactListToAdd.add(accountContactList);
+				});
+			}
+
+		guestCreated.addContacts(allowedContactsToAdd);
+		guestCreated.addContactList(accountContactListToAdd);
+		return guestCreated;
 	}
 
+	/**
+	 * Updates the information of an existing {@link Guest} entity, including its properties,
+	 * authorized contacts, and contact lists. This method ensures that only the relevant fields
+	 * of the guest entity are modified and that the corresponding authorized contacts and
+	 * contact lists are properly managed based on the updated restrictions.
+	 *
+	 * @param actor                The {@link Account} performing the update operation.
+	 * @param entity               The {@link Guest} entity to be updated. It contains the existing state
+	 *                             nd will be modified with the new values.
+	 * @param allowedContacts      A list of {@link User} objects representing the new authorized
+	 *                             contacts for the guest. Can be empty or null if not restricted.
+	 * @param contactLists   A list of {@link ContactList} objects representing the new
+	 *                             contact lists. Can be empty or null.
+	 * @return                     The updated {@link Guest} entity after changes have been persisted.
+	 * @throws BusinessException   If any business rule is violated during the update, such as missing
+	 *                             required contacts for a restricted guest.
+	 */
 	@Override
-	public Guest update(Account actor, Guest entity, Guest guest,
-			List<User> allowedContacts)
-			throws BusinessException {
+	public @Nonnull Guest update(Account actor, Guest entity, Guest guest, @Nullable final List<User> allowedContacts,
+			@Nullable final List<ContactList> contactLists) throws BusinessException {
 		boolean wasRestricted = entity.isRestricted();
 		// fields that can not be null
 		entity.setCanUpload(guest.isCanUpload());
@@ -192,25 +229,32 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		entity.setBusinessFirstName(guest.getFirstName());
 		entity.setExpirationDate(guest.getExpirationDate());
 		Guest update = guestRepository.update(entity);
+		// Management of authorized contacts
+		updateAllowedContacts(update, guest, wasRestricted, allowedContacts);
+		// Management of authorized contact list
+		if (contactLists != null && !contactLists.isEmpty()) {
+			mailingListBusinessServiceImpl.updateAccountContactLists(update, contactLists);
+		}
+		logger.info("restricted contact list: {}", update.getRestrictedContactLists());
+		logger.info("update: {}", update);
+		return update;
+	}
+
+	private void updateAllowedContacts(Guest update, Guest guest, boolean wasRestricted, List<User> allowedContacts) throws BusinessException {
 		if (wasRestricted == guest.isRestricted()) {
 			if (allowedContacts != null) {
-				if ((allowedContacts.isEmpty() && entity.isRestricted())) {
-					throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not update a restricted guest without a list of contacts.");
+				if ((update.isRestricted() && allowedContacts.isEmpty())) {
+					throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT,
+							"You can not update a restricted guest without a list of contacts.");
 				}
 				// update
 				allowedContactRepository.purge(update);
 				Set<String> contacts = Sets.newHashSet();
 				for (User contact : allowedContacts) {
-					allowedContactRepository.create(new AllowedContact(update,
-							contact));
+					allowedContactRepository.create(new AllowedContact(update, contact));
 					contacts.add(contact.getMail());
 				}
-				List<String> recipients = recipientFavouriteRepository.getElementsOrderByWeight(update);
-				for (String recipient: recipients) {
-					if (!contacts.contains(recipient)) {
-						recipientFavouriteRepository.deleteOneFavoriteOfUser(update, recipient);
-					}
-				}
+				updateRecipientFavorites(update, contacts);
 			}
 		} else if (wasRestricted) {
 			// it is not restricted anymore. purge
@@ -224,20 +268,22 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 				} else {
 					Set<String> contacts = Sets.newHashSet();
 					for (User contact : allowedContacts) {
-						allowedContactRepository.create(new AllowedContact(update,
-								contact));
+						allowedContactRepository.create(new AllowedContact(update, contact));
 						contacts.add(contact.getMail());
 					}
-					List<String> recipients = recipientFavouriteRepository.getElementsOrderByWeight(update);
-					for (String recipient: recipients) {
-						if (!contacts.contains(recipient)) {
-							recipientFavouriteRepository.deleteOneFavoriteOfUser(update, recipient);
-						}
-					}
+					updateRecipientFavorites(update, contacts);
 				}
 			}
 		}
-		return update;
+	}
+
+	private void updateRecipientFavorites(Guest update, Set<String> contacts) {
+		List<String> recipients = recipientFavouriteRepository.getElementsOrderByWeight(update);
+		for (String recipient : recipients) {
+			if (!contacts.contains(recipient)) {
+				recipientFavouriteRepository.deleteOneFavoriteOfUser(update, recipient);
+			}
+		}
 	}
 
 	@Override

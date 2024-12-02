@@ -26,8 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.SearchType;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
-import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -39,6 +40,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.ListAutoCompleteRes
 import org.linagora.linshare.core.facade.webservice.user.dto.ThreadMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.UserAutoCompleteResultDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.WorkgroupMemberAutoCompleteResultDto;
+import org.linagora.linshare.core.repository.AccountContactListsRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ContactListService;
@@ -67,12 +69,15 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	private final SharedSpaceMemberService ssMemberService;
 
+	private final AccountContactListsRepository accountContactListRepository;
+
 	public AutoCompleteFacadeImpl(final AccountService accountService,
 			final UserService userService,
 			final ContactListService contactListService,
 			final RecipientFavouriteRepository favourite,
 			final UserService2 userService2,
-			final SharedSpaceMemberService ssMemberService
+			final SharedSpaceMemberService ssMemberService,
+			final AccountContactListsRepository allowedContactListRepository
 			) {
 		super(accountService);
 		this.userService = userService;
@@ -80,6 +85,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 		this.contactListService = contactListService;
 		this.favourite = favourite;
 		this.ssMemberService = ssMemberService;
+		this.accountContactListRepository = allowedContactListRepository;
 	}
 
 	@Override
@@ -216,12 +222,36 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 		List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
 		int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
 		Set<UserDto> userList = findUser(pattern);
-		result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
-		result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
-		// TODO : Fix this dirty hack ! :(
-		List<RecipientFavourite> favouriteRecipeints = favourite.findMatchElementsOrderByWeight(pattern, authUser, FAVOURTITE_RECIPIENT_LIMIT);
-		int range2 = (favouriteRecipeints.size() < AUTO_COMPLETE_LIMIT ? favouriteRecipeints.size() : AUTO_COMPLETE_LIMIT);
-		result.addAll(ImmutableList.copyOf(Lists.transform(favouriteRecipeints.subList(0, range2), AutoCompleteResultDto.toRFDto())));
+		if (mailingListsList == null) mailingListsList = Lists.newArrayList();
+		List<AccountContactLists> accountContactList = null;
+		if(authUser instanceof Guest) {
+			accountContactList = accountContactListRepository.findByAccountAndContactListName(authUser, pattern);
+			if (accountContactList == null) accountContactList = Lists.newArrayList();
+			int range_contactList = (accountContactList .size() < AUTO_COMPLETE_LIMIT ? accountContactList .size() : AUTO_COMPLETE_LIMIT);
+			if(!accountContactList.isEmpty() ) {
+				result.addAll(ImmutableList.copyOf(Lists.transform(accountContactList.subList(0, range_contactList),
+						ListAutoCompleteResultDto.fromAllowedContactList())));
+			}
+			if(!userList.isEmpty() && authUser.isRestricted()){
+				result.addAll(ImmutableList.copyOf(
+						Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
+			}
+		}
+		else {
+			result.addAll(ImmutableList.copyOf(
+					Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
+			result.addAll(ImmutableList.copyOf(
+					Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
+
+			// TODO : Fix this dirty hack ! :(
+			List<RecipientFavourite> favouriteRecipeints = favourite.findMatchElementsOrderByWeight(pattern, authUser,
+					FAVOURTITE_RECIPIENT_LIMIT);
+			int range2 = (favouriteRecipeints.size() < AUTO_COMPLETE_LIMIT
+					? favouriteRecipeints.size()
+					: AUTO_COMPLETE_LIMIT);
+			result.addAll(ImmutableList.copyOf(
+					Lists.transform(favouriteRecipeints.subList(0, range2), AutoCompleteResultDto.toRFDto())));
+		}
 		return result;
 	}
 }

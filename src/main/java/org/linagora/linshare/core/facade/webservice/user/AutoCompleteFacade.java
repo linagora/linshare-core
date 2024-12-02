@@ -19,8 +19,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ContactListDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
+
+import javax.validation.constraints.NotNull;
 
 public interface AutoCompleteFacade {
 

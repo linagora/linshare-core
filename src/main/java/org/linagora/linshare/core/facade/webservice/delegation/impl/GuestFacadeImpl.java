@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,12 +25,15 @@ import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.UtilGuestAuthor;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountContactListDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ContactListDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestModeratorRole;
@@ -165,6 +169,7 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements Gues
 		User actor = getActor(authUser, actorUuid);
 		Guest guest = guestDto.toUserObject();
 		List<String> ac = null;
+		List<String> contactUuid = null;
 		if (guest.isRestricted()) {
 			if (guestDto.getRestrictedContacts() != null) {
 				ac = Lists.newArrayList();
@@ -173,7 +178,13 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements Gues
 				}
 			}
 		}
-		guest = guestService.create(authUser, actor, guest, ac);
+			if (guestDto.getRestrictedContactList() != null) {
+				contactUuid = Lists.newArrayList();
+				for (ContactListDto contactListDto : guestDto.getRestrictedContactList()) {
+					contactUuid.add(contactListDto.getUuid());
+				}
+			}
+		guest = guestService.create(authUser, actor, guest, ac, contactUuid);
 		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
@@ -189,12 +200,16 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements Gues
 		User actor = getActor(authUser, null);
 		Guest guest = dtoIn.toUserObject();
 		List<String> ac = Lists.newArrayList();
+		List<String> contactUuid = Lists.newArrayList();
 		if (guest.isRestricted()) {
 			for (GenericUserDto contactDto : dtoIn.getRestrictedContacts()) {
 				ac.add(contactDto.getMail());
 			}
 		}
-		guest = guestService.update(authUser, authUser, guest, ac);
+			for (ContactListDto contactListDto : dtoIn.getRestrictedContactList()) {
+				contactUuid.add(contactListDto.getUuid());
+			}
+		guest = guestService.update(authUser, authUser, guest, ac, contactUuid);
 		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
@@ -263,5 +278,14 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements Gues
 	public Map<String, Integer> getPasswordRules() throws BusinessException {
 		checkAuthentication();
 		return passwordService.getPasswordRules();
+	}
+
+	@Override
+	public List<AccountContactListDto> findContactListsByGuest(Version version, String uuid)
+			throws BusinessException {
+		Validate.notNull(uuid, "uuid is required");
+		List<AccountContactLists> accountContactLists = accountService.findAccountContactListsByAccount(uuid);
+		logger.info("allowed contact list guest", accountContactLists);
+		return new ArrayList<>(Lists.transform(accountContactLists, AccountContactListDto.toDto()));
 	}
 }

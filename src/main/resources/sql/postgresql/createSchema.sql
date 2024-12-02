@@ -30,6 +30,7 @@ CREATE TABLE account (
   can_upload            bool,
   comment               text,
   restricted            bool,
+  default_can_view_contact_list_members     bool,
   expiration_date       timestamp,
   ldap_uid              varchar(255),
   can_create_guest      bool,
@@ -355,6 +356,17 @@ CREATE TABLE allowed_contact (
   account_id int8 NOT NULL,
   contact_id int8 NOT NULL,
   PRIMARY KEY (id));
+
+CREATE TABLE account_contact_lists
+(
+    account_id        int8 NOT NULL,
+    contact_list_id int8 NOT NULL,
+    can_view_contact_list_members bool ,
+    PRIMARY KEY (account_id, contact_list_id),
+    FOREIGN KEY (account_id) REFERENCES account (id),
+    FOREIGN KEY (contact_list_id) REFERENCES contact_list (id)
+);
+
 CREATE TABLE technical_account_permission_domain_abstract (
   technical_account_permission_id int8 NOT NULL,
   domain_abstract_id              int8 NOT NULL,
@@ -977,6 +989,8 @@ CREATE INDEX unit_index
   ON unit (id);
 CREATE INDEX contact_list_index
   ON contact_list (uuid);
+CREATE INDEX contact_list_identifier_index
+    ON contact_list (identifier);
 CREATE INDEX contact_list_contact_index
   ON contact_list_contact (uuid);
 CREATE UNIQUE INDEX welcome_messages_uuid

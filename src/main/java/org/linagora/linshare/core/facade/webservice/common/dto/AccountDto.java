@@ -16,9 +16,11 @@
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.collect.Lists;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -67,6 +69,9 @@ public class AccountDto {
 	@Schema(description = "Show if user access is locked")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected Boolean locked = null;
+
+	@Schema(description = "ContactLists")
+	protected List<ContactListDto> contactLists = Lists.newArrayList();
 
 	public AccountDto() {
 		super();

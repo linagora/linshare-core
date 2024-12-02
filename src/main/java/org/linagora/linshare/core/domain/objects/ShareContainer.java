@@ -25,6 +25,8 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -40,6 +42,8 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import javax.annotation.Nonnull;
 
 public class ShareContainer {
 
@@ -353,13 +357,18 @@ public class ShareContainer {
 		Validate.notNull(user, "user must not be null.");
 		if (restrictedMode()) {
 			// In restricted mode, the current user is only allowed to create share with internals and guests.
-			if (allowedRecipients.get(user.getLsUuid()) == null) {
+			Recipient recipient = allowedRecipients.get(user.getLsUuid());
+			if (recipient == null) {
+				boolean isMailAuthorized = allowedRecipients.values().stream()
+						.anyMatch(r -> r.getMail().equals(user.getMail()));
 				// The current user is not an allowed recipient.
-				throw new BusinessException(
-						BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN,
-						"You are not authorized to create anonymous share entries.");
+				if (!isMailAuthorized) {
+					throw new BusinessException(BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN,
+							"You are not authorized to create anonymous share entries.");
+				}
 			}
 		}
+
 		this.shareRecipients.add(user);
 	}
 
@@ -419,6 +428,28 @@ public class ShareContainer {
 			this.addAllowedRecipient(allowedContact.getContact());
 		}
 	}
+
+	/**
+	 * Adds account contact lists to the internal collection of recipients, mapping each contact's email
+	 * to a {@link Recipient}.
+	 *
+	 * @param accountContactLists the list of {@link AccountContactLists} to process, must not be {@code null}.
+	 * @throws IllegalArgumentException if {@code allowedContactList} is {@code null}.
+	 */
+	public void addAccountContactLists(@Nonnull final List<AccountContactLists> accountContactLists) {
+		Validate.notNull(accountContactLists, "accountContactLists must not be null.");
+		if (this.allowedRecipients == null) {
+			this.allowedRecipients = Maps.newHashMap();
+		}
+		for (final AccountContactLists accountContactList : accountContactLists) {
+			final ContactList contactList = accountContactList.getContactList();
+
+			for (final ContactListContact contact : contactList.getContactListContacts()) {
+				this.allowedRecipients.put(contact.getMail(), new Recipient(contact));
+			}
+		}
+	}
+
 
 	public Boolean isAcknowledgement() {
 		return creationAcknowledgement;

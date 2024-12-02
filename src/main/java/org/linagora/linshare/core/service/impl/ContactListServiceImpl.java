@@ -15,9 +15,11 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -91,6 +93,19 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 	@Override
 	public void transferContactListFromGuestToInternal(final Guest guest, final Account authUser) {
 		this.contactListBusinessService.transferContactListFromGuestToInternal(guest,authUser);
+	}
+
+	@Override
+	public List<ContactList> searchContactLists(final Account actor, String pattern) throws BusinessException {
+		logger.debug("Begin autoCompleteContactList");
+
+		pattern = StringUtils.trim(pattern);
+		if (actor instanceof User) {
+			User user = (User) actor;
+				return contactListBusinessService.searchListByUser(user, pattern);
+		}
+		logger.debug("End autoCompleteContactList");
+		return new ArrayList<>();
 	}
 
 	@Override

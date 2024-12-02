@@ -191,6 +191,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User findByMail(String mail) {
+		Validate.notEmpty(mail, "User mail must be set.");
+		User user = userRepository.findByMail(mail);
+		if (user == null)
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "User with mail : " + mail  + " not found.");
+		return user;
+	}
+
+	@Override
 	public boolean exist(String lsUuid) {
 		return userRepository.findByLsUuid(lsUuid) != null;
 	}

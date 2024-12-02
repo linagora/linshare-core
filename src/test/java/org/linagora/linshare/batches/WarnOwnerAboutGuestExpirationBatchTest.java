@@ -137,7 +137,7 @@ public class WarnOwnerAboutGuestExpirationBatchTest {
 		LoadingServiceTestDatas datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		user1 = datas.getUser1();
-		guest = guestService.create(user1, user1, new Guest("Guest", "One", "guest1@linshare.org"), null);
+		guest = guestService.create(user1, user1, new Guest("Guest", "One", "guest1@linshare.org"), null, null);
 		Calendar expirationDate = Calendar.getInstance();
 		expirationDate.add(Calendar.DATE, 7);
 		guest.setExpirationDate(expirationDate.getTime());

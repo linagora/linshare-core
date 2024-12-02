@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,8 +23,9 @@ import java.util.Set;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
-public class ContactList {
+public class ContactList implements Serializable {
 
+	private static final long serialVersionUID = -1424966505036226433L;
 	/**
 	 * Database persistence identifier
 	 */

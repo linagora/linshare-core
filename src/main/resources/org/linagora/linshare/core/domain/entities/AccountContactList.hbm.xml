@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="org.linagora.linshare.core.domain.entities.AccountContactLists" table="account_contact_lists">
+    <composite-id name="id" class="org.linagora.linshare.core.domain.entities.AccountContactListId">
+      <key-many-to-one name="account" class="org.linagora.linshare.core.domain.entities.Account">
+        <column name="account_id"/>
+      </key-many-to-one>
+      <key-many-to-one name="contactList" class="org.linagora.linshare.core.domain.entities.ContactList">
+        <column name="contact_list_id"/>
+      </key-many-to-one>
+    </composite-id>
+    <property name="canViewContactListMembers" column="can_view_contact_list_members" type="boolean" not-null="false" lazy="false"/>
+    <many-to-one name="account" class="org.linagora.linshare.core.domain.entities.Account" insert="false" update="false">
+      <column name="account_id"/>
+    </many-to-one>
+    <many-to-one name="contactList" class="org.linagora.linshare.core.domain.entities.ContactList" insert="false" update="false">
+      <column name="contact_list_id"/>
+    </many-to-one>
+  </class>
+</hibernate-mapping>
+

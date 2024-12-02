@@ -26,7 +26,7 @@ import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.CommonDomainLightDto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Sets;
@@ -53,10 +53,10 @@ public class WelcomeMessagesDto {
 	private Date modificationDate;
 
 	@Schema(description = "MyDomain")
-	private DomainLightDto myDomain;
+	private CommonDomainLightDto myDomain;
 
 	@Schema(description = "Domains")
-	private Set<DomainLightDto> domains;
+	private Set<CommonDomainLightDto> domains;
 
 	@Schema(description = "WelcomeMessagesEntries")
 	private Map<SupportedLanguage, String> welcomeMessagesEntries;
@@ -76,7 +76,7 @@ public class WelcomeMessagesDto {
 					.getWelcomeMessagesEntries().values()) {
 				welcomeMessagesEntries.put(entry.getLang(), entry.getValue());
 			}
-			this.myDomain = new DomainLightDto(welcomeMessage.getDomain());
+			this.myDomain = new CommonDomainLightDto(welcomeMessage.getDomain());
 			this.domains = Sets.newHashSet();
 		}
 	}
@@ -121,11 +121,11 @@ public class WelcomeMessagesDto {
 		this.modificationDate = modificationDate;
 	}
 
-	public DomainLightDto getMyDomain() {
+	public CommonDomainLightDto getMyDomain() {
 		return myDomain;
 	}
 
-	public void setMyDomain(DomainLightDto myDomain) {
+	public void setMyDomain(CommonDomainLightDto myDomain) {
 		this.myDomain = myDomain;
 	}
 
@@ -138,7 +138,7 @@ public class WelcomeMessagesDto {
 		this.welcomeMessagesEntries = wlcmEntries;
 	}
 
-	public Set<DomainLightDto> getDomains() {
+	public Set<CommonDomainLightDto> getDomains() {
 		return domains;
 	}
 
@@ -146,10 +146,10 @@ public class WelcomeMessagesDto {
 		if (domains == null) {
 			domains = Sets.newHashSet();
 		}
-		domains.add(new DomainLightDto(domain));
+		domains.add(new CommonDomainLightDto(domain));
 	}
 
-	public void setDomains(Set<DomainLightDto> domains) {
+	public void setDomains(Set<CommonDomainLightDto> domains) {
 		this.domains = domains;
 	}
 

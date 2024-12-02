@@ -87,6 +87,7 @@
 					<property name="ldapUid" column="ldap_uid" type="string" length="255" not-null="false" lazy="false"/>
 					<property name="canUpload" column="can_upload" type="boolean" not-null="false" lazy="false"/>
 					<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="true" lazy="false"/>
+				    <property name="defaultCanViewContactListMembers" column="default_can_view_contact_list_members" type="boolean" not-null="false" lazy="false"/>
 					<property name="expirationDate" column="expiration_date" type="timestamp" not-null="false" lazy="false"/>
 					<property name="restricted" column="restricted" type="boolean" not-null="false" lazy="false"/>
 					<property name="comment" column="comment" type="text" not-null="false" lazy="false"/>

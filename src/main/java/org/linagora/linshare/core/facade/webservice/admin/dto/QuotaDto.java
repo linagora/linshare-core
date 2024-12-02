@@ -20,7 +20,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.Quota;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.CommonDomainLightDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -32,10 +32,10 @@ public class QuotaDto {
 	protected String uuid;
 
 	@Schema(description = "The domain which this quota belongs to.")
-	protected DomainLightDto domain;
+	protected CommonDomainLightDto domain;
 
 	@Schema(description = "The parent domain which this quota belongs to.")
-	protected DomainLightDto parentDomain;
+	protected CommonDomainLightDto parentDomain;
 
 	@Schema(description = "The limit (quota)")
 	protected Long quota;
@@ -78,10 +78,10 @@ public class QuotaDto {
 
 	public QuotaDto(Quota quota) {
 		this.uuid = quota.getUuid();
-		this.domain = new DomainLightDto(quota.getDomain());
+		this.domain = new CommonDomainLightDto(quota.getDomain());
 		this.domain.setType(quota.getDomain().getDomainType());
 		if (quota.getParentDomain() != null) {
-			this.parentDomain = new DomainLightDto(quota.getParentDomain());
+			this.parentDomain = new CommonDomainLightDto(quota.getParentDomain());
 		}
 		this.quota = quota.getQuota();
 		this.quotaOverride = quota.getQuotaOverride();
@@ -120,11 +120,11 @@ public class QuotaDto {
 		this.maintenance = maintenance;
 	}
 
-	public DomainLightDto getDomain() {
+	public CommonDomainLightDto getDomain() {
 		return domain;
 	}
 
-	public void setDomain(DomainLightDto domain) {
+	public void setDomain(CommonDomainLightDto domain) {
 		this.domain = domain;
 	}
 
@@ -192,11 +192,11 @@ public class QuotaDto {
 		this.defaultQuotaOverride = defaultQuotaOverride;
 	}
 
-	public DomainLightDto getParentDomain() {
+	public CommonDomainLightDto getParentDomain() {
 		return parentDomain;
 	}
 
-	public void setParentDomain(DomainLightDto parentDomain) {
+	public void setParentDomain(CommonDomainLightDto parentDomain) {
 		this.parentDomain = parentDomain;
 	}
 

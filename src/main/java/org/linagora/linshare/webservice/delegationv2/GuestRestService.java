@@ -18,7 +18,10 @@ package org.linagora.linshare.webservice.delegationv2;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountContactListDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+
+import javax.annotation.Nonnull;
 
 public interface GuestRestService {
 
@@ -33,5 +36,17 @@ public interface GuestRestService {
 	GuestDto update(String actorUuid, GuestDto guest, String uuid) throws BusinessException;
 
 	GuestDto delete(String actorUuid, GuestDto guest, String uuid) throws BusinessException;
+
+	/**
+	 * Retrieves a list of {@link AccountContactListDto} associated with a guest
+	 * identified by the given UUID. This method helps in fetching all contact lists linked
+	 * to the specified guest for further processing or display.
+	 *
+	 * @param uuid The unique identifier of the guest. Must not be {@code null} or empty.
+	 * @return     A list of {@link AccountContactListDto} linked to the specified guest.
+	 *             If no contact lists are found, an empty list is returned.
+	 * @throws BusinessException If there is an issue retrieving the restricted contact lists.
+	 */
+	public @Nonnull List<AccountContactListDto> findContactListByGuest(@Nonnull final String uuid);
 
 }

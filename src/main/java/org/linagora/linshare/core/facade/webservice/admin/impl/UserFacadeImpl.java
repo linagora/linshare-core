@@ -186,6 +186,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		User update;
 		if (entity.isGuest()) {
 			List<String> ac = null;
+			List<String> contactUuid = null;
 			if (userDto.isRestricted()) {
 				ac = Lists.newArrayList();
 				for (UserDto contactDto : userDto.getRestrictedContacts()) {
@@ -193,7 +194,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 				}
 			}
 			update = guestService.update(authUser, authUser,
-					(Guest) userToUpdate, ac);
+					(Guest) userToUpdate, ac, contactUuid);
 		} else {
 			update = userService.updateUser(authUser, userToUpdate,
 					userDto.getDomain());

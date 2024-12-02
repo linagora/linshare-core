@@ -23,6 +23,8 @@ import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -46,11 +48,11 @@ public interface GuestBusinessService {
 	List<String> findAllGuests();
 
 	Guest create(Account actor, Guest guest, AbstractDomain domain,
-			List<User> allowedContacts)
+			List<User> allowedContacts, List<ContactList> allowedContactLists)
 			throws BusinessException;
 
 	Guest update(Account actor, Guest entity, Guest guestDto,
-			List<User> allowedContacts) throws BusinessException;
+			List<User> allowedContacts , List<ContactList> allowedContactList) throws BusinessException;
 
 	void delete(Guest guest) throws BusinessException;
 
@@ -67,4 +69,5 @@ public interface GuestBusinessService {
 			Optional<String> pattern);
 
 	Account convertGuestToInternalUser(@Nonnull final Account internalAccount, @Nonnull final Guest guestAccount) ;
+
 }

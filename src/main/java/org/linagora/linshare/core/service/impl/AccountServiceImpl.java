@@ -17,23 +17,44 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.business.service.GuestBusinessService;
+import org.linagora.linshare.core.business.service.MailingListBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.UserResourceAccessControl;
+import org.linagora.linshare.core.repository.AccountContactListsRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AccountServiceImpl implements AccountService {
+import javax.annotation.Nonnull;
+
+public class AccountServiceImpl extends GenericServiceImpl<Account,User> implements AccountService {
 	
 	final private static Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 	
 	private final AccountRepository<Account> accountRepository;
+	private final AccountContactListsRepository accountContactListRepository;
+	private final GuestBusinessService guestBusinessService;
+	private final MailingListBusinessService mailingListBusinessService;
     
-	public AccountServiceImpl(AccountRepository<Account> accountRepository) {
-		super();
+	public AccountServiceImpl(AccountRepository<Account> accountRepository,
+			 SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			 UserResourceAccessControl rac,
+			AccountContactListsRepository accountContactListRepository,
+			GuestBusinessService guestBusinessService,
+			MailingListBusinessService mailingListBusinessService) {
+		super(rac, sanitizerInputHtmlBusinessService);
 		this.accountRepository = accountRepository;
+		this.accountContactListRepository = accountContactListRepository;
+		this.guestBusinessService = guestBusinessService;
+		this.mailingListBusinessService = mailingListBusinessService;
 	}
 
 	@Override
@@ -70,5 +91,18 @@ public class AccountServiceImpl implements AccountService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "forbidden");
 		}
 		return accountRepository.findAllKnownEmails(pattern);
+	}
+
+	@Override
+	public @Nonnull List<AccountContactLists> findAccountContactListsByAccount(@Nonnull final Account user)
+			throws BusinessException {
+		return accountContactListRepository.findByAccount(user);
+	}
+
+	@Override
+	public @Nonnull List<AccountContactLists> findAccountContactListsByAccount(@Nonnull final String accountUuid) {
+		Validate.notEmpty(accountUuid, "Account uuid is required");
+		Account account = accountRepository.findByLsUuid(accountUuid);
+		return mailingListBusinessService.findAccountContactListByAccount(account);
 	}
 }

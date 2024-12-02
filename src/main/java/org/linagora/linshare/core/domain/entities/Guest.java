@@ -36,6 +36,8 @@ public class Guest extends User {
 
 	private Set<AllowedContact> contacts = Sets.newHashSet();
 
+	private Set<AccountContactLists> contactLists = Sets.newHashSet();
+
 	private Set<Moderator> moderators = Sets.newHashSet();
 
 	protected AbstractDomain guestSourceDomain;
@@ -50,9 +52,8 @@ public class Guest extends User {
 		this.role = Role.SIMPLE;
 	}
 
-	/** Constructor for tests*/
-	public Guest(String firstName, String lastName, String mail,
-			String password, Boolean canUpload, String comment) {
+	/** Constructor for tests */
+	public Guest(String firstName, String lastName, String mail, String password, Boolean canUpload, String comment) {
 		super(firstName, lastName, mail);
 		this.canUpload = canUpload;
 		this.password = password;
@@ -71,7 +72,7 @@ public class Guest extends User {
 	}
 
 	public Guest(final String firstName, final String lastName, final String mail, final String lsUuid) {
-		super(firstName, lastName, mail,lsUuid);
+		super(firstName, lastName, mail, lsUuid);
 		this.restricted = false;
 		this.comment = "";
 		this.canCreateGuest = false;
@@ -120,6 +121,10 @@ public class Guest extends User {
 		this.contacts.addAll(c);
 	}
 
+	public void addContactList(Collection<? extends AccountContactLists> c) {
+		this.contactLists.addAll(c);
+	}
+
 	public Set<Moderator> getModerators() {
 		return moderators;
 	}
@@ -143,4 +148,13 @@ public class Guest extends User {
 	public void setGuestSourceDomain(AbstractDomain guestSourceDomain) {
 		this.guestSourceDomain = guestSourceDomain;
 	}
+
+	public Set<AccountContactLists> getRestrictedContactLists() {
+		return contactLists;
+	}
+
+	public void setContactLists(Set<AccountContactLists> contactLists) {
+		this.contactLists = contactLists;
+	}
+
 }

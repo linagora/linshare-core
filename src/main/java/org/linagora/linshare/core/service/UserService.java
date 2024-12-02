@@ -132,6 +132,8 @@ public interface UserService {
 
 	User findByLsUuid(String lsUuid);
 
+	User findByMail(String mail);
+
 	boolean exist(String lsUuid);
 
 	User findUserInDB(String domain, String mail);

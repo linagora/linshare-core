@@ -15,13 +15,17 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.dto;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
 
 import com.google.common.base.Function;
 
 @XmlRootElement(name = "ListAutoCompleteResult")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 
 	private String ownerLastName;
@@ -83,4 +87,9 @@ public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 			}
 		};
 	}
+
+	public static Function<AccountContactLists, ListAutoCompleteResultDto> fromAllowedContactList() {
+		return allowedContactList -> new ListAutoCompleteResultDto(allowedContactList.getContactList());
+	}
+
 }

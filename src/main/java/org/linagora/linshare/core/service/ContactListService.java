@@ -24,6 +24,9 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
+
 public interface ContactListService {
 
 	ContactList createList(String actorUuid, String ownerUuid, ContactList contactList) throws BusinessException;
@@ -103,4 +106,17 @@ public interface ContactListService {
 	List<ContactList> findAllByMemberEmail(Account actor, User owner, Boolean mine, String email);
 
 	void transferContactListFromGuestToInternal(final Guest guest, final Account authUser);
+
+	/**
+	 * Performs a search for {@link ContactList} entities based on a given pattern.
+	 * Filters results by the actor's permissions, including public lists within their domain
+	 * and private lists owned by them.
+	 *
+	 * @param actor   The {@link Account} requesting the search. Must not be {@code null}.
+	 * @param pattern The search pattern to match contact list names. Must not be {@code null} or empty.
+	 * @return        A list of matching {@link ContactList} objects, or an empty list if none are found.
+	 * @throws BusinessException If an error occurs during retrieval or filtering.
+	 */
+	public @Nonnull List<ContactList> searchContactLists(@NotNull final Account actor, @Nonnull final String pattern);
+
 }

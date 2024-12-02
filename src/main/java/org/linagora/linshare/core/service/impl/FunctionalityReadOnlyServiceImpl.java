@@ -42,6 +42,8 @@ import org.linagora.linshare.core.service.TimeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+
 public class FunctionalityReadOnlyServiceImpl implements
 		FunctionalityReadOnlyService {
 
@@ -136,6 +138,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public BooleanValueFunctionality getGuestsRestrictedContact(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.GUESTS__CONTACT_LISTS);
+	}
+
+	@Override
 	public BooleanValueFunctionality getGuestsCanUpload(AbstractDomain domain) {
 		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.GUESTS__CAN_UPLOAD);
 	}
@@ -218,6 +225,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.GUESTS__RESTRICTED);
+	}
+
+	@Override
+	public @Nonnull Functionality getCanAssignContactListToGuest(@Nonnull final AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.GUESTS__CONTACT_LISTS);
 	}
 
 	@Override

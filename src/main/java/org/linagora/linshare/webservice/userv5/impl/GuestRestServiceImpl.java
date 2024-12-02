@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountContactListDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
@@ -157,5 +158,15 @@ public class GuestRestServiceImpl implements GuestRestService {
 
 	private boolean lessThan3Char(String s) {
 		return StringUtils.trimToEmpty(s).length() < 3;
+	}
+
+	@Path("/{uuid}/contactLists")
+	@GET
+	@Produces(MediaType.APPLICATION_XML)
+	@Operation(summary = "Find the contact list of the current guest.", responses = {
+			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountContactListDto.class))), responseCode = "200") })
+	@Override
+	public List<AccountContactListDto> findContactListsByGuest( @Parameter(description = "The guest uuid.", required = true) @PathParam("uuid") String uuid) {
+		return guestFacade.findContactListsByGuest(Version.V5, uuid);
 	}
 }

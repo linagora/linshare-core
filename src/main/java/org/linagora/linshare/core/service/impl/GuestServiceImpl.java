@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
+import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -36,6 +38,8 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
@@ -69,8 +73,7 @@ import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 
-public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
-		implements GuestService {
+public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> implements GuestService {
 
 	private final GuestBusinessService guestBusinessService;
 
@@ -97,6 +100,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	protected final AccountRepository<Account> accountRepository;
 	private final GuestRepository guestRepository;
 
+	private final MailingListBusinessService mailingListBusinessService;
+
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -111,7 +116,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			final ModeratorService moderatorService,
 			final AccountRepository<Account> accountRepository,
-			final GuestRepository guestRepository) {
+			final GuestRepository guestRepository,
+			final MailingListBusinessService mailingListBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -126,6 +132,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.moderatorService = moderatorService;
 		this.accountRepository = accountRepository;
 		this.guestRepository = guestRepository;
+		this.mailingListBusinessService = mailingListBusinessService;
 	}
 
 	@Override
@@ -174,8 +181,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest create(Account authUser, Account actor, Guest guest,
-			List<String> restrictedMails) throws BusinessException {
+	public Guest create(Account authUser, Account actor, Guest guest, List<String> restrictedMails,
+			@Nonnull List<String> contactListsUuid) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(guest);
 		Validate.notEmpty(guest.getMail(), "Guest mail must be set.");
@@ -219,13 +226,13 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		if (guest.isRestricted()) {
 			restrictedContacts = transformToUsers(authUser, restrictedMails);
 			if (restrictedContacts == null || restrictedContacts.isEmpty()) {
-				throw new BusinessException(
-						BusinessErrorCode.GUEST_INVALID_INPUT,
+				throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT,
 						"Can not create a restricted guest without restricted contacts (internal or guest users only).");
 			}
 		}
-		Guest create = guestBusinessService.create(actor, guest,
-				guestDomain, restrictedContacts);
+		final List<ContactList> contactLists = mailingListBusinessService.findByAccountAndContactListUuids(authUser, contactListsUuid);
+		Guest create = guestBusinessService.create(actor, guest, guestDomain, restrictedContacts,
+				contactLists);
 		createQuotaGuest(guest);
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(create);
 		resetGuestPassword.setKind(ResetTokenKind.NEW_PASSWORD);
@@ -248,8 +255,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest update(Account authUser, User actor, Guest guest,
-			List<String> restrictedMails) throws BusinessException {
+	public Guest update(Account authUser, User actor, Guest guest, List<String> restrictedMails, List<String> restrictedContactUuid)
+			throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(guest, "Guest object is required");
 		Validate.notEmpty(guest.getLsUuid(), "Guest uuid is required");
@@ -261,7 +268,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		checkUpdatePermission(authUser, actor, Guest.class,
 				BusinessErrorCode.CANNOT_UPDATE_USER, entity);
 		List<User> restrictedContacts = transformToUsers(authUser, restrictedMails);
-		Date newExpirationDate = guest.getExpirationDate(); 
+		List<ContactList> restrictedContactList = mailingListBusinessService.findByAccountAndContactListUuids(authUser, restrictedContactUuid);
+		Date newExpirationDate = guest.getExpirationDate();
 		if (newExpirationDate != null && !newExpirationDate.before(new Date())) {
 				if (!actor.isAdmin()) {
 					// 1. Checking if he is admin of this domain was done by the rac.
@@ -278,7 +286,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		guest.setFirstName(sanitize(guest.getFirstName()));
 		guest.setLastName(sanitize(guest.getLastName()));
-		Guest result = guestBusinessService.update(actor, entity, guest, restrictedContacts);
+		Guest result = guestBusinessService.update(actor, entity, guest, restrictedContacts,restrictedContactList);
 		log.setResourceUpdated(new UserMto(result));
 		List<String> moderatorUuids = accountRepository.findAllModeratorUuidsByGuest(result);
 		log.addRelatedAccounts(moderatorUuids);
@@ -508,4 +516,5 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		logUser.setResourceUpdated(new UserMto((User)authUser ));
 		logEntryService.insert(logUser);
 	}
+
 }

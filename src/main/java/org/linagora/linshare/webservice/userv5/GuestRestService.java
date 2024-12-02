@@ -18,9 +18,11 @@ package org.linagora.linshare.webservice.userv5;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountContactListDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ModeratorRoleEnum;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
+
+import javax.annotation.Nonnull;
 
 public interface GuestRestService {
 
@@ -39,4 +41,14 @@ public interface GuestRestService {
 	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
 
 	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
+
+	/**
+	 * Retrieves the contact lists for a specific guest identified by its UUID.
+	 *
+	 * @param uuid The unique identifier of the guest. Must not be null.
+	 * @return A list of {@link AccountContactListDto} representing the allowed contact lists.
+	 *         May be empty if none are found.
+	 * @throws BusinessException if an error occurs or if the guest is not found.
+	 */
+	public @Nonnull List<AccountContactListDto> findContactListsByGuest(@Nonnull final String uuid);
 }

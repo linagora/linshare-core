@@ -89,7 +89,7 @@ INSERT INTO account(
 	mail_locale, external_mail_locale,
 	cmis_locale, enable, password,
 	destroyed, domain_id, purge_step, first_name,
-	last_name, can_upload, comment, restricted,
+	last_name, can_upload, comment, restricted
 	CAN_CREATE_GUEST, inconsistent, authentication_failure_count)
 VALUES
 -- John Do  (10)

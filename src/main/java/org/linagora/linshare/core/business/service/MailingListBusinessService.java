@@ -18,6 +18,7 @@ package org.linagora.linshare.core.business.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -154,4 +155,48 @@ public interface MailingListBusinessService {
 	List<ContactList> findAllListManagedByUser(User user);
 
 	void transferContactListFromGuestToInternal(@Nonnull final Guest guest,@Nonnull final Account authUser);
+
+	/**
+	 * <p>Retrieve a set of contact lists from their UUIDs validating their access permissions against
+	 * the given account.</p>
+	 * <p>This method ensures that only valid contact lists, either public within the actor's domain
+	 * or private owned by the actor, are added to the returned contact lists.</p>
+	 *
+	 * @param actor                The {@link Account} used to verify domain and ownership permissions.
+	 *                             Must not be {@code null}.
+	 * @param contactListUuids     A {@link List} of UUIDs representing the contact lists
+	 *                             to be retrieved and validated. May be {@code null} or empty.
+	 * @return                     A {@link List} of {@link ContactList} entities that have passed
+	 *                             the validation checks. Not {@code null}.
+	 * @throws BusinessException   If a public contact list belongs to another domain, or if the actor
+	 *                             attempts to use private contact lists they do not own.
+	 */
+	public @Nonnull List<ContactList> findByAccountAndContactListUuids(@Nonnull final Account actor, @Nonnull final List<String> contactListUuids);
+
+	/**
+	 * Updates the contact lists for a guest, ensuring consistency based on the guest's
+	 * restricted contact status.
+	 *
+	 * <p>Scenarios handled:
+	 * <ul>
+	 *   <li>If the status hasn't changed, it synchronizes contact lists by adding new ones
+	 *       and removing obsolete ones.</li>
+	 *   <li>If the guest was restricted but is no longer, all contact lists are purged.</li>
+	 *   <li>If the guest becomes restricted without contact lists, a {@link BusinessException} is thrown.</li>
+	 * </ul>
+	 *
+	 * @param update The guest being updated.
+	 * @param contactLists The new list of allowed contacts, if applicable.
+	 * @throws BusinessException If a restricted guest is updated or created without contact lists.
+	 */
+	void updateAccountContactLists(@Nonnull Guest update, @Nonnull List<ContactList> contactLists);
+
+	/**
+	 * Finds and retrieves the list of {@link AccountContactLists} associated with a
+	 * given {@link Account}
+	 * @param account           the {@link Account} entity
+	 * @return                A {@link List} of {@link AccountContactLists}
+	 */
+	public @Nonnull List<AccountContactLists> findAccountContactListByAccount(@Nonnull final Account account);
+
 }

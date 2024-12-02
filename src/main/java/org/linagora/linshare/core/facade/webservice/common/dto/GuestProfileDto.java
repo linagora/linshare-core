@@ -57,6 +57,9 @@ public class GuestProfileDto extends AbstractUserProfileDto<GuestProfileDto> {
 	@Schema(description = "User is restricted", required = true)
 	private Boolean restricted;
 
+	@Schema(description = "User is restricted contact list", required = true)
+	private Boolean restrictedContact;
+
 	@Schema(description = "User's author", required = true)
 	private AuthorDto author;
 
@@ -87,6 +90,14 @@ public class GuestProfileDto extends AbstractUserProfileDto<GuestProfileDto> {
 		this.author = author;
 	}
 
+	public Boolean isRestrictedContact() {
+		return restrictedContact;
+	}
+
+	public void setRestrictedContact(Boolean restrictedContact) {
+		this.restrictedContact = restrictedContact;
+	}
+
 	@Override
 	public void validation() {
 		super.validation();
@@ -99,6 +110,7 @@ public class GuestProfileDto extends AbstractUserProfileDto<GuestProfileDto> {
 	public String toString() {
 		return abstractToString()
 			.add("restricted", restricted)
+			.add("restrictedContact", restrictedContact)
 			.add("author", author)
 			.add("expirationDate", expirationDate)
 			.toString();
@@ -107,6 +119,9 @@ public class GuestProfileDto extends AbstractUserProfileDto<GuestProfileDto> {
 	@Override
 	public boolean equalsElseLocale(GuestProfileDto dto) {
 		if (dto.isRestricted() != isRestricted()) {
+			return false;
+		}
+		if (dto.isRestrictedContact() != isRestrictedContact()) {
 			return false;
 		}
 		if (!dto.getAuthor().getUuid().equals(getAuthor().getUuid())) {

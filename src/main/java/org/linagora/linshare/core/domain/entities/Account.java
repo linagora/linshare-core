@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
@@ -26,8 +27,9 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 
-public abstract class Account {
+public abstract class Account implements Serializable {
 
+	private static final long serialVersionUID = 4246042012346185743L;
 	protected long id;
 
 	protected String lsUuid;
@@ -79,6 +81,18 @@ public abstract class Account {
 	protected Integer authenticationFailureCount;
 
 	protected Set<Moderator> moderators;
+
+	/**
+	 * <p>Indicates, by default, whether the account has permission to view members of its
+	 * contact list. This permission can be overridden at the contact list association level
+	 * ({@link AccountContactLists #canViewContactListMembers}). It can be {@code null}, in which case
+	 * the permission will be defined by the Linshare parameter/functionality
+	 * '{@code user_can_view_its_contact_list_members}'.</p>
+	 *
+	 * <p>This field is typically used to control access to contact list visibility,
+	 * allowing only authorized accounts to see member details.</p>
+	 */
+	private Boolean defaultCanViewContactListMembers;
 
 	public Account() {
 		setCreationDate(new Date());
@@ -229,6 +243,14 @@ public abstract class Account {
 
 	public Language getMailLocale() {
 		return mailLocale;
+	}
+
+	public Boolean isDefaultCanViewContactListMembers() {
+		return defaultCanViewContactListMembers;
+	}
+
+	public void setDefaultCanViewContactListMembers(Boolean defaultCanViewContactListMembers) {
+		this.defaultCanViewContactListMembers = defaultCanViewContactListMembers;
 	}
 
 	public Locale getJavaExternalMailLocale() {

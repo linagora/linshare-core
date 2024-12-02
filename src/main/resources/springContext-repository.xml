@@ -86,6 +86,10 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="allowedContactListRepository" class="org.linagora.linshare.core.repository.hibernate.AccountContactListsRepositoryImpl ">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="domainPatternRepository" class="org.linagora.linshare.core.repository.hibernate.DomainPatternRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>

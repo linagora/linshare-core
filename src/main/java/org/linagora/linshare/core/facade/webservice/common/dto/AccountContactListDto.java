@@ -15,33 +15,25 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
-import java.util.Date;
+import com.google.common.base.Function;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 
-import org.linagora.linshare.core.domain.entities.ContactList;
-
-import com.google.common.base.Function;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-@XmlRootElement(name = "ContactList")
+@XmlRootElement(name = "AllowedContactList")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Schema(name = "ContactList", description = "Contact list")
-public class ContactListDto {
+@Schema(name = "AccountContactList", description = "Account Contact list")
+public class AccountContactListDto {
 
 	@Schema(description = "Name")
 	private String name;
 
 	@Schema(description = "Description")
 	private String description;
-
-	@Schema(description = "IsPublic")
-	private boolean isPublic;
-
-	@Schema(description = "Owner")
-	private GenericUserDto owner;
 
 	@Schema(description = "Uuid")
 	private String uuid;
@@ -55,27 +47,29 @@ public class ContactListDto {
 	@Schema(description = "Modification Date")
 	protected Date modificationDate;
 
-	public ContactListDto() {
+	@Schema(description = "Contact_list")
+	private ContactListDto contactList;
+
+	private AccountDto account;
+	public AccountContactListDto() {
 		super();
 	}
 
-	public ContactListDto(ContactList list) {
-		this.uuid = list.getUuid();
-		this.name = list.getIdentifier();
-		this.description = list.getDescription();
-		this.isPublic = list.isPublic();
-		this.owner = new GenericUserDto(list.getOwner());
-		this.domain = new CommonDomainLightDto(list.getDomain());
-		this.creationDate = list.getCreationDate();
-		this.modificationDate = list.getModificationDate();
+	public AccountContactListDto(AccountContactLists list) {
+		this.uuid = list.getContactList().getUuid();
+		this.name = list.getContactList().getIdentifier();
+		this.description = list.getContactList().getDescription();
+		this.domain = new CommonDomainLightDto(list.getContactList().getDomain());
+		this.creationDate = list.getContactList().getCreationDate();
+		this.modificationDate = list.getContactList().getModificationDate();
+		this.contactList = new ContactListDto(list.getContactList()) ;
 	}
 
-	public ContactList toObject() {
-		ContactList list = new ContactList();
-		list.setUuid(getUuid());
-		list.setIdentifier(getName());
-		list.setDescription(getDescription());
-		list.setPublic(isPublic());
+	public AccountContactLists toObject() {
+		AccountContactLists list = new AccountContactLists();
+		list.getContactList().setUuid(getUuid());
+		list.getContactList().setIdentifier(getName());
+		list.getContactList().setDescription(getDescription());
 		return list;
 	}
 
@@ -93,22 +87,6 @@ public class ContactListDto {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public boolean isPublic() {
-		return isPublic;
-	}
-
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
-	}
-
-	public GenericUserDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
 	}
 
 	public String getUuid() {
@@ -143,15 +121,31 @@ public class ContactListDto {
 		this.modificationDate = modificationDate;
 	}
 
+	public AccountDto getAccount() {
+		return account;
+	}
+
+	public void setAccount(AccountDto account) {
+		this.account = account;
+	}
+
+	public ContactListDto getContactList() {
+		return contactList;
+	}
+
+	public void setContactList(ContactListDto contactList) {
+		this.contactList = contactList;
+	}
+
 	/*
 	 * Transformers
 	 */
 
-	public static Function<ContactList, ContactListDto> toDto() {
-		return new Function<ContactList, ContactListDto>() {
+	public static Function<AccountContactLists, AccountContactListDto> toDto() {
+		return new Function<AccountContactLists, AccountContactListDto>() {
 			@Override
-			public ContactListDto apply(ContactList arg0) {
-				return new ContactListDto(arg0);
+			public AccountContactListDto apply(AccountContactLists arg0) {
+				return new AccountContactListDto(arg0);
 			}
 		};
 	}

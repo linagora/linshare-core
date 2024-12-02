@@ -26,7 +26,7 @@ import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.WelcomeMessagesFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.CommonDomainLightDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
@@ -101,12 +101,12 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(wlcmDto.getUuid(), "Welcome message uuid must be set.");
 		User authUser = checkAuthentication(Role.ADMIN);
 		if (wlcmDto.getDomains() == null) {
-			Set<DomainLightDto> domains = Sets.newHashSet();
+			Set<CommonDomainLightDto> domains = Sets.newHashSet();
 			wlcmDto.setDomains(domains);
 		}
 		WelcomeMessages wlcm = wlcmDto.toObject();
 		List<String> domainUuids = Lists.newArrayList();
-		for (DomainLightDto d : wlcmDto.getDomains()) {
+		for (CommonDomainLightDto d : wlcmDto.getDomains()) {
 			domainUuids.add(d.getIdentifier());
 		}
 		WelcomeMessages wlcmMessage = service.update(authUser, wlcm, domainUuids);

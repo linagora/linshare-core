@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -67,7 +68,7 @@ public interface GuestService {
 	 * @return created guest
 	 * @throws BusinessException
 	 */
-	Guest create(Account authUser, Account actor, Guest guest, List<String> restrictedMails)
+	Guest create(Account authUser, Account actor, Guest guest, List<String> restrictedMails, List<String> restrictedContactUuid)
 			throws BusinessException;
 
 	/**
@@ -76,16 +77,17 @@ public interface GuestService {
 	 * @param actor
 	 * @param guest
 	 * @param restrictedMails : if null, it won't be updated.
+	 * @param restrictedContactUuid : if null, it won't be updated.
 	 * @return Guest
 	 * @throws BusinessException
 	 */
-	Guest update(Account authUser, User actor, Guest guest, List<String> restrictedMails)
+	Guest update(Account authUser, User actor, Guest guest, List<String> restrictedMails, List<String> restrictedContactUuid)
 			throws BusinessException;
 
 	/**
 	 * 
 	 * @param actor who triggered the action
-	 * @param owner
+	 * @param authUser
 	 *            for who triggered the action
 	 * @param lsUuid
 	 *            guest lsUuid
@@ -139,4 +141,5 @@ public interface GuestService {
 			Optional<ModeratorRole> moderatorRole);
 
 	void convertGuestToInternalUser(@Nonnull final SystemAccount systemAccount,@Nonnull final Account authUser,@Nonnull final User guestUser);
+
 }

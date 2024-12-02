@@ -90,6 +90,7 @@
 		<constructor-arg ref="mailingListRepository" />
 		<constructor-arg ref="mailingListContactRepository" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="allowedContactListRepository" />
 	</bean>
 
 	<bean id="mailConfigBusinessService" class="org.linagora.linshare.core.business.service.impl.MailConfigBusinessServiceImpl">
@@ -287,6 +288,11 @@
 	<bean name="accountService"
 		class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
 		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
+		<constructor-arg ref="userResourceAccessControl" />
+		<constructor-arg ref="allowedContactListRepository" />
+		<constructor-arg ref="mailingListBusinessService" />
+
 	</bean>
 	
 	<bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">

@@ -29,6 +29,8 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 
+import javax.annotation.Nonnull;
+
 public interface FunctionalityReadOnlyService {
 
 	Functionality get(String domainIdentifier,String functionalityIdentifier) throws BusinessException;
@@ -45,6 +47,7 @@ public interface FunctionalityReadOnlyService {
 	Functionality getGuests (AbstractDomain domain);
 	TimeUnitValueFunctionality getGuestsExpiration (AbstractDomain domain);
 	BooleanValueFunctionality getGuestsRestricted(AbstractDomain domain);
+	BooleanValueFunctionality getGuestsRestrictedContact(AbstractDomain domain);
 	BooleanValueFunctionality getGuestsCanUpload(AbstractDomain domain);
 	Functionality getGuestsExpirationDateProlongation(AbstractDomain domain);
 
@@ -59,6 +62,7 @@ public interface FunctionalityReadOnlyService {
 	BooleanValueFunctionality getAnonymousUrlForceAnonymousSharing(AbstractDomain domain);
 	StringValueFunctionality getAnonymousURLNotificationUrl(AbstractDomain domain);
 	Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
+	public @Nonnull Functionality getCanAssignContactListToGuest(@Nonnull final AbstractDomain domain);
 	Functionality getWorkGroupCreationRight(AbstractDomain domain);
 	BooleanValueFunctionality getWorkGroupFileVersioning(AbstractDomain domain);
 	StringValueFunctionality getWorkGroupFileEdition(AbstractDomain domain);

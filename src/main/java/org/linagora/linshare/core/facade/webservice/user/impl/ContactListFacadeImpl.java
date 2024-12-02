@@ -17,6 +17,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.entities.ContactList;
@@ -65,7 +66,21 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 		List<ContactList> lists = contactListService.findAllByMemberEmail(authUser, actor, mine, email);
 		return ImmutableSet.copyOf(Lists.transform(lists, ContactListDto.toDto()));
 	}
-	
+
+	@Override
+	public Set<ContactListDto> findContactListByPattern(String actorUuid, String pattern) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		List<ContactList> lists = contactListService.searchContactLists(authUser, pattern);
+		return ImmutableSet.copyOf(
+				Lists.transform(lists.stream()
+								.filter(contact -> contact.getIdentifier().contains(pattern))
+								.collect(Collectors.toList()),
+						ContactListDto.toDto()
+				)
+		);
+	}
+
 	@Override
 	public ContactListDto find(String actorUuid, String uuid) throws BusinessException {
 		User authUser = checkAuthentication();

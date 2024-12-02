@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
@@ -62,6 +63,9 @@ public class UserDto extends AccountDto {
 	@Schema(description = "Restricted")
 	private Boolean restricted;
 
+	@Schema(description = "RestrictedContact")
+	private boolean restrictedContact;
+
 	@Schema(description = "Comment")
 	private String comment;
 
@@ -70,6 +74,9 @@ public class UserDto extends AccountDto {
 
 	@Schema(description = "RestrictedContacts")
 	private List<UserDto> restrictedContacts;
+
+	@Schema(description = "RestrictedContactList")
+	protected List<ContactListDto> restrictedContactList;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@Schema(description = "user's quota uuid, only available in v2.")
@@ -99,10 +106,13 @@ public class UserDto extends AccountDto {
 				if (g.isRestricted()) {
 					restrictedContacts = Lists.newArrayList();
 					for (AllowedContact contact : g.getRestrictedContacts()) {
-						this.restrictedContacts.add(getSimple(contact
-								.getContact()));
+						this.restrictedContacts.add(getSimple(contact.getContact()));
 					}
 				}
+					restrictedContactList = Lists.newArrayList();
+					for (AccountContactLists contact : g.getRestrictedContactLists()) {
+						this.restrictedContactList.add(new ContactListDto(contact.getContactList()));
+					}
 			}
 			this.canUpload = u.isCanUpload();
 			this.canCreateGuest = u.isCanCreateGuest();

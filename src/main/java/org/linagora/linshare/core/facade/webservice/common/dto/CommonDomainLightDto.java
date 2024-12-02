@@ -16,6 +16,7 @@
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -24,8 +25,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Domain")
-@Schema(name = "DomainLightDto", description = "")
-public class DomainLightDto {
+@XmlType(name = "CommonDomainLightDto", namespace = "http://www.linagora.org/linshare/common")
+@Schema(name = "CommonDomainLightDto", description = "")
+public class CommonDomainLightDto {
 
 	private String label;
 
@@ -34,9 +36,9 @@ public class DomainLightDto {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private DomainType type;
 
-	public DomainLightDto(){}
+	public CommonDomainLightDto(){}
 
-	public DomainLightDto(AbstractDomain domain) {
+	public CommonDomainLightDto(AbstractDomain domain) {
 		this.identifier = domain.getUuid();
 		this.label = domain.getLabel();
 	}

@@ -15,10 +15,17 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
+import org.linagora.linshare.core.domain.entities.AccountContactListId;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -27,6 +34,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountContactListsRepository;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
 import org.slf4j.Logger;
@@ -40,14 +48,17 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	private final MailingListRepository listRepository;
 	private final MailingListContactRepository contactRepository;
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
+	private final AccountContactListsRepository accountContactListsRepository;
 
 	public MailingListBusinessServiceImpl(MailingListRepository mailingListRepository,
 										  MailingListContactRepository mailingListContactRepository,
-										  DomainPermissionBusinessService domainPermissionBusinessService) {
+										  DomainPermissionBusinessService domainPermissionBusinessService,
+			                              AccountContactListsRepository accountContactListsRepository) {
 		super();
 		this.listRepository = mailingListRepository;
 		this.contactRepository = mailingListContactRepository;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
+		this.accountContactListsRepository = accountContactListsRepository;
 	}
 
 	/**
@@ -314,5 +325,84 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	@Override
 	public List<ContactList> findAllOthersByMemberEmail(Account actor, User user, String email) {
 		return listRepository.findAllOthersByMemberEmail(user, email);
+	}
+
+	@Override
+	public @Nonnull List<ContactList> findByAccountAndContactListUuids(@Nonnull final Account actor, @Nonnull final List<String> contactListUuids) {
+		List<ContactList> restrictedContactLists = new ArrayList<>();
+		if (contactListUuids != null) {
+			for (String uuid : contactListUuids) {
+				try {
+					ContactList contactList = this.findByUuid(uuid);
+					if (contactList.isPublic() && !contactList.getDomain().equals(actor.getDomain())) {
+									logger.debug("Public contact list from another domain cannot be restricted.");
+									continue;
+						}
+						if (contactList.isPublic() && !contactList.getOwner().equals(actor)) {
+							logger.debug("You can only restrict guests with your own private contact lists.");
+							continue;
+						}
+
+					restrictedContactLists.add(contactList);
+				} catch (BusinessException ex) {
+					logger.debug("Failed to process contact list '{}': {}", uuid, ex.getMessage());
+					throw new RuntimeException("Error processing contact list", ex);
+				}
+			}
+		}
+		return restrictedContactLists;
+	}
+
+	@Override
+	public void updateAccountContactLists(@Nonnull Guest update, @Nonnull List<ContactList> contactLists) {
+		Set<ContactList> newContactLists = new HashSet<>(contactLists);
+		List<AccountContactLists> existingContactLists = accountContactListsRepository.findByAccount(update);
+		Set<ContactList> existingContacts = existingContactLists.stream()
+				.map(AccountContactLists::getContactList)
+				.collect(Collectors.toSet());
+
+		Set<ContactList> toRemove = new HashSet<>(existingContacts);
+		toRemove.removeAll(newContactLists);
+		toRemove.forEach(contact -> this.deleteByAccountAndContactList(update, contact));
+
+		Set<ContactList> toAdd = new HashSet<>(newContactLists);
+		toAdd.removeAll(existingContacts);
+		toAdd.forEach(contact -> {
+			AccountContactListId accountContactListId = new AccountContactListId(update, contact);
+			AccountContactLists accountContactList = new AccountContactLists();
+			accountContactList.setId(accountContactListId);
+			accountContactList.setAccount(update);
+			accountContactList.setContactList(contact);
+			accountContactListsRepository.create(accountContactList);
+		});
+	}
+
+	/**
+	 * Deletes the association between a specific {@link Account} and a {@link ContactList}.
+	 * This method is useful when removing an account’s access to a particular contact list.
+	 *
+	 * @param account The {@link Account} whose contact list association is to be removed.
+	 *               Must not be {@code null}.
+	 * @param contactList The {@link ContactList} to be disassociated from the guest.
+	 *                Must not be {@code null}.
+	 */
+	private void deleteByAccountAndContactList(@Nonnull final Account account, @Nonnull final ContactList contactList) {
+
+		Optional<AccountContactLists> accountContactLists = accountContactListsRepository.findByAccountAndContactList(account,
+				contactList);
+
+		accountContactLists.ifPresent(accountContactList -> {
+			try {
+				accountContactListsRepository.delete(accountContactList);
+			} catch (IllegalArgumentException | BusinessException e) {
+				e.printStackTrace();
+			}
+		});
+
+	}
+
+	@Override
+	public @Nonnull List<AccountContactLists> findAccountContactListByAccount(@Nonnull final Account account) {
+		return accountContactListsRepository.findByAccount(account);
 	}
 }

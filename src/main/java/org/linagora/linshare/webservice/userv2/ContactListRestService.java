@@ -24,7 +24,17 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface ContactListRestService {
 
-	Set<ContactListDto> findAll(Boolean mine, String contactMail) throws BusinessException;
+	/**
+	 * Retrieves a set of contact lists based on filter criteria (pattern, ownership, or contact email).
+	 * Only one criterion is applied at a time.
+	 *
+	 * @param pattern The pattern to filter contact lists by (optional).
+	 * @param mine A flag to filter by ownership (optional).
+	 * @param contactMail A contact email to filter by (optional).
+	 * @return A set of {@link ContactListDto} matching the criteria.
+	 * @throws BusinessException If an error occurs while fetching the contact lists.
+	 */
+	Set<ContactListDto> findAll(String pattern, Boolean mine, String contactMail) throws BusinessException;
 
 	ContactListDto find(String uuid) throws BusinessException;
 
@@ -51,4 +61,5 @@ public interface ContactListRestService {
 	void deleteContact(String uuid, String contactUuid) throws BusinessException;
 
 	Set<AuditLogEntryUser> audit(String uuid);
+
 }

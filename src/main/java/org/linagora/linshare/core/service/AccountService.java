@@ -18,7 +18,10 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.exception.BusinessException;
+
+import javax.annotation.Nonnull;
 
 public interface AccountService {
 
@@ -40,4 +43,23 @@ public interface AccountService {
 	 * found, and to not change the old behavior with the old method findByLsUuid
 	 */
 	Account findAccountByLsUuid(String uuid);
+
+	/**
+	 * Finds the list of contact lists associated with a given account.
+	 *
+	 * @param user     The target account whose contact lists are to be retrieved. Must not be {@code null}.
+	 * @return A list of {@link AccountContactLists} associated with the target account.
+	 * @throws BusinessException If an error occurs during the operation,
+	 *                           such as missing permissions or an invalid account.
+	 */
+	public @Nonnull List<AccountContactLists> findAccountContactListsByAccount(@Nonnull final Account user) throws BusinessException;
+
+	/**
+	 * Retrieves the contact lists for an account identified by its UUID.
+	 *
+	 * @param accountUuid The UUID of the account, which must not be null or empty.
+	 * @return A list of {@link AccountContactLists} related to the guest, possibly empty.
+	 * @throws IllegalArgumentException if the UUID is empty.
+	 */
+	public @Nonnull List<AccountContactLists> findAccountContactListsByAccount(@Nonnull final String accountUuid);
 }

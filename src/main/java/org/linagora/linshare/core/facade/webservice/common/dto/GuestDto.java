@@ -15,13 +15,20 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.adminv5.dto.UserDto.Author;
@@ -35,6 +42,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 @XmlRootElement(name = "Guest")
+@XmlAccessorType(XmlAccessType.FIELD)
 @Schema(name = "Guest", description = "")
 public class GuestDto extends AccountDto {
 
@@ -73,10 +81,21 @@ public class GuestDto extends AccountDto {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@Schema(description = "My moderator role for this guest.", accessMode = AccessMode.READ_ONLY)
 	protected GuestModeratorRole myRole;
+	private Set<AccountContactLists> accountContactLists;
 
 	public GuestDto() {
 		super();
 	}
+
+	protected GuestDto(Guest guest) {
+		this.firstName = guest.getFirstName();
+		this.lastName = guest.getLastName();
+		this.mail = guest.getMail();
+		this.restricted = guest.isRestricted();
+		this.comment = guest.getComment();
+		this.expirationDate = guest.getExpirationDate();
+		this.canUpload = guest.isCanUpload();
+		}
 
 	protected GuestDto(Guest guest, boolean full, AccountMto author) {
 		super(guest, full);
@@ -97,6 +116,9 @@ public class GuestDto extends AccountDto {
 						.getContact()));
 			}
 		}
+			for (AccountContactLists contact : guest.getRestrictedContactLists()) {
+				this.contactLists.add(new ContactListDto(contact.getContactList()));
+			}
 	}
 
 	public Guest toUserObject() {
@@ -110,6 +132,14 @@ public class GuestDto extends AccountDto {
 		guest.setLastName(getLastName());
 		guest.setMail(getMail());
 		guest.setRestricted(isRestricted());
+		Set<AccountContactLists> accountContactLists = (contactLists == null) ? Collections.emptySet() :
+				contactLists.stream().map(contactListDto -> {
+			AccountContactLists accountContactList = new AccountContactLists();
+			accountContactList.setAccount(guest);
+			accountContactList.setContactList(contactListDto.toObject());
+			return accountContactList;
+		})
+				.collect(Collectors.toSet());
 		return guest;
 	}
 
@@ -218,6 +248,14 @@ public class GuestDto extends AccountDto {
 
 	public void setRestrictedContacts(List<GenericUserDto> restrictedContacts) {
 		this.restrictedContacts = restrictedContacts;
+	}
+
+	public List<ContactListDto> getRestrictedContactList() {
+		return contactLists;
+	}
+
+	public void setRestrictedContactList(List<ContactListDto> restrictedContactList) {
+		this.contactLists = restrictedContactList;
 	}
 
 	public boolean isCanUpload() {

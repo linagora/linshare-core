@@ -30,6 +30,7 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -48,6 +49,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.ShareNewShareAcknowledgementEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -73,6 +75,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	private final UserService userService;
 
 	private final GuestService guestService;
+
+	private final AccountService accountService;
 
 	private final AnonymousShareEntryService anonymousShareEntryService;
 
@@ -105,6 +109,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final MailBuildingService mailBuildingService,
 			final ShareExpiryDateService shareExpiryDateService,
 			final ShareEntryGroupService shareEntryGroupService,
+			final AccountService accountService,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			TimeService timeService) {
 		super(rac, sanitizerInputHtmlBusinessService);
@@ -118,6 +123,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.entryBusinessService = entryBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.shareExpiryDateService = shareExpiryDateService;
+		this.accountService = accountService;
 		this.shareEntryGroupService = shareEntryGroupService;
 		this.timeService = timeService;
 	}
@@ -261,9 +267,15 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			ShareContainer shareContainer) throws BusinessException {
 
 		// Initialize the shareContainer for guest if needed.
-		if (owner.isGuest() && owner.isRestricted()) {
+		if (owner.isGuest()) {
 			List<AllowedContact> allowedContacts = guestService.load(actor, owner);
-			shareContainer.addAllowedRecipients(allowedContacts);
+			List<AccountContactLists> accountContactLists = accountService.findAccountContactListsByAccount(actor);
+			if (allowedContacts != null) {
+				shareContainer.addAllowedRecipients(allowedContacts);
+			}
+			if (accountContactLists != null) {
+				shareContainer.addAccountContactLists(accountContactLists);
+			}
 		}
 		BooleanValueFunctionality aufas = funcService.getAnonymousUrlForceAnonymousSharing(owner.getDomain());
 		Boolean forceAnonymousSharing = aufas.getFinalValue(shareContainer.getForceAnonymousSharing());

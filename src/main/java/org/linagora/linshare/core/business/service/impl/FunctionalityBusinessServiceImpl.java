@@ -47,6 +47,7 @@ public class FunctionalityBusinessServiceImpl extends
 		exclude.add(FunctionalityNames.GUESTS__EXPIRATION.toString());
 		exclude.add(FunctionalityNames.GUESTS__EXPIRATION.toString());
 		exclude.add(FunctionalityNames.GUESTS__RESTRICTED.toString());
+		exclude.add(FunctionalityNames.GUESTS__CONTACT_LISTS.toString());
 		exclude.add(FunctionalityNames.GUESTS__CAN_UPLOAD.toString());
 		exclude.add(FunctionalityNames.GUESTS__EXPIRATION_ALLOW_PROLONGATION
 				.toString());

@@ -208,7 +208,7 @@ public class UserServiceImplTest {
 			List <String> restricted = new ArrayList<>();
 			Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 			guest.setCmisLocale("en");
-			guestService.create(user, user, guest, restricted);
+			guestService.create(user, user, guest, restricted, null);
 		} catch (TechnicalException e) {
 			logger.info("Impossible to send mail, normal in test environment");
 		}
@@ -411,10 +411,10 @@ public class UserServiceImplTest {
 		guest.setCanCreateGuest(false);
 		List <String> restricted = Lists.newArrayList();
 		restricted.add("user1@linshare.org");
-		guestService.update(user2, user2, guest, restricted);
+		guestService.update(user2, user2, guest, restricted,null);
 		Assertions.assertFalse(guest.isCanCreateGuest());
 		guest.setCanCreateGuest(true);
-		guestService.update(user2, user2, guest, restricted);
+		guestService.update(user2, user2, guest, restricted, null);
 		Assertions.assertTrue(guest.isCanCreateGuest());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -516,11 +516,11 @@ public class UserServiceImplTest {
 		guest.setCmisLocale("en");
 		List<String> contacts = Lists.newArrayList();
 		contacts.add("user1@linshare.org");
-		guest = guestService.create(user1, user1, guest, contacts);
+		guest = guestService.create(user1, user1, guest, contacts, null);
 
 		Assertions.assertTrue(guest.isRestricted());
 		guest.setRestricted(false);
-		guest = guestService.update(user1, user1, guest, null);
+		guest = guestService.update(user1, user1, guest, null, null);
 		Assertions.assertFalse(guest.isRestricted());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -555,7 +555,7 @@ public class UserServiceImplTest {
 		guest2.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest2.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest2.setCmisLocale("en");
-		guest2 = guestService.create(user1, user1, guest2, null);
+		guest2 = guestService.create(user1, user1, guest2, null, null);
 
 		// create guest
 		Guest guest = new Guest("Foo", "Bar", "user3@linpki.org");
@@ -566,12 +566,12 @@ public class UserServiceImplTest {
 		guest.setMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setExternalMailLocale(SupportedLanguage.toLanguage(guestDomain.getDefaultTapestryLocale()));
 		guest.setCmisLocale(guestDomain.getDefaultTapestryLocale().toString());
-		guest = guestService.create(user1, user1, guest, null);
+		guest = guestService.create(user1, user1, guest, null, null);
 
 		guest.setRestricted(true);
 		List<String> contacts = Lists.newArrayList();
 		contacts.add("user1@linshare.org");
-		guestService.update(user1, user1, guest, contacts);
+		guestService.update(user1, user1, guest, contacts,null);
 		List<AllowedContact> listAllowedContact = allowedContactRepository
 				.findByOwner(guest);
 		Assertions.assertEquals(1, listAllowedContact.size());

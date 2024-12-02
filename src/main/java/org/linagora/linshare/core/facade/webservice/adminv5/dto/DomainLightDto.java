@@ -18,8 +18,7 @@ package org.linagora.linshare.core.facade.webservice.adminv5.dto;
 import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import java.util.Objects;
+import javax.xml.bind.annotation.XmlType;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.mongo.entities.mto.DomainMto;
@@ -30,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "Domain")
+@XmlType(name = "AdminV5DomainLightDto", namespace = "http://www.linagora.org/linshare/adminv5")
 @Schema(name = "DomainV5Light", description = "A LinShare's domain")
 public class DomainLightDto {
 

@@ -111,6 +111,18 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_boolean(functionality_id, boolean_value) 
 	VALUES (24, true);
 
+-- Functionality : GUESTS__RESTRICTED__CONTACT
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (359, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (360, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (361, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES (89, false, 'GUESTS__RESTRICTED__CONTACT', 359, 360, 361, 1, 'GUESTS', false, now(), now());
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+	VALUES (89, true);
+
 -- Functionality : GUESTS__CAN_UPLOAD
 INSERT INTO policy(id, status, default_status, policy, system) 
 	VALUES (113, true, true, 0, true);
