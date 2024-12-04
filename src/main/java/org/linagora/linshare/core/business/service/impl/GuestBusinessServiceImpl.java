@@ -118,6 +118,9 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			if (guest.isRestricted()) {
 				guest.addContacts(allowedContactRepository.findByOwner(guest));
 			}
+			if (guest.getRestrictedContactLists() != null) {
+				guest.addContactList(accountContactListRepository.findByAccount(guest));
+			}
 		}
 		return guest;
 	}
@@ -129,6 +132,9 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		if (guest != null) {
 			if (guest.isRestricted()) {
 				guest.addContacts(allowedContactRepository.findByOwner(guest));
+			}
+			if (guest.getRestrictedContactLists() != null) {
+				guest.addContactList(accountContactListRepository.findByAccount(guest));
 			}
 		}
 		return guest;

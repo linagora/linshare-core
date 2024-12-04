@@ -94,7 +94,7 @@ CREATE TABLE account_contact_lists
     FOREIGN KEY (contact_list_id) REFERENCES contact_list (id)
 );
 
--- Functionality : GUESTS__RESTRICTED__CONTACT
+-- Functionality : GUESTS__CONTACT_LISTS
 INSERT INTO policy(id, status, default_status, policy, system)
 VALUES (359, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -102,7 +102,7 @@ VALUES (360, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
 VALUES (361, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
-VALUES (89, false, 'GUESTS__RESTRICTED__CONTACT', 359, 360, 361, 1, 'GUESTS', false, now(), now());
+VALUES (89, false, 'GUESTS__CONTACT_LISTS', 359, 360, 361, 1, 'GUESTS', true, now(), now());
 INSERT INTO functionality_boolean(functionality_id, boolean_value)
 VALUES (89, true);
 
