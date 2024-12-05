@@ -169,7 +169,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 	public List<AutoCompleteResultDto> searchContactListsForAutoComplete(String pattern, User authUser) throws BusinessException {
 		List<ContactList> lists = contactListService.searchContactLists(authUser, pattern);
 		return lists.stream()
-				.map(contact -> new AutoCompleteResultDto(contact))
+				.map(contactList -> new ListAutoCompleteResultDto(contactList))
 				.collect(Collectors.toList());
 	}
 
