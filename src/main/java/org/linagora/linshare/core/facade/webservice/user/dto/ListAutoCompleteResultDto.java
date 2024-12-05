@@ -36,6 +36,8 @@ public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 
 	private String listName;
 
+	private boolean isPublic;
+
 	public ListAutoCompleteResultDto() {
 	}
 
@@ -45,6 +47,7 @@ public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 		this.ownerLastName = list.getOwner().getLastName();
 		this.ownerMail = list.getOwner().getMail();
 		this.listName = list.getIdentifier();
+		this.isPublic = list.isPublic();
 	}
 
 	public String getOwnerLastName() {
@@ -77,6 +80,14 @@ public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 
 	public void setListName(String listName) {
 		this.listName = listName;
+	}
+
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public void setPublic(boolean aPublic) {
+		isPublic = aPublic;
 	}
 
 	public static Function<ContactList, ListAutoCompleteResultDto> toDto() {
