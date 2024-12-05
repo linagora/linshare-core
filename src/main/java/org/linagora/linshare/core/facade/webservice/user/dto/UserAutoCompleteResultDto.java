@@ -49,6 +49,9 @@ public class UserAutoCompleteResultDto extends AutoCompleteResultDto {
 		this.mail = user.getMail();
 	}
 
+	public UserAutoCompleteResultDto() {
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}

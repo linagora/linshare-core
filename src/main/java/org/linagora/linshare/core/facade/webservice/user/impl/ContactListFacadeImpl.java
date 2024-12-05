@@ -68,20 +68,6 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 	}
 
 	@Override
-	public Set<ContactListDto> findContactListByPattern(String actorUuid, String pattern) throws BusinessException {
-		User authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);
-		List<ContactList> lists = contactListService.searchContactLists(authUser, pattern);
-		return ImmutableSet.copyOf(
-				Lists.transform(lists.stream()
-								.filter(contact -> contact.getIdentifier().contains(pattern))
-								.collect(Collectors.toList()),
-						ContactListDto.toDto()
-				)
-		);
-	}
-
-	@Override
 	public ContactListDto find(String actorUuid, String uuid) throws BusinessException {
 		User authUser = checkAuthentication();
 		Validate.notEmpty(uuid, "List uuid must be set.");

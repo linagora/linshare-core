@@ -49,13 +49,4 @@ public interface ContactListFacade {
 
 	Set<ContactListDto> findAllByMemberEmail(String actorUuid, Boolean mine, String mail) throws BusinessException;
 
-	/**
-	 * Retrieves contact lists matching a pattern for a specified actor.
-	 *
-	 * @param actorUuid the actor's unique identifier.
-	 * @param pattern   the pattern to search for in contact list identifiers.
-	 * @return a set of matching {@link ContactListDto}.
-	 * @throws BusinessException if authentication or data retrieval fails.
-	 */
-	Set<ContactListDto> findContactListByPattern(String actorUuid, String pattern) throws BusinessException;
 }

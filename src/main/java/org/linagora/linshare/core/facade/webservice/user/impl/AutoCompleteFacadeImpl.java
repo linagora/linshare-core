@@ -151,6 +151,8 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 				return searchForSharing(pattern, authUser);
 			case USERS:
 				return searchUsers(pattern, accountType);
+			case CONTACT_LIST:
+				return searchContactListsForAutoComplete(pattern, authUser);
 			case THREAD_MEMBERS:
 				return searchForThreadMembers(pattern, threadUuid, authUser);
 			case UPLOAD_REQUESTS:
@@ -162,6 +164,13 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 		default:
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, "Unexpected search type.");
 		}
+	}
+
+	public List<AutoCompleteResultDto> searchContactListsForAutoComplete(String pattern, User authUser) throws BusinessException {
+		List<ContactList> lists = contactListService.searchContactLists(authUser, pattern);
+		return lists.stream()
+				.map(contact -> new AutoCompleteResultDto(contact))
+				.collect(Collectors.toList());
 	}
 
 	private List<AutoCompleteResultDto> searchForWorkgroupAuthors(String pattern, String threadUuid, User authUser) {
