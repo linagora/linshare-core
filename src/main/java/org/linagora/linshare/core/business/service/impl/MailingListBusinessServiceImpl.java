@@ -334,15 +334,17 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 			for (String uuid : contactListUuids) {
 				try {
 					ContactList contactList = this.findByUuid(uuid);
-					if (contactList.isPublic() && !contactList.getDomain().equals(actor.getDomain())) {
-									logger.debug("Public contact list from another domain cannot be restricted.");
-									continue;
+					if (contactList.isPublic()) {
+						if (!contactList.getDomain().equals(actor.getDomain())) {
+							logger.debug("Public contact list from another domain cannot be restricted.");
+							continue;
 						}
-						if (contactList.isPublic() && !contactList.getOwner().equals(actor)) {
+					} else {
+						if (!contactList.getOwner().equals(actor)) {
 							logger.debug("You can only restrict guests with your own private contact lists.");
 							continue;
 						}
-
+					}
 					restrictedContactLists.add(contactList);
 				} catch (BusinessException ex) {
 					logger.debug("Failed to process contact list '{}': {}", uuid, ex.getMessage());
