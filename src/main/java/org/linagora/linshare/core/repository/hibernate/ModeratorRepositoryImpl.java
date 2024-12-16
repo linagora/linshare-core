@@ -32,6 +32,7 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
 
 import com.google.common.base.Strings;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -81,6 +82,15 @@ public class ModeratorRepositoryImpl extends AbstractRepositoryImpl<Moderator> i
 		det.add(Restrictions.eq("guest", guest));
 		Moderator moderator = DataAccessUtils.singleResult(findByCriteria(det));
 		return Optional.ofNullable(moderator);
+	}
+
+	@Override
+	public Moderator findModeratorByGuestAndAccount(@Nonnull final Account actor, @Nonnull final Guest guest) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("account", actor));
+		det.add(Restrictions.eq("guest", guest));
+		Moderator moderator = DataAccessUtils.singleResult(findByCriteria(det));
+		return moderator;
 	}
 
 	@Override

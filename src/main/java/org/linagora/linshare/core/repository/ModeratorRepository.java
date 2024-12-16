@@ -23,6 +23,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 
+import javax.annotation.Nonnull;
+
 public interface ModeratorRepository extends  AbstractRepository<Moderator>{
 
 	Moderator findByUuid(String uuid);
@@ -32,4 +34,6 @@ public interface ModeratorRepository extends  AbstractRepository<Moderator>{
 	Optional<Moderator> findByGuestAndAccount(Account actor, Guest guest);
 
 	void deleteAllModerators(Guest guest);
+
+	public Moderator findModeratorByGuestAndAccount(@Nonnull final Account actor, @Nonnull final Guest guest);
 }

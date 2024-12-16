@@ -24,8 +24,10 @@ import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
+import org.linagora.linshare.core.business.service.ModeratorBusinessService;
 import org.linagora.linshare.core.domain.entities.AccountContactListId;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -41,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class MailingListBusinessServiceImpl implements MailingListBusinessService {
 
@@ -49,16 +52,19 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	private final MailingListContactRepository contactRepository;
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
 	private final AccountContactListsRepository accountContactListsRepository;
+	private final ModeratorBusinessService moderatorBusinessService;
 
 	public MailingListBusinessServiceImpl(MailingListRepository mailingListRepository,
 										  MailingListContactRepository mailingListContactRepository,
 										  DomainPermissionBusinessService domainPermissionBusinessService,
-			                              AccountContactListsRepository accountContactListsRepository) {
+			                              AccountContactListsRepository accountContactListsRepository,
+			                              ModeratorBusinessService moderatorBusinessService) {
 		super();
 		this.listRepository = mailingListRepository;
 		this.contactRepository = mailingListContactRepository;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.accountContactListsRepository = accountContactListsRepository;
+		this.moderatorBusinessService = moderatorBusinessService;
 	}
 
 	/**
@@ -328,31 +334,62 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public @Nonnull List<ContactList> findByAccountAndContactListUuids(@Nonnull final Account actor, @Nonnull final List<String> contactListUuids) {
+	public @Nonnull List<ContactList> findByAccountAndContactListUuids(@Nonnull final Account actor,
+			@Nullable final Guest guest,
+			@Nonnull final List<String> contactListUuids) {
 		List<ContactList> restrictedContactLists = new ArrayList<>();
+
+		boolean hasOtherModerator = guest != null && guest.getModerators().stream()
+				.anyMatch(moderator -> !moderator.getAccount().equals(actor));
+
 		if (contactListUuids != null) {
 			for (String uuid : contactListUuids) {
 				try {
 					ContactList contactList = this.findByUuid(uuid);
+					logger.debug("Processing contact list with UUID: {}", uuid);
+
 					if (contactList.isPublic()) {
-						if (!contactList.getDomain().equals(actor.getDomain())) {
-							logger.debug("Public contact list from another domain cannot be restricted.");
-							continue;
+
+						if (isPublicListValid(contactList, actor)) {
+							restrictedContactLists.add(contactList);
 						}
 					} else {
-						if (!contactList.getOwner().equals(actor)) {
-							logger.debug("You can only restrict guests with your own private contact lists.");
-							continue;
+
+						if (isPrivateListValid(contactList, actor, guest, hasOtherModerator)) {
+							restrictedContactLists.add(contactList);
 						}
 					}
-					restrictedContactLists.add(contactList);
 				} catch (BusinessException ex) {
-					logger.debug("Failed to process contact list '{}': {}", uuid, ex.getMessage());
+					logger.error("Failed to find contact list with UUID: {}", uuid, ex);
 					throw new RuntimeException("Error processing contact list", ex);
 				}
 			}
 		}
+
 		return restrictedContactLists;
+	}
+
+	private boolean isPublicListValid(ContactList contactList, Account actor) {
+		if (!contactList.getDomain().equals(actor.getDomain())) {
+			logger.debug("Public contact list from another domain cannot be restricted.");
+			return false;
+		}
+		return true;
+	}
+
+	private boolean isPrivateListValid(ContactList contactList, Account actor, Guest guest, boolean hasOtherModerator) {
+		if (!contactList.getOwner().equals(actor)) {
+			Moderator moderator = moderatorBusinessService.findModeratorByGuestAndAccount(contactList.getOwner(), guest);
+			if (!hasOtherModerator) {
+				logger.debug("You can only restrict guests with your own private contact lists.");
+				return false;
+			}
+			if (hasOtherModerator && moderator == null) {
+				logger.debug("You can only restrict guests with your own private contact lists and you are not a moderator for this guest.");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

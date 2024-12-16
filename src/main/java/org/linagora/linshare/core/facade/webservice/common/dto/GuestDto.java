@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -82,6 +82,9 @@ public class GuestDto extends AccountDto {
 	@Schema(description = "My moderator role for this guest.", accessMode = AccessMode.READ_ONLY)
 	protected GuestModeratorRole myRole;
 	private Set<AccountContactLists> accountContactLists;
+
+	@JsonIgnore
+	private boolean restrictedContact;
 
 	public GuestDto() {
 		super();
@@ -288,6 +291,14 @@ public class GuestDto extends AccountDto {
 
 	public void setAuthor(Author author) {
 		this.author = author;
+	}
+
+	public boolean isRestrictedContact() {
+		return restrictedContact;
+	}
+
+	public void setRestrictedContact(boolean restrictedContact) {
+		this.restrictedContact = restrictedContact;
 	}
 
 	/*

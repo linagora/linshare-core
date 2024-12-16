@@ -26,6 +26,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface MailingListBusinessService {
 
@@ -158,12 +159,15 @@ public interface MailingListBusinessService {
 
 	/**
 	 * <p>Retrieve a set of contact lists from their UUIDs validating their access permissions against
-	 * the given account.</p>
+	 * the given account and optionally a guest's moderators.</p>
 	 * <p>This method ensures that only valid contact lists, either public within the actor's domain
-	 * or private owned by the actor, are added to the returned contact lists.</p>
+	 * or private owned by the actor, are added to the returned contact lists.If a guest is provided,
+	 * the method verifies that moderators linked to the guest are taken into account for the validation.</p>
 	 *
 	 * @param actor                The {@link Account} used to verify domain and ownership permissions.
 	 *                             Must not be {@code null}.
+	 * @param guest                An optional {@link Guest} whose moderators are considered for additional
+	 *                             validation rules. May be {@code null}.
 	 * @param contactListUuids     A {@link List} of UUIDs representing the contact lists
 	 *                             to be retrieved and validated. May be {@code null} or empty.
 	 * @return                     A {@link List} of {@link ContactList} entities that have passed
@@ -171,7 +175,7 @@ public interface MailingListBusinessService {
 	 * @throws BusinessException   If a public contact list belongs to another domain, or if the actor
 	 *                             attempts to use private contact lists they do not own.
 	 */
-	public @Nonnull List<ContactList> findByAccountAndContactListUuids(@Nonnull final Account actor, @Nonnull final List<String> contactListUuids);
+	public @Nonnull List<ContactList> findByAccountAndContactListUuids(@Nonnull final Account actor, @Nullable final Guest guest, @Nonnull final List<String> contactListUuids);
 
 	/**
 	 * Updates the contact lists for a guest, ensuring consistency based on the guest's

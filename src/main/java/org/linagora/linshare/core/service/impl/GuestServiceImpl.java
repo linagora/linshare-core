@@ -230,7 +230,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 						"Can not create a restricted guest without restricted contacts (internal or guest users only).");
 			}
 		}
-		final List<ContactList> contactLists = mailingListBusinessService.findByAccountAndContactListUuids(authUser, contactListsUuid);
+		final List<ContactList> contactLists = mailingListBusinessService.findByAccountAndContactListUuids(authUser, null, contactListsUuid);
 		Guest create = guestBusinessService.create(actor, guest, guestDomain, restrictedContacts,
 				contactLists);
 		createQuotaGuest(guest);
@@ -268,7 +268,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 		checkUpdatePermission(authUser, actor, Guest.class,
 				BusinessErrorCode.CANNOT_UPDATE_USER, entity);
 		List<User> restrictedContacts = transformToUsers(authUser, restrictedMails);
-		List<ContactList> restrictedContactList = mailingListBusinessService.findByAccountAndContactListUuids(authUser, restrictedContactUuid);
+		List<ContactList> restrictedContactList = mailingListBusinessService.findByAccountAndContactListUuids(authUser, entity,restrictedContactUuid);
 		Date newExpirationDate = guest.getExpirationDate();
 		if (newExpirationDate != null && !newExpirationDate.before(new Date())) {
 				if (!actor.isAdmin()) {
