@@ -35,5 +35,4 @@ public interface ModeratorRepository extends  AbstractRepository<Moderator>{
 
 	void deleteAllModerators(Guest guest);
 
-	public Moderator findModeratorByGuestAndAccount(@Nonnull final Account actor, @Nonnull final Guest guest);
 }

@@ -85,15 +85,6 @@ public class ModeratorRepositoryImpl extends AbstractRepositoryImpl<Moderator> i
 	}
 
 	@Override
-	public Moderator findModeratorByGuestAndAccount(@Nonnull final Account actor, @Nonnull final Guest guest) {
-		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
-		det.add(Restrictions.eq("account", actor));
-		det.add(Restrictions.eq("guest", guest));
-		Moderator moderator = DataAccessUtils.singleResult(findByCriteria(det));
-		return moderator;
-	}
-
-	@Override
 	public void deleteAllModerators(Guest guest) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("guest", guest));

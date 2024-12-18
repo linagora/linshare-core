@@ -93,8 +93,4 @@ public class ModeratorBusinessServiceImpl implements ModeratorBusinessService {
 		return accountRepository.findAllModeratorUuidsByGuest(guest);
 	}
 
-	@Override
-	public Moderator findModeratorByGuestAndAccount(Account actor, Guest guest){
-		return moderatorRepository.findModeratorByGuestAndAccount(actor, guest);
-	}
 }

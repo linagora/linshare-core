@@ -158,22 +158,32 @@ public interface MailingListBusinessService {
 	void transferContactListFromGuestToInternal(@Nonnull final Guest guest,@Nonnull final Account authUser);
 
 	/**
-	 * <p>Retrieve a set of contact lists from their UUIDs validating their access permissions against
-	 * the given account and optionally a guest's moderators.</p>
-	 * <p>This method ensures that only valid contact lists, either public within the actor's domain
-	 * or private owned by the actor, are added to the returned contact lists.If a guest is provided,
-	 * the method verifies that moderators linked to the guest are taken into account for the validation.</p>
+	 * <p>Retrieve a set of contact lists from their UUIDs, validating their access permissions against
+	 * the given account as actor and optionally a moderator list.</p>
 	 *
-	 * @param actor                The {@link Account} used to verify domain and ownership permissions.
-	 *                             Must not be {@code null}.
-	 * @param guest                An optional {@link Guest} whose moderators are considered for additional
-	 *                             validation rules. May be {@code null}.
-	 * @param contactListUuids     A {@link List} of UUIDs representing the contact lists
-	 *                             to be retrieved and validated. May be {@code null} or empty.
-	 * @return                     A {@link List} of {@link ContactList} entities that have passed
-	 *                             the validation checks. Not {@code null}.
-	 * @throws BusinessException   If a public contact list belongs to another domain, or if the actor
-	 *                             attempts to use private contact lists they do not own.
+	 * <p>This method ensures that only valid contact lists are included in the result:</p>
+	 * <ul>
+	 *     <li>Public contact lists are only included if they belong to the actor's domain.</li>
+	 *     <li>Private contact lists are only included if they are owned by the actor or if the actor
+	 *     is a valid moderator for the specified guest associated with the list.</li>
+	 * </ul>
+	 *
+	 * <p>If a `Guest` is provided, the method takes into account the guest's moderators to validate
+	 * whether the actor is allowed to access certain private contact lists. Specifically:</p>
+	 * <ul>
+	 *     <li>If the actor is not the owner of a private contact list, they must be a moderator linked
+	 *     to the guest to access the list.</li>
+	 *     <li>If no guest is provided or the actor is not a moderator, private lists owned by other accounts
+	 *     are excluded from the result.</li>
+	 * </ul>
+	 *
+	 * @param actor            The {@link Account} used to verify domain and ownership permissions. Must not be
+	 *                         {@code null}.
+	 * @param guest            An optional {@link Guest} whose moderators are considered for additional validation
+	 *                         rules. May be {@code null}.
+	 * @param contactListUuids A {@link List} of UUIDs representing the contact lists to be retrieved and validated. May
+	 *                         be {@code null} or empty.
+	 * @return A {@link List} of {@link ContactList} entities that have passed the validation checks. Not {@code null}.
 	 */
 	public @Nonnull List<ContactList> findByAccountAndContactListUuids(@Nonnull final Account actor, @Nullable final Guest guest, @Nonnull final List<String> contactListUuids);
 

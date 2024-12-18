@@ -377,17 +377,18 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 		return true;
 	}
 
-	private boolean isPrivateListValid(ContactList contactList, Account actor, Guest guest, boolean hasOtherModerator) {
+	private boolean isPrivateListValid(ContactList contactList, Account actor, Account guest, boolean hasOtherModerator) {
 		if (!contactList.getOwner().equals(actor)) {
-			Moderator moderator = moderatorBusinessService.findModeratorByGuestAndAccount(contactList.getOwner(), guest);
+			Optional<Moderator> moderator = moderatorBusinessService.findByGuestAndAccount(contactList.getOwner(), (Guest) guest);
 			if (!hasOtherModerator) {
 				logger.debug("You can only restrict guests with your own private contact lists.");
 				return false;
 			}
-			if (hasOtherModerator && moderator == null) {
+			if (hasOtherModerator && moderator.isEmpty()) {
 				logger.debug("You can only restrict guests with your own private contact lists and you are not a moderator for this guest.");
 				return false;
 			}
+				assert hasOtherModerator : "Here 'hasOtherModerator'  should be true when moderator is present.";
 		}
 		return true;
 	}

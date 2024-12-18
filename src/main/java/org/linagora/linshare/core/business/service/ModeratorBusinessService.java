@@ -43,13 +43,4 @@ public interface ModeratorBusinessService {
 
 	List<String> findAllModeratorUuidsByGuest(Account guest);
 
-	/**
-	 * Retrieves a {@link Moderator} associated with the specified {@link Account} and {@link Guest}.
-	 *
-	 * @param actor the account to search for. Must not be {@code null}.
-	 * @param guest the guest to search for. Must not be {@code null}.
-	 * @return the {@link Moderator} if found, or {@code null} otherwise.
-	 * @throws IllegalArgumentException if {@code actor} or {@code guest} is {@code null}.
-	 */
-	public Moderator findModeratorByGuestAndAccount(@Nonnull final Account actor, @Nonnull final Guest guest);
 }
