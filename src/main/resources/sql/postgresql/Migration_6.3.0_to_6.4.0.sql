@@ -86,13 +86,16 @@ SET client_min_messages = warning;
 -- Create table Account_Contact_List
 CREATE TABLE account_contact_lists
 (
-    account_id        int8 NOT NULL,
-    contact_list_id int8 NOT NULL,
+    account_id      int8 NOT NULL CONSTRAINT nonnull_account_contact_lists_account_id,
+    contact_list_id int8 NOT NULL CONSTRAINT nonnull_account_contact_lists_contact_list_id,
     can_view_contact_list_members bool ,
-    PRIMARY KEY (account_id, contact_list_id),
-    FOREIGN KEY (account_id) REFERENCES account (id),
-    FOREIGN KEY (contact_list_id) REFERENCES contact_list (id)
+    CONSTRAINT pk_account_contact_lists PRIMARY KEY (account_id, contact_list_id),
+    CONSTRAINT fk_account_contact_lists_account_id FOREIGN KEY (account_id) REFERENCES account (id),
+    CONSTRAINT fk_account_contact_lists_contact_list_id FOREIGN KEY (contact_list_id) REFERENCES contact_list (id)
 );
+
+CREATE INDEX contact_list_identifier
+    ON contact_list (identifier);
 
 -- Functionality : GUESTS__CONTACT_LISTS
 INSERT INTO policy(id, status, default_status, policy, system)
