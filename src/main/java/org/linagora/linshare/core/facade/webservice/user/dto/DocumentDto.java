@@ -17,6 +17,7 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -259,5 +260,27 @@ public class DocumentDto extends EntryDto {
 				return new DocumentDto(arg0, version);
 			}
 		};
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		DocumentDto that = (DocumentDto) o;
+		return hasThumbnail == that.hasThumbnail && Objects.equals(description, that.description) && Objects.equals(
+				creationDate, that.creationDate) && Objects.equals(modificationDate, that.modificationDate)
+				&& Objects.equals(expirationDate, that.expirationDate) && Objects.equals(ciphered, that.ciphered)
+				&& Objects.equals(type, that.type) && Objects.equals(humanMimeType, that.humanMimeType)
+				&& Objects.equals(size, that.size) && Objects.equals(metaData, that.metaData) && Objects.equals(
+				sha256sum, that.sha256sum) && Objects.equals(shared, that.shared) && Objects.equals(async, that.async)
+				&& Objects.equals(shares, that.shares);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(description, creationDate, modificationDate, expirationDate, ciphered, type, humanMimeType,
+				size, metaData, sha256sum, hasThumbnail, shared, async, shares);
 	}
 }

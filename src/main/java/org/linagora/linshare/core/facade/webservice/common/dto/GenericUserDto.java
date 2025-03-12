@@ -24,6 +24,8 @@ import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.Objects;
+
 @XmlRootElement(name = "GenericUser")
 @Schema(name = "GenericUser", description = "This class is a container to display or identify a user."
 		+ "If the uuid is set, it will be used as the key for retrieve the user profile from the database."
@@ -137,5 +139,22 @@ public class GenericUserDto {
 
 	public void setExternal(Boolean external) {
 		this.external = external;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		GenericUserDto that = (GenericUserDto) o;
+		return Objects.equals(uuid, that.uuid) && Objects.equals(domain, that.domain) && Objects.equals(firstName,
+				that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(mail, that.mail)
+				&& accountType == that.accountType && Objects.equals(external, that.external);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(uuid, domain, firstName, lastName, mail, accountType, external);
 	}
 }

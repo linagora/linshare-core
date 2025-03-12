@@ -18,6 +18,7 @@ package org.linagora.linshare.core.facade.webservice.delegation.dto;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -30,6 +31,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 
 @XmlRootElement(name = "Share")
+@XmlType(name = "DelegationShareDto")
 @Schema(name = "Share", description = "A document can be shared between users.")
 public class ShareDto {
 

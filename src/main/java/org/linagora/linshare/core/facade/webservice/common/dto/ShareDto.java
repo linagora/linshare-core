@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -33,6 +34,7 @@ import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "Share")
+@XmlType(name = "CommonShareDto")
 @Schema(name = "Share", description = "A document can be shared between users.")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ShareDto implements Serializable, Comparable<ShareDto> {
