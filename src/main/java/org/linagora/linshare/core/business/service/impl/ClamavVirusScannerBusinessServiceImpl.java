@@ -18,16 +18,20 @@ package org.linagora.linshare.core.business.service.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
-import net.taldius.clamav.ScannerException;
-import net.taldius.clamav.impl.NetworkScanner;
-
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.linagora.linshare.core.business.service.VirusScannerBusinessService;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.capybara.clamav.ClamavClient;
+import xyz.capybara.clamav.ClamavException;
+import xyz.capybara.clamav.commands.scan.result.ScanResult;
+
+import javax.annotation.Nonnull;
 
 /**
  * This class is a Clamav implementation of VirusScannerService To use this
@@ -35,10 +39,10 @@ import org.slf4j.LoggerFactory;
  * a TCP port by adding "TCPSocket 3310" to your clamad.conf
  */
 public class ClamavVirusScannerBusinessServiceImpl implements VirusScannerBusinessService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ClamavVirusScannerBusinessServiceImpl.class);
 
-	private static final int defaultConnectionTimeout = 90;
+	private static final int DEFAULT_CONNECTION_TIMEOUT_MS = 90 * 1000;
 
 	private boolean disabled = false;
 
@@ -46,53 +50,45 @@ public class ClamavVirusScannerBusinessServiceImpl implements VirusScannerBusine
 
 	private Integer clamdPort = 3310;
 
-	public ClamavVirusScannerBusinessServiceImpl(String clamdHost, int clamdPort) {
+	private ClamavClient clamavClient;
+
+	private final Object lock = new Object();
+
+	public ClamavVirusScannerBusinessServiceImpl(@NonNull final String clamdHost, @NonNull final int clamdPort) {
 		this.clamdHost = clamdHost;
 		this.clamdPort = clamdPort;
 		if (clamdHost.length() == 0) {
-			disabled = true;
+			this.disabled = true;
 		}
-	}
-
-	private NetworkScanner getNewClamavScanner(String clamdHost, int clamdPort,
-			int connectionTimeout) {
-		NetworkScanner clamavScan = new NetworkScanner();
-		clamavScan.setClamdHost(clamdHost);
-		clamavScan.setClamdPort(clamdPort);
-		clamavScan.setConnectionTimeout(connectionTimeout);
-		return clamavScan;
+		else{
+			this.clamavClient = new ClamavClient(clamdHost, clamdPort);
+		}
 	}
 
 	public boolean isDisabled() {
-		return disabled;
+		return this.disabled;
 	}
 
-	public boolean check(File fileToCheck) throws TechnicalException {
-		try {
-			InputStream fileAsStream = new FileInputStream(fileToCheck);
-			return check(fileAsStream);
-		} catch (FileNotFoundException e) {
-			throw new TechnicalException(
-					TechnicalErrorCode.VIRUS_SCANNER_COMMUNICATION_FAILED, e
-							.getMessage(), e.getCause());
+	@Override
+	public boolean check(@Nonnull final File fileToCheck) throws TechnicalException {
+		try (final InputStream fileAsStream = new FileInputStream(fileToCheck)) {
+			return this.check(fileAsStream);
+		} catch (final FileNotFoundException e) {
+			throw new TechnicalException(TechnicalErrorCode.VIRUS_SCANNER_COMMUNICATION_FAILED,
+					String.format("File to scan not found: '%s' !!", fileToCheck.getAbsolutePath()), e);
+		} catch (final IOException e) {
+			throw new TechnicalException(TechnicalErrorCode.VIRUS_SCANNER_COMMUNICATION_FAILED,
+					String.format("An error occurs closing the file '%s'. Ignored", fileToCheck.getAbsolutePath()), e);
 		}
-
 	}
 
-	public boolean check(InputStream steamToCheck) throws TechnicalException{
-		if (disabled) 
+	public boolean check(@Nonnull final InputStream streamToCheck) throws TechnicalException{
+		if (this.disabled)
 			throw new TechnicalException(TechnicalErrorCode.VIRUS_SCANNER_IS_DISABLED, "VirusScanner is disabled");
 		try {
-			NetworkScanner clamavScanner = getNewClamavScanner(clamdHost, clamdPort, defaultConnectionTimeout);
-			// Check if the streamToCheck contains virus
-			boolean isSafe = clamavScanner.performScan(steamToCheck);
-			// consume the messages
-			clamavScanner.reset();
-			return isSafe;
-		} catch (ScannerException e) {
-			Throwable ioException = e.getCause();
-			logger.error(ioException.getMessage());
-			logger.debug(ioException.toString());
+			return this.clamavClient.scan(streamToCheck) instanceof ScanResult.OK;
+		} catch (final ClamavException e) {
+			logger.error("Error during ClamAV scan: {}", e.getMessage(), e);
 			throw new TechnicalException(
 					TechnicalErrorCode.VIRUS_SCANNER_COMMUNICATION_FAILED, e
 							.getMessage(), e.getCause());
@@ -101,42 +97,36 @@ public class ClamavVirusScannerBusinessServiceImpl implements VirusScannerBusine
 
 	@Override
 	public String getHost() {
-		return clamdHost;
+		return this.clamdHost;
 	}
 
 	@Override
 	public void setHost(String host) {
-		logger.warn("Reconfiguring Clamav current host ...");
-		synchronized (clamdHost) {
-			try {
-				clamdHost = host;
-				logger.warn("Clamav current host reconfigured to " + clamdHost);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("Clamav reconfiguration failed ! ");
-			}
+		logger.info("Reconfiguring Clamav current host ...");
+		synchronized (this.lock) {
+				this.clamdHost = host;
+				logger.info("Clamav current host reconfigured to {}", this.clamdHost);
+
 		}
 	}
 
 	@Override
 	public Integer getPort() {
-		return clamdPort;
+		return this.clamdPort;
 	}
 
 	@Override
 	public void setPort(Integer port) throws Exception {
 		logger.warn("Reconfiguring Clamav current port ...");
-		if (port.equals(0)) {
-			throw new Exception("invalid port value : " + port);
+		if (port == 0) {
+			throw new TechnicalException(
+					TechnicalErrorCode.VIRUS_SCANNER_COMMUNICATION_FAILED,
+					"Invalid port value: " + port
+			);
 		}
-		synchronized (clamdPort) {
-			try {
-				clamdPort = port;
-				logger.warn("Clamav current port reconfigured to " + clamdPort);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("Clamav reconfiguration failed ! ");
-			}
+		synchronized (this.lock) {
+				this.clamdPort = port;
+				logger.warn("Clamav current port reconfigured to {} " ,this.clamdPort);
 		}
 	}
 

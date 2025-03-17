@@ -666,17 +666,13 @@
 			<artifactId>mail</artifactId>
 			<version>1.4.7</version>
 		</dependency>
+		<!-- Antivirus scanner dependencies -->
 		<dependency>
-			<groupId>net.taldius</groupId>
-			<artifactId>libclamav</artifactId>
-			<version>1.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>xyz.capybara</groupId>
+			<artifactId>clamav-client</artifactId>
+			<version>2.1.2</version>
 		</dependency>
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
