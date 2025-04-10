@@ -120,8 +120,10 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			Date begin = getBeginDate(beginDate, end);
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, begin, end);
 		}
-		checkListPermission(authUser, actor, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
-				res.iterator().next());
+		if (!res.isEmpty()) {
+			checkListPermission(authUser, actor, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
+					res.iterator().next());
+		}
 		return res;
 	}
 
