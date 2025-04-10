@@ -17,6 +17,7 @@ package org.linagora.linshare.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ import org.subethamail.wiser.WiserMessage;
 		"classpath:springContext-test.xml"
 		})
 public class MailNotifierServiceImplTest {
-	private static Logger logger = LoggerFactory.getLogger(MailNotifierServiceImplTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MailNotifierServiceImplTest.class);
 
 	@Autowired
 	private NotifierService mailNotifierService;
@@ -68,22 +69,31 @@ public class MailNotifierServiceImplTest {
 
 	@BeforeEach
 	public void setUp() {
-		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		LOGGER.debug(LinShareTestConstants.BEGIN_SETUP);
 		mailNotifierService.setHost("localhost");
+		wiser = new Wiser(2525) {
+			@Override
+			public boolean accept(String from, String recipient) {
+				if ("invalid@example.com".equals(recipient)){
+					return false;
+				}
+				return true;
+			}
+		};
 		wiser.start();
-		logger.debug(LinShareTestConstants.END_SETUP);
+		LOGGER.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@AfterEach
 	public void tearDown() {
-		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		LOGGER.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
-		logger.debug(LinShareTestConstants.END_TEARDOWN);
+		LOGGER.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
 	public void testSendNotification() throws MessagingException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
+		LOGGER.info(LinShareTestConstants.BEGIN_TEST);
 
 		String subject = "subject";
 		Language locale = Language.ENGLISH;
@@ -128,15 +138,15 @@ public class MailNotifierServiceImplTest {
 					msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString(), "'To' address did not match");
 			assertEquals(fromUser, msg.getReplyTo()[0].toString(), "'ReplyTo' address did not match");
 		} else {
-			logger.error("No mail received");
+			LOGGER.error("No mail received");
 			Assertions.fail();
 		}
-		logger.debug(LinShareTestConstants.END_TEST);
+		LOGGER.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testSendAllNotifications() throws MessagingException, BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
+		LOGGER.info(LinShareTestConstants.BEGIN_TEST);
 
 		String subject = "subject";
 		String contentTxt = "content";
@@ -182,7 +192,7 @@ public class MailNotifierServiceImplTest {
 			assertEquals(LINSHARE_MAIL, msg.getReplyTo()[0].toString(), "'ReplyTo' address did not match");
 
 		} else {
-			logger.error("No mail received");
+			LOGGER.error("No mail received");
 			Assertions.fail();
 		}
 
@@ -211,9 +221,60 @@ public class MailNotifierServiceImplTest {
 					"'To' address did not match");
 			assertEquals(fromUser, msg.getReplyTo()[0].toString(), "'ReplyTo' address did not match");
 		} else {
-			logger.error("No mail received");
+			LOGGER.error("No mail received");
 			Assertions.fail();
 		}
-		logger.debug(LinShareTestConstants.END_TEST);
+		LOGGER.debug(LinShareTestConstants.END_TEST);
+	}
+
+	/**
+	 * Tests the notification system's behavior when sending emails to both valid and invalid recipients.
+	 * Verifies that:
+	 * - Emails to valid recipients are successfully delivered.
+	 * - Emails to invalid recipients are marked as failed.
+	 */
+	@Test
+	void sendNotificationToInvalidAdressMail() throws MessagingException{
+		LOGGER.info(LinShareTestConstants.BEGIN_TEST);
+
+		final String subject = "subject";
+		final Language locale = Language.ENGLISH;
+		final String fromUser = "foobar@foodomain.com";
+		final String fromDomain = LINSHARE_MAIL;
+		final String validRecipient = "valid@example.com";
+		final String invalidRecipient = "invalid@example.com";
+
+		final MailContainerWithRecipient validMail = new MailContainerWithRecipient(locale);
+		validMail.setSubject(subject);
+		validMail.setContent("validContent");
+		validMail.setFrom(fromDomain);
+		validMail.setReplyTo(fromUser);
+		validMail.setRecipient(validRecipient);
+
+		final MailContainerWithRecipient invalidMail = new MailContainerWithRecipient(locale);
+		invalidMail.setSubject(subject);
+		invalidMail.setContent("invalidContent");
+		invalidMail.setFrom(fromDomain);
+		invalidMail.setReplyTo(fromUser);
+		invalidMail.setRecipient(invalidRecipient);
+
+		final List<MailContainerWithRecipient> mailContainerWithRecipients = new ArrayList<>();
+		mailContainerWithRecipients.add(validMail);
+		mailContainerWithRecipients.add(invalidMail);
+
+		final List<String> failedRecipients = this.mailNotifierService.sendNotification(mailContainerWithRecipients);
+
+		assertEquals(1, failedRecipients.size(), "Expected 1 failed recipient");
+		assertTrue(failedRecipients.contains(invalidRecipient), "Failed recipients should contain " + invalidRecipient);
+
+		assertEquals(1, this.wiser.getMessages().size(), "Expected 1 successful email");
+		WiserMessage wiserMsg = this.wiser.getMessages().get(0);
+		MimeMessage msg = wiserMsg.getMimeMessage();
+
+		assertNotNull(msg, "Message should not be null");
+		assertEquals(subject, msg.getSubject(), "Subject should match");
+		assertEquals(validRecipient, msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString(), "Recipient should match");
+
+		LOGGER.debug(LinShareTestConstants.END_TEST);
 	}
 }

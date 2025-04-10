@@ -148,7 +148,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		log.setCause(LogActionCause.COPY);
 		log.setCopiedTo(copiedTo);
 		logEntryService.insert(log);
-		notifierService.sendNotification(mail, true);
+		notifierService.sendNotification(mail);
 		return share;
 	}
 
@@ -197,7 +197,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				documentEntryBusinessService.update(documentEntry);
 			}
 		}
-		notifierService.sendNotification(mail, true);
+		notifierService.sendNotification(mail);
 		return share;
 	}
 
@@ -244,7 +244,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		if (share.getDownloaded() <= 0) {
 			ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail, true);
+			notifierService.sendNotification(mail);
 		}
 		share = shareEntryBusinessService.updateDownloadCounter(share.getUuid());
 		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DOWNLOAD, share,

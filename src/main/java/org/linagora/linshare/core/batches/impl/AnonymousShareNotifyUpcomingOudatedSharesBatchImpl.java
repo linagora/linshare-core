@@ -85,7 +85,7 @@ public class AnonymousShareNotifyUpcomingOudatedSharesBatchImpl extends GenericB
 		if (anonymousShareEntry.getDownloaded() < 1) {
 			EmailContext emailContext = new ShareWarnRecipientBeforeExpiryEmailContext(anonymousShareEntry, daysLeft);
 			MailContainerWithRecipient mail = mailBuildingService.build(emailContext);
-			notifierService.sendNotification(mail, true);
+			notifierService.sendNotification(mail);
 		}
 		return context;
 	}

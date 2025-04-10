@@ -15,10 +15,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
@@ -28,19 +25,24 @@ import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +58,13 @@ import java.util.Set;
  */
 public class MailNotifierServiceImpl implements NotifierService {
 
+	/** Class logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
+
+	private static final CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
+
 	/** The smtpServer that will send the email. */
-	private String smtpServer;
+	private volatile String smtpServer;
 
 	/** The smtp user. */
 	private final String smtpUser;
@@ -66,7 +73,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	private final String smtpPassword;
 
 	/** The smtp port. */
-	private Integer smtpPort;
+	private volatile int smtpPort;
 
 	/** Is the server needing authentification. */
 	private final boolean needsAuth;
@@ -82,24 +89,19 @@ public class MailNotifierServiceImpl implements NotifierService {
 
 	private final String sslProtocols;
 
-	/** Class logger */
-	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
-	
-	private static final CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
-
 	/**
 	 * see http://java.sun.com/developer/EJTechTips/2004/tt0625.html for
 	 * multipart/alternative
 	 */
-	public MailNotifierServiceImpl(String smtpServer,
+	public MailNotifierServiceImpl(@Nonnull String smtpServer,
 			int smtpPort,
-			String smtpUser,
-			String smtpPassword,
+			@Nullable String smtpUser,
+			@Nullable String smtpPassword,
 			boolean needsAuth,
-			String charset,
+			@Nonnull String charset,
 			boolean startTlsEnable,
 			boolean sslEnable,
-			String sslProtocols) {
+			@Nullable String sslProtocols) {
 		this.smtpServer = smtpServer;
 		this.smtpPort = smtpPort;
 		this.smtpUser = smtpUser;
@@ -111,56 +113,79 @@ public class MailNotifierServiceImpl implements NotifierService {
 		this.sslProtocols = sslProtocols;
 	}
 
-	public static boolean isPureAscii(String v) {
-		return asciiEncoder.canEncode(v);
+	private static boolean isPureAscii(@Nullable final String v) {
+		return v!=null && !v.isBlank() && asciiEncoder.canEncode(v);
 	}
-	  
-	@Override
-	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent,
-			String inReplyTo, String references, Map<String, DataSource> attachments) throws SendFailedException {
 
-		if (smtpServer.equals("")) {
-			logger.warn("Mail notifications are disabled.");
+	@Override
+	public void sendNotification(@Nonnull final String smtpSender, @Nullable final String replyTo,
+			@Nonnull final String recipient, @Nonnull final String subject, @Nonnull final String htmlContent,
+			@Nullable final String inReplyTo, @Nullable final String references,
+			@Nullable final Map<String, DataSource> attachments) throws SendFailedException, TechnicalException {
+
+		if (this.smtpServer.isBlank()) {
+			LOGGER.warn("Mail notifications are disabled.");
 			return;
 		}
-		// get the mail session
-		Session session = getMailSession();
+		final Session session = getMailSession();
+		final MimeMessage message = this.buildMimeMessage(session, smtpSender, replyTo, recipient, subject, htmlContent,
+				inReplyTo, references, attachments);
+		this.sendMimeMessage(session, message);
+	}
 
-		// Define message
-		MimeMessage messageMim = new MimeMessage(session);
-
+	private @Nonnull MimeMessage buildMimeMessage(@Nonnull final Session session,
+			@Nonnull final String smtpSender,
+			@Nullable final String replyTo,
+			@Nonnull final String recipient,
+			@Nonnull final String subject,
+			@Nonnull final String htmlContent,
+			@Nullable final String inReplyTo,
+			@Nullable final String references,
+			@Nullable final Map<String, DataSource> attachments) throws TechnicalException {
 		try {
-			messageMim.setFrom(new InternetAddress(smtpSender));
+			// Define message
+			final MimeMessage messageMim = new MimeMessage(session);
 
+			messageMim.setFrom(new InternetAddress(smtpSender));
+			messageMim.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(recipient));
 			if (replyTo != null) {
-				InternetAddress reply[] = new InternetAddress[1];
-				reply[0] = new InternetAddress(replyTo);
+				final InternetAddress[] reply = new InternetAddress[] { new InternetAddress(replyTo) };
 				messageMim.setReplyTo(reply);
 			}
-
-			messageMim.addRecipient(javax.mail.Message.RecipientType.TO,
-					new InternetAddress(recipient));
-
-			if (inReplyTo != null && inReplyTo != "") {
-				// This field should contain only ASCCI character (RFC 822)
-				if(isPureAscii(inReplyTo)) {
-					messageMim.setHeader("In-Reply-To", inReplyTo);
-				}
-			}
-			
-			if (references != null && references != "") {
-				// This field should contain only ASCCI character (RFC 822)  
-				if(isPureAscii(references)) {
-					messageMim.setHeader("References", references);
-				}
-			}
-			
+			// En-têtes
+			setHeaders(messageMim, inReplyTo, references);
+			messageMim.setContent(buildMultipartContent(htmlContent, attachments, this.charset));
 			messageMim.setSubject(subject, charset);
+			// RFC 822 "Date" header field
+			// Indicates that the message is complete and ready for delivery
+			messageMim.setSentDate(new GregorianCalendar().getTime());
+			return messageMim;
+		} catch (final AddressException e) {
+			throw new TechnicalException(TechnicalErrorCode.MAIL_VALIDATION, "Invalid email address", e);
+		} catch (final MessagingException e) {
+			throw new TechnicalException(TechnicalErrorCode.MAIL_COMPOSITION, "Message composition failed", e);
+		}
+	}
 
+	private static void setHeaders(@Nonnull final MimeMessage message, @Nullable final String inReplyTo, @Nullable final String references) throws MessagingException {
+
+		if (isPureAscii(inReplyTo)) {
+				message.setHeader("In-Reply-To", inReplyTo);
+		}
+		if (isPureAscii(references)) {
+				message.setHeader("References", references);
+		}
+
+	}
+
+	private static Multipart buildMultipartContent(@Nonnull final String htmlContent,
+			@Nullable final Map<String, DataSource> attachments, @Nonnull final String charset)
+			throws TechnicalException {
+		try {
 			// Create a "related" Multipart message
 			// content type is multipart/alternative
 			// it will contain two part BodyPart 1 and 2
-			Multipart mp = new MimeMultipart("alternative");
+			final Multipart mp = new MimeMultipart("alternative");
 
 			// BodyPart 2
 			// content type is multipart/related
@@ -169,30 +194,30 @@ public class MailNotifierServiceImpl implements NotifierService {
 			// as parts of an aggregate whole. The message consists of a root
 			// part (by default, the first) which reference other parts inline,
 			// which may in turn reference other parts.
-			Multipart html_mp = new MimeMultipart("related");
+			final Multipart html_mp = new MimeMultipart("related");
 
 			// Include an HTML message with images.
 			// BodyParts: the HTML file and an image
 
 			// Get the HTML file
-			BodyPart rel_bph = new MimeBodyPart();
-			rel_bph.setDataHandler(new DataHandler(new ByteArrayDataSource(
-					htmlContent, "text/html; charset=" + charset)));
+			final BodyPart rel_bph = new MimeBodyPart();
+			rel_bph.setDataHandler(
+					new DataHandler(new ByteArrayDataSource(htmlContent, "text/html; charset=" + charset)));
 			html_mp.addBodyPart(rel_bph);
 
 			// Create the second BodyPart of the multipart/alternative,
 			// set its content to the html multipart, and add the
 			// second bodypart to the main multipart.
-			BodyPart alt_bp2 = new MimeBodyPart();
+			final BodyPart alt_bp2 = new MimeBodyPart();
 			alt_bp2.setContent(html_mp);
 			mp.addBodyPart(alt_bp2);
 
 			if (attachments != null) {
 				// <img src="cid:image.part.1@linshare.org" />
-				Set<String> keySet = attachments.keySet();
-				for (String identifier : keySet) {
-					DataSource dataSource = attachments.get(identifier);
-					MimeBodyPart rel_bpi = new MimeBodyPart();
+				final Set<String> keySet = attachments.keySet();
+				for (final String identifier : keySet) {
+					final DataSource dataSource = attachments.get(identifier);
+					final MimeBodyPart rel_bpi = new MimeBodyPart();
 					rel_bpi.setFileName(dataSource.getName());
 					rel_bpi.setText(dataSource.getName());
 					rel_bpi.setDataHandler(new DataHandler(dataSource));
@@ -201,47 +226,45 @@ public class MailNotifierServiceImpl implements NotifierService {
 					html_mp.addBodyPart(rel_bpi);
 				}
 			}
+			return mp;
+		} catch (final IOException | MessagingException e) {
+			throw new TechnicalException(TechnicalErrorCode.MAIL_COMPOSITION, "Failed to build multipart email content",
+					e);
+		}
+	}
 
-			messageMim.setContent(mp);
-			
-			// RFC 822 "Date" header field
-			// Indicates that the message is complete and ready for delivery
-			messageMim.setSentDate(new GregorianCalendar().getTime());
-			
-			// Since we used html tags, the content must be marker as text/html
-			// messageMim.setContent(content,"text/html; charset="+charset);
-
-			Transport tr = session.getTransport("smtp");
-
+	private void sendMimeMessage(@Nonnull final Session session, final @Nonnull MimeMessage messageMim) throws SendFailedException, TechnicalException {
+		try {
+			messageMim.saveChanges();
 			// Connect to smtp server, if needed
-			if (needsAuth) {
-				tr.connect(smtpServer, smtpPort, smtpUser, smtpPassword);
-				messageMim.saveChanges();
-				tr.sendMessage(messageMim, messageMim.getAllRecipients());
-				tr.close();
+			if (this.needsAuth) {
+				// Since we used html tags, the content must be marker as text/html
+				final Transport tr = session.getTransport("smtp");
+				try {
+					tr.connect(this.smtpServer, this.smtpPort, this.smtpUser, this.smtpPassword);
+					tr.sendMessage(messageMim, messageMim.getAllRecipients());
+				} finally {
+					tr.close();
+				}
 			} else {
 				// Send message
 				Transport.send(messageMim);
 			}
-		} catch (SendFailedException e) {
-			logger.error("Error sending notification on " + smtpServer + " port " + smtpPort +" to "+ recipient, e);
+		} catch (final SendFailedException e) {
+			LOGGER.error("SMTP delivery failed to at least one recipient.", e);
 			throw e;
-		} catch (MessagingException e) {
-			logger.error("Error sending notification on " + smtpServer + " port " + smtpPort, e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification", e);
-		} catch (Exception e) {
-			logger.error("Error sending notification on " + smtpServer + " port " + smtpPort, e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification", e);
+		} catch (final MessagingException e) {
+			throw new TechnicalException(TechnicalErrorCode.MAIL_DELIVERY, "SMTP transport error", e);
 		}
 	}
 
 	/**
 	 * Create some properties and get the default Session
 	 */
-	private Session getMailSession() {
+	private @Nonnull Session getMailSession() {
 
 		// Set the host smtp address
-		Properties props = new Properties();
+		final Properties props = new Properties();
 		props.put("mail.smtp.host", smtpServer);
 		// if ssl is enabled
 		if (sslEnable) {
@@ -260,8 +283,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 		}
 
 		// create some properties and get the default Session
-		Session session = Session.getInstance(props, null);
-		if (logger.isDebugEnabled()) {
+		final Session session = Session.getInstance(props, null);
+		if (LOGGER.isDebugEnabled()) {
 			session.setDebug(true);
 		} else {
 			session.setDebug(false);
@@ -270,103 +293,64 @@ public class MailNotifierServiceImpl implements NotifierService {
 		return session;
 	}
 
-	/**
-	 * Send multiple notifications giving a mailContainerWithRecipient object.
-	 */	
 	@Override
-	public void sendNotification(List<MailContainerWithRecipient> mailContainerWithRecipient, boolean skipUnreachableAddresses) throws BusinessException {
-		if(CollectionUtils.isNotEmpty(mailContainerWithRecipient)) {
-			List<String> unknownRecipients = Lists.newArrayList();
-			for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
+	public @Nonnull List<String> sendNotification(@Nonnull final List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException {
+		final List<String> failedRecipients = new ArrayList<>();
+		if (!mailContainerWithRecipient.isEmpty()) {
+			for (final MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
 				if (mailContainer == null) {
 					continue;
 				}
 				try {
 					if (mailContainer.getRecipient() == null) {
-						logger.error("can not send mails, no recipient");
+						LOGGER.error("can not send mails, no recipient");
 					} else {
-						sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(),
+						this.sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(),
 								mailContainer.getSubject(), mailContainer.getContent(),
 								mailContainer.getInReplyTo(), mailContainer.getReferences(), mailContainer.getAttachments());
 					}
-				} catch (SendFailedException e) {
-					unknownRecipients.add(mailContainer.getRecipient());
-					logger.debug(e.toString());
+				} catch (final SendFailedException e) {
+					LOGGER.error("Failed to send email to {}: {}", mailContainer.getRecipient(), e.getMessage(), e);
+					failedRecipients.add(mailContainer.getRecipient());
 				}
 			}
-			if(!unknownRecipients.isEmpty()){
-				logger.warn("Addresses unreachables : " + unknownRecipients.toString());
-				if (!skipUnreachableAddresses) {
-					throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
-				}
-			}
-		} else {
-			logger.debug("can not send mails, input list empty");
-		} 
-	}	
-
-	@Override
-	public void sendNotification(MailContainerWithRecipient mailContainers, boolean skipUnreachableAddresses)
-			throws BusinessException {
-		this.sendNotification(Lists.newArrayList(mailContainers), skipUnreachableAddresses);
-	}
-
-	@Override
-	public void sendNotification(List<MailContainerWithRecipient> mailContainers) throws BusinessException {
-		this.sendNotification(Lists.newArrayList(mailContainers), false);
-	}
-
-	@Override
-	public void sendNotification(MailContainerWithRecipient mailContainer) throws BusinessException {
-		this.sendNotification(Lists.newArrayList(mailContainer), false);
-	}
-
-	@Override
-	public String getHost() {
-		return smtpServer;
-	}
-
-	@Override
-	public void setHost(String host) {
-		logger.warn("Reconfiguring Smtp current server ...");
-		synchronized (smtpServer) {
-			try {
-				smtpServer = host;
-				logger.warn("Smtp current server reconfigured to " + smtpServer);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("Smtp reconfiguration failed ! ");
-			}
 		}
+		return failedRecipients;
 	}
 
 	@Override
-	public Integer getPort() {
-		return smtpPort;
+	public @Nonnull String getHost() {
+		return this.smtpServer;
 	}
 
 	@Override
-	public void setPort(Integer port) throws Exception {
-		logger.warn("Reconfiguring Smtp current port ...");
-		if (port.equals(0)) {
-			throw new Exception("invalid port value : " + port);
+	public void setHost(@Nonnull final String host) {
+		LOGGER.info("Reconfiguring Smtp current server ...");
+		this.smtpServer = host;
+		LOGGER.info("Smtp current server reconfigured to " + this.smtpServer);
+	}
+
+	@Override
+	public @Nonnull int getPort() {
+		return this.smtpPort;
+	}
+
+	@Override
+	public void setPort(final int port) {
+		LOGGER.info("Reconfiguring Smtp current port from {} to {}", this.smtpPort, port);
+		if (port <= 0) {
+			throw new IllegalArgumentException("invalid port value : " + port);
 		}
-		synchronized (smtpPort) {
-			try {
-				smtpPort = port;
-				logger.warn("Smtp current port reconfigured to " + smtpPort);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("Smtp reconfiguration failed ! ");
-			}
-		}
+		LOGGER.info("Reconfiguring Smtp port from {} to {}", this.smtpPort, port);
+		this.smtpPort = port;
+		LOGGER.info("Smtp current port reconfigured to {} ", port);
 	}
 
 	public boolean isStartTlsEnable() {
-		return startTlsEnable;
+		return this.startTlsEnable;
 	}
 
 	public boolean isSslEnable() {
-		return sslEnable;
+		return this.sslEnable;
 	}
 }

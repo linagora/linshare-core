@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataSource;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.SendFailedException;
 
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -41,24 +43,26 @@ public interface NotifierService {
      * @param references : message ID list
 	 * @throws SendFailedException
      */
-	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject,String htmlContent,
-			String inReplyTo, String references, Map<String, DataSource> attachments) throws SendFailedException;
+	public void sendNotification(@Nonnull final String smtpSender, @Nullable final String replyTo, @Nonnull final String recipient, @Nonnull final String subject, @Nonnull final String htmlContent,
+			@Nullable final String inReplyTo, @Nullable final String references, @Nullable final Map<String, DataSource> attachments) throws SendFailedException;
 
 	/**
-	 * @param mailContainers
-	 *            list of mail containers attached to recipients
-	 * @param skipUnreachableAddresses
-	 * @throws BusinessException
+	 * Sends email notifications to recipients from the provided mail containers.
+	 *
+	 * @param mailContainers List of mail containers with recipients and content (non-null, no null elements)
+	 * @return List of failed recipient addresses (empty if all succeeded)
 	 */
-	public void sendNotification(List<MailContainerWithRecipient> mailContainers,
-			boolean skipUnreachableAddresses) throws BusinessException;
+	public @Nonnull List<String> sendNotification(@Nonnull final List<MailContainerWithRecipient> mailContainers) throws BusinessException;
 
-	public void sendNotification(List<MailContainerWithRecipient> mailContainers) throws BusinessException;
-
-	public void sendNotification(MailContainerWithRecipient mailContainer, boolean skipUnreachableAddresses)
-			throws BusinessException;
-
-	public void sendNotification(MailContainerWithRecipient mailContainer) throws BusinessException;
+	/**
+	 * Sends a single email notification.
+	 * @param mailContainer email to send (non-null)
+	 * @return {@code true} if sent successfully, {@code false} if an error about unreachable recipient ({@link SendFailedException}) occurs.
+	 * @throws BusinessException an error different from {@link SendFailedException} occurs.
+	 */
+	public default boolean sendNotification(@Nonnull MailContainerWithRecipient mailContainer) throws BusinessException {
+			return this.sendNotification(List.of(mailContainer)).isEmpty();
+	}
 
 	/**
 	 * For JMX purpose.
@@ -68,8 +72,8 @@ public interface NotifierService {
 
 	void setHost(String host);
 
-	Integer getPort();
+	int getPort();
 
-	void setPort(Integer port) throws Exception;
+	void setPort(int port) throws Exception;
 
 }

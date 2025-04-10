@@ -33,8 +33,14 @@ public class WorkGroupEntryUploadAsyncTask extends
 
 	@Override
 	protected String runMyTask(WorkGroupEntryTaskContext task) {
-		WorkGroupEntryDto dto = asyncFacade.upload(task);
-		return dto.getUuid();
+		try {
+			final WorkGroupEntryDto dto = asyncFacade.upload(task);
+			return dto.getUuid();
+		}
+		catch (final Throwable e) {
+			logger.error("Failed to process upload task: {}", e.getMessage(), e);
+			throw e;
+		}
 	}
 
 }

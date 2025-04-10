@@ -153,7 +153,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 					(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
 					requestUrl.getUploadRequest(), requestUrl, upReqdoc);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail, true);
+			notifierService.sendNotification(mail);
 		}
 		return upReqdoc;
 	}

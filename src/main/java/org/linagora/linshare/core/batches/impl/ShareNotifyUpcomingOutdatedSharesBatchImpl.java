@@ -85,7 +85,7 @@ public class ShareNotifyUpcomingOutdatedSharesBatchImpl extends GenericBatchImpl
 		if (shareEntry.getDownloaded() < 1) {
 			EmailContext emailContext = new ShareWarnRecipientBeforeExpiryEmailContext(shareEntry, daysLeft);
 			MailContainerWithRecipient mail = mailBuildingService.build(emailContext);
-			notifierService.sendNotification(mail, true);
+			notifierService.sendNotification(mail);
 		}
 		return context;
 	}

@@ -106,7 +106,7 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 
 	protected void notify(EmailContext context) {
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail, true);
+		notifierService.sendNotification(mail);
 	}
 	/**
 	 * Save audit log for create and delete actions.

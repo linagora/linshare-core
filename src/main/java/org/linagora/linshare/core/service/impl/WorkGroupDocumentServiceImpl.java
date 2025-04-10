@@ -164,7 +164,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 				mailContainers.add(mail);
 			}
 		}
-		notifierService.sendNotification(mailContainers, false);
+		notifierService.sendNotification(mailContainers);
 		return document;
 	}
 

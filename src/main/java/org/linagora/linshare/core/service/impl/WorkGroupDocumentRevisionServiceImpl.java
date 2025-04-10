@@ -150,8 +150,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 						mailContainers.add(mail);
 					}
 				}
-				notifierService.sendNotification(mailContainers, false);
-
+				notifierService.sendNotification(mailContainers);
 			} else {
 				WorkGroupDocument parentDocument = (WorkGroupDocument) repository
 						.findByWorkGroupAndUuid(workGroup.getLsUuid(), documentRevision.getParent());
