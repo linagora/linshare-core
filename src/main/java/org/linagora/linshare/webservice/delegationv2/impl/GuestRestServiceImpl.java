@@ -174,7 +174,6 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 
 	@GET
 	@Path("/{uuid}/contactLists")
-	@Produces(MediaType.APPLICATION_XML)
 	@Operation(summary = "Find the contact lists of the given guest.", responses = {
 			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountContactListDto.class))), responseCode = "200") })
 	@Override

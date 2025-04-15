@@ -162,7 +162,6 @@ public class GuestRestServiceImpl implements GuestRestService {
 
 	@Path("/{uuid}/contactLists")
 	@GET
-	@Produces(MediaType.APPLICATION_XML)
 	@Operation(summary = "Find the contact list of the current guest.", responses = {
 			@ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountContactListDto.class))), responseCode = "200") })
 	@Override
