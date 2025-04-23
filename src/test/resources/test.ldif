@@ -370,4 +370,17 @@ cn: Oidcldap, Dude
 userPassword: password2
 mail: oidcldap.dude@linshare.org
 
+dn: uid=external.user,ou=OidcDomain,dc=linshare,dc=org
+uid: external.user
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: User
+givenName: External
+cn: External User
+userPassword: password
+mail: external.user@linshare.org
+
+
 

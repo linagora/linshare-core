@@ -29,6 +29,13 @@ INSERT INTO account(
 	last_name, can_upload, comment, restricted,
 	CAN_CREATE_GUEST, inconsistent, authentication_failure_count)
 VALUES
+    -- Amy Wolsh (UUID unique)
+    (56, 'amy.wolsh@linshare.org', 2, 'aebe1b64-0000-11e5-9fa8-080027b8254x',
+     now(), now(), 0,
+     'en', 'en', 'en', true, null,
+     0, 5 , 'IN_USE', 'Amy',
+     'Wolsh', true, '', false,
+     true, false, 0),
 	-- standard dude topDomain2
 	(53, 'standard.dude@linshare.org', 2, 'aebe1b64-0000-11e5-9fa8-080027b8254j',
 	now(), now(), 0,

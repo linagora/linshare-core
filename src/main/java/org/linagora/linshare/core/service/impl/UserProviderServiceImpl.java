@@ -101,6 +101,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 
 	private final String oidcLdapPatternUuid;
 
+	private final String ldapUsersBaseDnBranch;
+
 	public UserProviderServiceImpl(
 			DomainPatternRepository domainPatternRepository,
 			LDAPUserQueryService ldapQueryService,
@@ -114,7 +116,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			TwakeGuestUserProviderServiceImpl twakeGuestUserProviderService,
 			LdapConnectionRepositoryImpl ldapConnectionRepository,
 			String oidcLdapConnectionUuid,
-			String oidcLdapPatternUuid) {
+			String oidcLdapPatternUuid,
+			String ldapUsersBaseDnBranch) {
 		super(sanitizerInputHtmlBusinessService);
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
@@ -128,6 +131,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		this.ldapConnectionRepository = ldapConnectionRepository;
 		this.oidcLdapConnectionUuid = oidcLdapConnectionUuid;
 		this.oidcLdapPatternUuid = oidcLdapPatternUuid;
+		this.ldapUsersBaseDnBranch = ldapUsersBaseDnBranch;
 	}
 
 	@Override
@@ -473,7 +477,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						lastName, null, null, null, null, null, Set.of(), container);
 				List <User> users = container.getPageResponse().getContent();
 
-				return addSearchedLdapUsersFromConfig(domain, users, mail, firstName, lastName);
+				return addSearchedLdapUsersFromConfig(users, mail, firstName, lastName);
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.searchUser(domain, (TwakeUserProvider) userProvider, mail, firstName, lastName);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
@@ -485,7 +489,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		return Lists.newArrayList();
 	}
 
-	private List<User> addSearchedLdapUsersFromConfig(AbstractDomain domain, List<User> users,
+	private List<User> addSearchedLdapUsersFromConfig(List<User> users,
 			 String mail, String firstName, String lastName) {
 		LdapConnection oidcLdapConnection = !StringUtils.isBlank(oidcLdapConnectionUuid)
 				? ldapConnectionRepository.findByUuid(oidcLdapConnectionUuid)
@@ -499,7 +503,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				HashSet<User> allUsers = new HashSet<>(users);
 
 				allUsers.addAll(ldapQueryService.searchUser(
-						oidcLdapConnection, getBaseDn(domain),
+						oidcLdapConnection, getBaseDn(),
 						oidcLdapPattern, mail, firstName, lastName));
 
 				return List.copyOf(allUsers);
@@ -540,7 +544,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				container = userRepository.findAll(Lists.newArrayList(domain), Order.asc("modificationDate"), pattern, null,
 						null, null, null, null, null, null, Set.of(), container);
 				List<User> users = container.getPageResponse().getContent();
-				return addCompletedLdapUsersFromConfig(domain, users, pattern, null, null);
+				return addCompletedLdapUsersFromConfig(users, pattern, null, null);
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) userProvider, pattern);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
@@ -579,7 +583,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						lastName, null, null, null, null, null, Set.of(),
 						container);
 				List<User> users = container.getPageResponse().getContent();
-				return addCompletedLdapUsersFromConfig(domain, users, null, firstName, lastName);
+				return addCompletedLdapUsersFromConfig(users, null, firstName, lastName);
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) userProvider, firstName, lastName);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
@@ -591,7 +595,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		return Lists.newArrayList();
 	}
 
-	private List<User> addCompletedLdapUsersFromConfig(AbstractDomain domain, List<User> users,
+	private List<User> addCompletedLdapUsersFromConfig(List<User> users,
 			 @Nullable String pattern, @Nullable String firstName, @Nullable String lastName) {
 		LdapConnection oidcLdapConnection = !StringUtils.isBlank(oidcLdapConnectionUuid)
 				? ldapConnectionRepository.findByUuid(oidcLdapConnectionUuid)
@@ -606,12 +610,12 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 
 				if (!StringUtils.isBlank(pattern)){
 					allUsers.addAll(ldapQueryService.completeUser(
-							oidcLdapConnection, getBaseDn(domain),
+							oidcLdapConnection, getBaseDn(),
 							oidcLdapPattern, pattern));
 
 				} else if (!StringUtils.isBlank(firstName) && !StringUtils.isBlank(lastName)){
 					allUsers.addAll(ldapQueryService.completeUser(
-							oidcLdapConnection, getBaseDn(domain),
+							oidcLdapConnection, getBaseDn(),
 							oidcLdapPattern, firstName, lastName));
 				}
 				return List.copyOf(allUsers);
@@ -627,8 +631,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	}
 
 	@NotNull
-	private static String getBaseDn(AbstractDomain domain) {
-		return "ou=" + domain.getLabel().toLowerCase() + ",dc=linshare,dc=org";
+	private String getBaseDn() {
+		return ldapUsersBaseDnBranch;
 	}
 
 	@Override

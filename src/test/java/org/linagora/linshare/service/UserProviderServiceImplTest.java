@@ -15,12 +15,14 @@
  */
 package org.linagora.linshare.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -41,6 +43,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.core.service.impl.UserProviderServiceImpl;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +52,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @ExtendWith(LdapServerRule.class)
@@ -56,13 +60,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Transactional
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
+		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-mongo.xml",
-		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-mongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class UserProviderServiceImplTest {
 
@@ -80,7 +86,7 @@ public class UserProviderServiceImplTest {
 
 	@Autowired
 	private UserProviderService userProviderService;
-	
+
 	@Autowired
 	private AccountService accountService;
 
@@ -108,7 +114,7 @@ public class UserProviderServiceImplTest {
 	public void testCreateLDAPConnection() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		
+
 		LdapConnection ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
 		try {
 			ldapConnectionService.create(ldapconnexion);
@@ -117,18 +123,18 @@ public class UserProviderServiceImplTest {
 			Assertions.fail("Can't create connection.");
 		}
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
-		
+
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
-	
-	
+
+
 	@Test
 	public void testCreateDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
-			attributeList.put("first", attribute);
+		attributeList.put("first", attribute);
 		UserLdapPattern domainPattern = new UserLdapPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
@@ -174,8 +180,8 @@ public class UserProviderServiceImplTest {
 			Assertions.fail("Can't create connection.");
 		}
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
-		
-		
+
+
 		try {
 			ldapConnectionService.delete(ldapconnexion.getUuid());
 		} catch (BusinessException e) {
@@ -185,13 +191,13 @@ public class UserProviderServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
-	
+
 	@Test
 	public void testCreateDeleteDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
-			attributeList.put("first", attribute);
+		attributeList.put("first", attribute);
 		UserLdapPattern domainPattern = new UserLdapPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
@@ -218,9 +224,9 @@ public class UserProviderServiceImplTest {
 	@Test
 	public void testUpdateDomainPattern() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
+
 		UserLdapPattern domainPattern = null;
-		
+
 		try {
 			List<UserLdapPattern> listD = userProviderService.findAllUserDomainPattern();
 			domainPattern = listD.get(0);
@@ -466,4 +472,33 @@ public class UserProviderServiceImplTest {
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	/**
+	 * Tests the private method `getBaseDn()` using reflection to ensure
+	 * it returns the correct LDAP base DN string.
+	 */
+	@Test
+	void getBaseDn() throws Exception {
+		final UserProviderServiceImpl userProviderService1 = (UserProviderServiceImpl) userProviderService;
+		final Method method = userProviderService1.getClass().getDeclaredMethod("getBaseDn");
+		method.setAccessible(true);
+		final String base_dn = (String) method.invoke(userProviderService1);
+		assertEquals("ou=OidcDomain,dc=linshare,dc=org", base_dn);
+	}
+
+	/**
+	 * Verifies that LDAP autocomplete returns the expected user
+	 * when searching within the same LDAP branch.
+	 */
+	@Test
+	void autoCompleteWithLdapUserSameBranch(){
+		final User actor = this.userRepository.findByMail("oidc.dude@linshare.org");
+		final AbstractDomain domain = actor.getDomain();
+		final UserProvider userProvider = domain.getUserProvider();
+
+		final List<User> users = this.userProviderService.autoCompleteUser(domain, userProvider,"external");
+		final List<String> emails = users.stream().map(User::getMail).collect(Collectors.toList());
+		assertTrue(emails.contains("external.user@linshare.org"));
+	}
+
 }

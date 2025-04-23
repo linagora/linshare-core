@@ -114,6 +114,7 @@
 		<constructor-arg ref="ldapConnectionRepository" />
 		<constructor-arg value="${oidc.ldap.connectionUuid}"/>
 		<constructor-arg value="${oidc.ldap.provider.patternUuid}"/>
+		<constructor-arg value="${ldap.users.baseDn.branch}"/>
 	</bean>
 
 	<bean id="mimePolicyService"
