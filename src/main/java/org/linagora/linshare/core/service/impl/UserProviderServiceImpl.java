@@ -23,13 +23,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.criterion.Order;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.linagora.linshare.auth.oidc.OidcLinShareUserClaims;
 import org.linagora.linshare.auth.oidc.OidcTokenWithClaims;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -101,8 +102,6 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 
 	private final String oidcLdapPatternUuid;
 
-	private final String ldapUsersBaseDnBranch;
-
 	public UserProviderServiceImpl(
 			DomainPatternRepository domainPatternRepository,
 			LDAPUserQueryService ldapQueryService,
@@ -116,8 +115,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			TwakeGuestUserProviderServiceImpl twakeGuestUserProviderService,
 			LdapConnectionRepositoryImpl ldapConnectionRepository,
 			String oidcLdapConnectionUuid,
-			String oidcLdapPatternUuid,
-			String ldapUsersBaseDnBranch) {
+			String oidcLdapPatternUuid) {
 		super(sanitizerInputHtmlBusinessService);
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
@@ -131,7 +129,6 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		this.ldapConnectionRepository = ldapConnectionRepository;
 		this.oidcLdapConnectionUuid = oidcLdapConnectionUuid;
 		this.oidcLdapPatternUuid = oidcLdapPatternUuid;
-		this.ldapUsersBaseDnBranch = ldapUsersBaseDnBranch;
 	}
 
 	@Override
@@ -477,7 +474,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						lastName, null, null, null, null, null, Set.of(), container);
 				List <User> users = container.getPageResponse().getContent();
 
-				return addSearchedLdapUsersFromConfig(users, mail, firstName, lastName);
+				return addSearchedLdapUsersFromConfig(users, mail, firstName, lastName, up);
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.searchUser(domain, (TwakeUserProvider) userProvider, mail, firstName, lastName);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
@@ -489,30 +486,40 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		return Lists.newArrayList();
 	}
 
-	private List<User> addSearchedLdapUsersFromConfig(List<User> users,
-			 String mail, String firstName, String lastName) {
-		LdapConnection oidcLdapConnection = !StringUtils.isBlank(oidcLdapConnectionUuid)
-				? ldapConnectionRepository.findByUuid(oidcLdapConnectionUuid)
+	@Nonnull
+	private List<User> addSearchedLdapUsersFromConfig(@Nonnull final List<User> users, @Nullable final String mail, @Nullable final String firstName, @Nullable final String lastName,
+			@Nullable final UserProvider up) {
+		final LdapConnection oidcLdapConnection = !StringUtils.isBlank(this.oidcLdapConnectionUuid)
+				? this.ldapConnectionRepository.findByUuid(this.oidcLdapConnectionUuid)
 				: null;
-		UserLdapPattern oidcLdapPattern = !StringUtils.isBlank(oidcLdapPatternUuid)
-				? domainPatternRepository.findByUuid(oidcLdapPatternUuid)
+		final UserLdapPattern oidcLdapPattern = !StringUtils.isBlank(this.oidcLdapPatternUuid)
+				? this.domainPatternRepository.findByUuid(this.oidcLdapPatternUuid)
 				: null;
+		if (up != null) {
+			final UserProvider userProvider = this.userProviderRepository.findByUuid(up.getUuid());
+			if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
+				final OIDCUserProvider oidcUserProvider = (OIDCUserProvider) userProvider;
 
-		if (oidcLdapConnection != null && oidcLdapPattern != null) {
-			try {
-				HashSet<User> allUsers = new HashSet<>(users);
+				if (oidcLdapConnection != null && oidcLdapPattern != null) {
+					final String baseDn = oidcUserProvider.getBaseDn();
+					if (StringUtils.isBlank(baseDn)) {
+						logger.warn("BaseDn is not configured for OIDCProvider {}", oidcUserProvider.getUuid());
+						return users;
+					}
+					try {
+						final HashSet<User> allUsers = new HashSet<>(users);
 
-				allUsers.addAll(ldapQueryService.searchUser(
-						oidcLdapConnection, getBaseDn(),
-						oidcLdapPattern, mail, firstName, lastName));
+						allUsers.addAll(this.ldapQueryService.searchUser(oidcLdapConnection, baseDn, oidcLdapPattern, mail,
+								firstName, lastName));
 
-				return List.copyOf(allUsers);
-			} catch (NamingException | IOException | CommunicationException e) {
-				logger.error(
-						"Error while searching for a user with ldap connection {}",
-						oidcLdapConnection.getUuid());
-				logger.error(e.getMessage());
-				logger.debug(e.toString());
+						return List.copyOf(allUsers);
+					} catch (NamingException | IOException | CommunicationException e) {
+						logger.error("Error while searching for a user with ldap connection {}",
+								oidcLdapConnection.getUuid());
+						logger.error(e.getMessage());
+						logger.debug(e.toString());
+					}
+				}
 			}
 		}
 		return users;
@@ -544,7 +551,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				container = userRepository.findAll(Lists.newArrayList(domain), Order.asc("modificationDate"), pattern, null,
 						null, null, null, null, null, null, Set.of(), container);
 				List<User> users = container.getPageResponse().getContent();
-				return addCompletedLdapUsersFromConfig(users, pattern, null, null);
+				return addCompletedLdapUsersFromConfig(users, pattern, null, null, up);
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) userProvider, pattern);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
@@ -583,7 +590,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 						lastName, null, null, null, null, null, Set.of(),
 						container);
 				List<User> users = container.getPageResponse().getContent();
-				return addCompletedLdapUsersFromConfig(users, null, firstName, lastName);
+				return addCompletedLdapUsersFromConfig(users, null, firstName, lastName, up);
 			} else if (UserProviderType.TWAKE_PROVIDER.equals(up.getType())) {
 				return twakeUserProviderService.autoCompleteUser(domain, (TwakeUserProvider) userProvider, firstName, lastName);
 			} else if (UserProviderType.TWAKE_GUEST_PROVIDER.equals(up.getType())) {
@@ -596,43 +603,47 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 	}
 
 	private List<User> addCompletedLdapUsersFromConfig(List<User> users,
-			 @Nullable String pattern, @Nullable String firstName, @Nullable String lastName) {
-		LdapConnection oidcLdapConnection = !StringUtils.isBlank(oidcLdapConnectionUuid)
-				? ldapConnectionRepository.findByUuid(oidcLdapConnectionUuid)
+			 @Nullable String pattern, @Nullable String firstName, @Nullable String lastName, @javax.annotation.Nullable UserProvider up) {
+		final LdapConnection oidcLdapConnection = !StringUtils.isBlank(this.oidcLdapConnectionUuid)
+				? this.ldapConnectionRepository.findByUuid(this.oidcLdapConnectionUuid)
 				: null;
-		UserLdapPattern oidcLdapPattern = !StringUtils.isBlank(oidcLdapPatternUuid)
-				? domainPatternRepository.findByUuid(oidcLdapPatternUuid)
+		final UserLdapPattern oidcLdapPattern = !StringUtils.isBlank(this.oidcLdapPatternUuid)
+				? this.domainPatternRepository.findByUuid(this.oidcLdapPatternUuid)
 				: null;
+		if (up != null) {
+			final UserProvider userProvider = this.userProviderRepository.findByUuid(up.getUuid());
+			if (UserProviderType.OIDC_PROVIDER.equals(up.getType())) {
+				final OIDCUserProvider oidcUserProvider = (OIDCUserProvider) userProvider;
 
-		if (oidcLdapConnection != null && oidcLdapPattern != null) {
-			try {
-				HashSet<User> allUsers = new HashSet<>(users);
+				if (oidcLdapConnection != null && oidcLdapPattern != null) {
+					final String baseDn = oidcUserProvider.getBaseDn();
+					if (StringUtils.isBlank(baseDn)) {
+						logger.warn("BaseDn is not configured for OIDCProvider {}", oidcUserProvider.getUuid());
+						return users;
+					}
+					try {
+						final HashSet<User> allUsers = new HashSet<>(users);
 
-				if (!StringUtils.isBlank(pattern)){
-					allUsers.addAll(ldapQueryService.completeUser(
-							oidcLdapConnection, getBaseDn(),
-							oidcLdapPattern, pattern));
+						if (!StringUtils.isBlank(pattern)) {
+							allUsers.addAll(this.ldapQueryService.completeUser(oidcLdapConnection, baseDn, oidcLdapPattern,
+									pattern));
 
-				} else if (!StringUtils.isBlank(firstName) && !StringUtils.isBlank(lastName)){
-					allUsers.addAll(ldapQueryService.completeUser(
-							oidcLdapConnection, getBaseDn(),
-							oidcLdapPattern, firstName, lastName));
+						} else if (!StringUtils.isBlank(firstName) && !StringUtils.isBlank(lastName)) {
+							allUsers.addAll(this.ldapQueryService.completeUser(oidcLdapConnection, baseDn, oidcLdapPattern,
+									firstName, lastName));
+						}
+						return List.copyOf(allUsers);
+					} catch (final NamingException | IOException | CommunicationException e) {
+						logger.error("Error while searching for a user with ldap connection {}",
+								oidcLdapConnection.getUuid());
+						logger.error(e.getMessage());
+						logger.debug(e.toString());
+
+					}
 				}
-				return List.copyOf(allUsers);
-			} catch (NamingException | IOException | CommunicationException e) {
-				logger.error(
-						"Error while searching for a user with ldap connection {}",
-						oidcLdapConnection.getUuid());
-				logger.error(e.getMessage());
-				logger.debug(e.toString());
 			}
 		}
 		return users;
-	}
-
-	@NotNull
-	private String getBaseDn() {
-		return ldapUsersBaseDnBranch;
 	}
 
 	@Override

@@ -31,6 +31,8 @@ public class OIDCUserProvider extends UserProvider {
 
 	private Boolean moveBetweenDomainClaim;
 
+	private String baseDn;
+
 	public OIDCUserProvider() {
 		super();
 	}
@@ -43,6 +45,17 @@ public class OIDCUserProvider extends UserProvider {
 		this.useRoleClaim = false;
 		this.useEmailLocaleClaim = false;
 		this.moveBetweenDomainClaim = false;
+	}
+
+	public OIDCUserProvider(AbstractDomain domain, String domainDiscriminator, String baseDn) {
+		super(domain);
+		this.domainDiscriminator = domainDiscriminator;
+		this.checkExternalUserID = false;
+		this.useAccessClaim = false;
+		this.useRoleClaim = false;
+		this.useEmailLocaleClaim = false;
+		this.moveBetweenDomainClaim = false;
+		this.baseDn = baseDn;
 	}
 
 	public String getDomainDiscriminator() {
@@ -93,12 +106,20 @@ public class OIDCUserProvider extends UserProvider {
 		this.moveBetweenDomainClaim = moveBetweenDomainClaim;
 	}
 
+	public String getBaseDn() {
+		return baseDn;
+	}
+
+	public void setBaseDn(String baseDn) {
+		this.baseDn = baseDn;
+	}
+
 	@Override
 	public String toString() {
-		return "OIDCUserProvider [domainDiscriminator=" + domainDiscriminator + ", checkExternalUserID="
+		return "OIDCUserProvider{" + "domainDiscriminator='" + domainDiscriminator + '\'' + ", checkExternalUserID="
 				+ checkExternalUserID + ", useAccessClaim=" + useAccessClaim + ", useRoleClaim=" + useRoleClaim
-				+ ", useEmailLocalClaim=" + useEmailLocaleClaim + ", moveBetweenDomainClaim="
-				+ moveBetweenDomainClaim + "]";
+				+ ", useEmailLocaleClaim=" + useEmailLocaleClaim + ", moveBetweenDomainClaim=" + moveBetweenDomainClaim
+				+ ", baseDn='" + baseDn + '\'' + '}';
 	}
 
 	@Deprecated

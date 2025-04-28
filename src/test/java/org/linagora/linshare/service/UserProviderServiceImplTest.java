@@ -15,10 +15,8 @@
  */
 package org.linagora.linshare.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +36,10 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.RemoteServerService;
 import org.linagora.linshare.core.service.UserProviderService;
-import org.linagora.linshare.core.service.impl.UserProviderServiceImpl;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,10 +90,6 @@ public class UserProviderServiceImplTest {
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	@Autowired
-	private UserProviderRepository userProviderRepository;
-
-
 	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
@@ -127,7 +119,6 @@ public class UserProviderServiceImplTest {
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
-
 
 	@Test
 	public void testCreateDomainPattern() {
@@ -471,19 +462,6 @@ public class UserProviderServiceImplTest {
 		}
 
 		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	/**
-	 * Tests the private method `getBaseDn()` using reflection to ensure
-	 * it returns the correct LDAP base DN string.
-	 */
-	@Test
-	void getBaseDn() throws Exception {
-		final UserProviderServiceImpl userProviderService1 = (UserProviderServiceImpl) userProviderService;
-		final Method method = userProviderService1.getClass().getDeclaredMethod("getBaseDn");
-		method.setAccessible(true);
-		final String base_dn = (String) method.invoke(userProviderService1);
-		assertEquals("ou=OidcDomain,dc=linshare,dc=org", base_dn);
 	}
 
 	/**

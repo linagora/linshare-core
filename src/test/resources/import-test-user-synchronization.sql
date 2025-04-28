@@ -1,6 +1,6 @@
 -- Third user provider used on OidcDomain
-INSERT INTO user_provider(id, uuid, provider_type, creation_date, modification_date)
-	VALUES (52, '6668197e-301e-11ec-8d3d-0242ac130003', 'OIDC_PROVIDER', now(), now());
+INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modification_date)
+VALUES (52, '6668197e-301e-11ec-8d3d-0242ac130003', 'OIDC_PROVIDER', 'ou=OidcDomain,dc=linshare,dc=org', now(), now());
 
 -- MyDomain domains' addition
 INSERT INTO domain_abstract(
