@@ -17,6 +17,8 @@ package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 
+import javax.annotation.Nullable;
+
 public class OIDCUserProvider extends UserProvider {
 
 	private String domainDiscriminator;
@@ -31,7 +33,11 @@ public class OIDCUserProvider extends UserProvider {
 
 	private Boolean moveBetweenDomainClaim;
 
-	private String baseDn;
+	/**
+	 * Base DN used for LDAP queries when integrating OIDC with an LDAP directory.
+	 * This specifies the starting point for LDAP searches (e.g., "ou=users,dc=example,dc=com").
+	 */
+	private String ldapBaseDn;
 
 	public OIDCUserProvider() {
 		super();
@@ -45,17 +51,6 @@ public class OIDCUserProvider extends UserProvider {
 		this.useRoleClaim = false;
 		this.useEmailLocaleClaim = false;
 		this.moveBetweenDomainClaim = false;
-	}
-
-	public OIDCUserProvider(AbstractDomain domain, String domainDiscriminator, String baseDn) {
-		super(domain);
-		this.domainDiscriminator = domainDiscriminator;
-		this.checkExternalUserID = false;
-		this.useAccessClaim = false;
-		this.useRoleClaim = false;
-		this.useEmailLocaleClaim = false;
-		this.moveBetweenDomainClaim = false;
-		this.baseDn = baseDn;
 	}
 
 	public String getDomainDiscriminator() {
@@ -106,12 +101,12 @@ public class OIDCUserProvider extends UserProvider {
 		this.moveBetweenDomainClaim = moveBetweenDomainClaim;
 	}
 
-	public String getBaseDn() {
-		return baseDn;
+	public String getLdapBaseDn() {
+		return this.ldapBaseDn;
 	}
 
-	public void setBaseDn(String baseDn) {
-		this.baseDn = baseDn;
+	public void setLdapBaseDn(@Nullable final String ldapBaseDn) {
+		this.ldapBaseDn = ldapBaseDn;
 	}
 
 	@Override
@@ -119,7 +114,7 @@ public class OIDCUserProvider extends UserProvider {
 		return "OIDCUserProvider{" + "domainDiscriminator='" + domainDiscriminator + '\'' + ", checkExternalUserID="
 				+ checkExternalUserID + ", useAccessClaim=" + useAccessClaim + ", useRoleClaim=" + useRoleClaim
 				+ ", useEmailLocaleClaim=" + useEmailLocaleClaim + ", moveBetweenDomainClaim=" + moveBetweenDomainClaim
-				+ ", baseDn='" + baseDn + '\'' + '}';
+				+ ", ldapBaseDn='" + ldapBaseDn + '\'' + '}';
 	}
 
 	@Deprecated

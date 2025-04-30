@@ -479,4 +479,16 @@ public class UserProviderServiceImplTest {
 		assertTrue(emails.contains("external.user@linshare.org"));
 	}
 
+	/**
+	 * Tests that autoCompleteUser returns an empty list when the UserProvider has no base DN.
+	 */
+	@Test
+	void autoCompleteWithoutBaseDn() throws BusinessException{
+		final User user = this.userRepository.findByMail("oidc.without_baseDn@linshare.org");
+		final AbstractDomain domain = user.getDomain();
+		final UserProvider userProvider = domain.getUserProvider();
+		final List<User> users = this.userProviderService.autoCompleteUser(domain, userProvider, "user");
+		assertTrue(users.isEmpty());
+	}
+
 }

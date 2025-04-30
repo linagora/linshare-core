@@ -80,7 +80,7 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 		this.useAccessClaim = up.getUseAccessClaim();
 		this.useRoleClaim = up.getUseRoleClaim();
 		this.type = UserProviderType.OIDC_PROVIDER;
-		this.baseDn = up.getBaseDn();
+		this.baseDn = up.getLdapBaseDn();
 	}
 
 	public String getDomainDiscriminator() {
