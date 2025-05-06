@@ -206,9 +206,11 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements Gues
 				ac.add(contactDto.getMail());
 			}
 		}
+		if (dtoIn.getRestrictedContactList() != null) {
 			for (ContactListDto contactListDto : dtoIn.getRestrictedContactList()) {
 				contactUuid.add(contactListDto.getUuid());
 			}
+		}
 		guest = guestService.update(authUser, authUser, guest, ac, contactUuid);
 		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);

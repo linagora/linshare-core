@@ -213,9 +213,11 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 				ac.add(contactDto.getMail());
 			}
 		}
-			for (ContactListDto contactListDto: dtoIn.getRestrictedContactList()) {
+		if (dtoIn.getRestrictedContactList() != null) {
+			for (ContactListDto contactListDto : dtoIn.getRestrictedContactList()) {
 				contactUuid.add(contactListDto.getUuid());
 			}
+		}
 		logger.info("ancien contact list: {}", guest.getRestrictedContactLists());
 		guest = guestService.update(authUser, authUser, guest, ac, contactUuid);
 		logger.info("new contact list: {}", guest.getRestrictedContactLists());
