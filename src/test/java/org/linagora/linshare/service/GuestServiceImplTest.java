@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -756,6 +757,45 @@ public class GuestServiceImplTest {
 		assertThat(guest_converted.getEntries()).isEqualTo(owner1.getEntries());
 		this.guestService.deleteUser(systemAccount,guest_converted.getLsUuid());
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	void createGuestWithNullRestrictedContactList() {
+		final Guest guest = new Guest("Guest", "Doe", "guest-null-list@linshare.org");
+		guest.setCmisLocale("en");
+		final Guest created = this.guestService.create(this.owner1, this.owner1, guest, null, null);
+		assertNotNull(created);
+		assertTrue(created.getRestrictedContactLists().isEmpty());
+	}
+
+	@Test
+	void createGuestWithEmptyRestrictedContactList() {
+		final Guest guest = new Guest("Guest", "Doe", "guest-empty-list@linshare.org");
+		guest.setCmisLocale("en");
+		final Guest created = this.guestService.create(this.owner1, this.owner1, guest, null, Collections.emptyList());
+		assertNotNull(created);
+		assertTrue(created.getRestrictedContactLists().isEmpty());
+	}
+
+	@Test
+	void updateGuestWithEmptyRestrictedContactList() {
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = this.guestService.create(this.owner1, this.owner1, guest, null, null);
+		final Guest updated = this.guestService.update(this.owner1, this.owner1, guest, null, Collections.emptyList());
+		assertNotNull(updated);
+		assertTrue(updated.getRestrictedContactLists().isEmpty());
+	}
+
+	@Test
+	void updateGuestWithNullRestrictedContactList() {
+
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		guest = this.guestService.create(this.owner1, this.owner1, guest, null, null);
+		final Guest updated = this.guestService.update(this.owner1, this.owner1, guest, null, null);
+		assertNotNull(updated);
+		assertTrue(updated.getRestrictedContactLists().isEmpty());
 	}
 
 }

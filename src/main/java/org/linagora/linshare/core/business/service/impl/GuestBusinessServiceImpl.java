@@ -157,10 +157,11 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public Guest create(Account actor, Guest guest, AbstractDomain domain, List<User> allowedContacts,
-			List<ContactList> contactLists) throws BusinessException {
-		String password = passwordService.generatePassword();
-		String hashedPassword = passwordService.encode(password);
+	public Guest create(@Nonnull final Account actor, @Nonnull final Guest guest, @Nonnull final AbstractDomain domain,
+			@Nullable final List<User> allowedContacts, @Nullable final List<ContactList> contactLists)
+			throws BusinessException {
+		final String password = passwordService.generatePassword();
+		final String hashedPassword = passwordService.encode(password);
 		guest.setMail(guest.getMail().toLowerCase());
 		guest.setDomain(domain);
 		guest.setCmisLocale(Language.ENGLISH.toString());
@@ -171,31 +172,31 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			guest.setExternalMailLocale(domain.getExternalMailLocale());
 		}
 		guest.setPassword(hashedPassword);
-		Guest guestCreated = guestRepository.create(guest);
-		Set<AllowedContact> allowedContactsToAdd = Sets.newHashSet();
-		Set<AccountContactLists> accountContactListToAdd = Sets.newHashSet();
+		Guest guestCreated = this.guestRepository.create(guest);
+		final Set<AllowedContact> allowedContactsToAdd = Sets.newHashSet();
+		final Set<AccountContactLists> accountContactListToAdd = Sets.newHashSet();
 		if (guestCreated.isRestricted()) {
 			if (allowedContacts == null || allowedContacts.isEmpty()) {
-				throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not create a restricted guest without a list of contacts.");
+				throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT,
+						"You can not create a restricted guest without a list of contacts.");
 			} else {
-				for (User contact : allowedContacts) {
-					AllowedContact allowedContact = new AllowedContact(guestCreated,
-							contact);
-					allowedContactRepository.create(allowedContact);
+				for (final User contact : allowedContacts) {
+					final AllowedContact allowedContact = new AllowedContact(guestCreated, contact);
+					this.allowedContactRepository.create(allowedContact);
 					allowedContactsToAdd.add(allowedContact);
 				}
 			}
 		}
-				contactLists.stream().distinct().forEach(contactList -> {
-					AccountContactListId accountContactListId = new AccountContactListId(guestCreated,
-							contactList);
+		Optional.ofNullable(contactLists)
+				.ifPresent(nonNullLists -> nonNullLists.stream().distinct().forEach(contactList -> {
+					AccountContactListId accountContactListId = new AccountContactListId(guestCreated, contactList);
 					AccountContactLists accountContactList = new AccountContactLists();
 					accountContactList.setId(accountContactListId);
 					accountContactList.setAccount(guestCreated);
 					accountContactList.setContactList(contactList);
 					accountContactListRepository.create(accountContactList);
 					accountContactListToAdd.add(accountContactList);
-				});
+				}));
 
 		guestCreated.addContacts(allowedContactsToAdd);
 		guestCreated.addContactList(accountContactListToAdd);

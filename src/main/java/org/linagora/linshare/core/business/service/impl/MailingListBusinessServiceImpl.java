@@ -395,7 +395,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void updateAccountContactLists(@Nonnull final Guest update, @Nonnull final List<ContactList> contactLists) {
+	public void updateAccountContactLists(@Nonnull final Guest update, @Nullable final List<ContactList> contactLists) {
 		final List<ContactList> nonNullContactLists = contactLists != null ? contactLists : Collections.emptyList();
 		final Set<ContactList> newContactLists = new HashSet<>(nonNullContactLists);
 		final List<AccountContactLists> existingContactLists = accountContactListsRepository.findByAccount(update);
