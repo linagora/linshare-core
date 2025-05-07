@@ -237,8 +237,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		// Management of authorized contacts
 		updateAllowedContacts(update, guest, wasRestricted, allowedContacts);
 		// Management of authorized contact list
-		final List<ContactList> safeContactLists = contactLists != null ? contactLists : Collections.emptyList();
-		mailingListBusinessServiceImpl.updateAccountContactLists(update, safeContactLists);
+		mailingListBusinessServiceImpl.updateAccountContactLists(update, contactLists != null ? contactLists : Collections.emptyList());
 		logger.info("restricted contact list: {}", update.getRestrictedContactLists());
 		logger.info("update: {}", update);
 		return update;
