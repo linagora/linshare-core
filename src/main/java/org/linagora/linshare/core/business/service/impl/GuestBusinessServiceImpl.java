@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -185,8 +186,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 				}
 			}
 		}
-			if (contactLists != null && !contactLists.isEmpty()) {
-
 				contactLists.stream().distinct().forEach(contactList -> {
 					AccountContactListId accountContactListId = new AccountContactListId(guestCreated,
 							contactList);
@@ -197,7 +196,6 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 					accountContactListRepository.create(accountContactList);
 					accountContactListToAdd.add(accountContactList);
 				});
-			}
 
 		guestCreated.addContacts(allowedContactsToAdd);
 		guestCreated.addContactList(accountContactListToAdd);
@@ -238,9 +236,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		// Management of authorized contacts
 		updateAllowedContacts(update, guest, wasRestricted, allowedContacts);
 		// Management of authorized contact list
-		if (contactLists != null && !contactLists.isEmpty()) {
-			mailingListBusinessServiceImpl.updateAccountContactLists(update, contactLists);
-		}
+		final List<ContactList> safeContactLists = contactLists != null ? contactLists : Collections.emptyList();
+		mailingListBusinessServiceImpl.updateAccountContactLists(update, safeContactLists);
 		logger.info("restricted contact list: {}", update.getRestrictedContactLists());
 		logger.info("update: {}", update);
 		return update;

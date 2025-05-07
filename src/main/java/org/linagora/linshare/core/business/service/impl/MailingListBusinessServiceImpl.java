@@ -16,6 +16,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -394,26 +395,27 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void updateAccountContactLists(@Nonnull Guest update, @Nonnull List<ContactList> contactLists) {
-		Set<ContactList> newContactLists = new HashSet<>(contactLists);
-		List<AccountContactLists> existingContactLists = accountContactListsRepository.findByAccount(update);
-		Set<ContactList> existingContacts = existingContactLists.stream()
+	public void updateAccountContactLists(@Nonnull final Guest update, @Nonnull final List<ContactList> contactLists) {
+		final List<ContactList> nonNullContactLists = contactLists != null ? contactLists : Collections.emptyList();
+		final Set<ContactList> newContactLists = new HashSet<>(nonNullContactLists);
+		final List<AccountContactLists> existingContactLists = accountContactListsRepository.findByAccount(update);
+		final Set<ContactList> existingContacts = existingContactLists.stream()
 				.map(AccountContactLists::getContactList)
 				.collect(Collectors.toSet());
 
-		Set<ContactList> toRemove = new HashSet<>(existingContacts);
+		final Set<ContactList> toRemove = new HashSet<>(existingContacts);
 		toRemove.removeAll(newContactLists);
 		toRemove.forEach(contact -> this.deleteByAccountAndContactList(update, contact));
 
-		Set<ContactList> toAdd = new HashSet<>(newContactLists);
+		final Set<ContactList> toAdd = new HashSet<>(newContactLists);
 		toAdd.removeAll(existingContacts);
 		toAdd.forEach(contact -> {
-			AccountContactListId accountContactListId = new AccountContactListId(update, contact);
-			AccountContactLists accountContactList = new AccountContactLists();
+			final AccountContactListId accountContactListId = new AccountContactListId(update, contact);
+			final AccountContactLists accountContactList = new AccountContactLists();
 			accountContactList.setId(accountContactListId);
 			accountContactList.setAccount(update);
 			accountContactList.setContactList(contact);
-			accountContactListsRepository.create(accountContactList);
+			this.accountContactListsRepository.create(accountContactList);
 		});
 	}
 
