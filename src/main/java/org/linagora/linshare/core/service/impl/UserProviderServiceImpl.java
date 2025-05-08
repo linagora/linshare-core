@@ -486,8 +486,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		return Lists.newArrayList();
 	}
 
-	@Nonnull
-	private List<User> addSearchedLdapUsersFromConfig(@Nonnull final List<User> users, @Nullable final String mail, @Nullable final String firstName, @Nullable final String lastName,
+	private @Nonnull List<User> addSearchedLdapUsersFromConfig(@Nonnull final List<User> users, @Nullable final String mail, @Nullable final String firstName, @Nullable final String lastName,
 			@Nullable final UserProvider up) {
 		final LdapConnection oidcLdapConnection = !StringUtils.isBlank(this.oidcLdapConnectionUuid)
 				? this.ldapConnectionRepository.findByUuid(this.oidcLdapConnectionUuid)
@@ -513,7 +512,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 								firstName, lastName));
 
 						return List.copyOf(allUsers);
-					} catch (NamingException | IOException | CommunicationException e) {
+					} catch (final NamingException | IOException | CommunicationException e) {
 						logger.error("Error while searching for a user with ldap connection {}",
 								oidcLdapConnection.getUuid());
 						logger.error(e.getMessage());
@@ -602,8 +601,8 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 		return Lists.newArrayList();
 	}
 
-	private List<User> addCompletedLdapUsersFromConfig(List<User> users,
-			 @Nullable String pattern, @Nullable String firstName, @Nullable String lastName, @javax.annotation.Nullable UserProvider up) {
+	private @Nonnull List<User> addCompletedLdapUsersFromConfig(@Nonnull final List<User> users,
+			 @Nullable final String pattern, @Nullable final String firstName, @Nullable final String lastName, @Nullable final UserProvider up) {
 		final LdapConnection oidcLdapConnection = !StringUtils.isBlank(this.oidcLdapConnectionUuid)
 				? this.ldapConnectionRepository.findByUuid(this.oidcLdapConnectionUuid)
 				: null;

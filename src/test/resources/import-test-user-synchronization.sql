@@ -52,14 +52,6 @@ VALUES
      'Wolsh', true, '', false,
      true, false, 0),
 
-    -- oidc.without_baseDn (UUID unique)
-    (57, 'oidc.without_baseDn@linshare.org', 2, 'aebe1b64-0000-11e5-9fa8-080027b82zzz',
-     now(), now(), 0,
-     'en', 'en', 'en', true, null,
-     0, 7 , 'IN_USE', 'NoBaseDn',
-     'without_baseDn', true, '', false,
-     true, false, 0),
-
 	-- standard dude topDomain2
 	(53, 'standard.dude@linshare.org', 2, 'aebe1b64-0000-11e5-9fa8-080027b8254j',
 	now(), now(), 0,

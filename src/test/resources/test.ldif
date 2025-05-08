@@ -262,6 +262,18 @@ cn: Amy WOLSH
 userPassword: secret
 mail: amy.wolsh@linshare.org
 
+dn: uid=external.ldap,ou=People2,dc=linshare,dc=org
+uid: external.ldap
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Ldap
+givenName: External
+cn: External Ldap
+userPassword: secret
+mail: external.ldap@linshare.org
+
 dn: uid=peter.wilson,ou=People2,dc=linshare,dc=org
 uid: peter.wilson
 objectClass: inetOrgPerson

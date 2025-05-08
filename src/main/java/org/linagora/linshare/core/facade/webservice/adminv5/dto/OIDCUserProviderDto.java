@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "OIDCUserProvider", description = "A OIDC user provider")
 public class OIDCUserProviderDto extends AbstractUserProviderDto {
@@ -59,8 +61,8 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 //			defaultValue = "false")
 //	private Boolean useMoveBetweenDomainClaim;
 
-	@Schema(description = "BaseDn, starting point of the LDAP queries", required = false)
-	private String baseDn;
+	@Schema(description = "LdapBaseDn, starting point of the LDAP queries", required = false)
+	private String ldapBaseDn;
 
 	@Schema(defaultValue = "OIDC_PROVIDER")
 	@Override
@@ -80,7 +82,7 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 		this.useAccessClaim = up.getUseAccessClaim();
 		this.useRoleClaim = up.getUseRoleClaim();
 		this.type = UserProviderType.OIDC_PROVIDER;
-		this.baseDn = up.getLdapBaseDn();
+		this.ldapBaseDn = up.getLdapBaseDn();
 	}
 
 	public String getDomainDiscriminator() {
@@ -124,18 +126,18 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 	}
 
 	public String getBaseDn() {
-		return baseDn;
+		return this.ldapBaseDn;
 	}
 
-	public void setBaseDn(String baseDn) {
-		this.baseDn = baseDn;
+	public void setBaseDn(@Nullable final String baseDn) {
+		this.ldapBaseDn = baseDn;
 	}
 
 	@Override
 	public String toString() {
 		return "OIDCUserProviderDto{" + "domainDiscriminator='" + domainDiscriminator + '\'' + ", checkExternalUserID="
 				+ checkExternalUserID + ", useAccessClaim=" + useAccessClaim + ", useRoleClaim=" + useRoleClaim
-				+ ", useEmailLocaleClaim=" + useEmailLocaleClaim + ", baseDn='" + baseDn + '\'' + '}';
+				+ ", useEmailLocaleClaim=" + useEmailLocaleClaim + ", baseDn='" + ldapBaseDn + '\'' + '}';
 	}
 
 }

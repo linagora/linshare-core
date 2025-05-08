@@ -15,6 +15,10 @@
  */
 package org.linagora.linshare.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
@@ -32,10 +36,12 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.OIDCUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.RemoteServerService;
@@ -89,6 +95,9 @@ public class UserProviderServiceImplTest {
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
+
+	@Autowired
+	private UserProviderRepository userProviderRepository;
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -153,7 +162,7 @@ public class UserProviderServiceImplTest {
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		Account actor = accountService.findByLsUuid(LinShareTestConstants.ROOT_ACCOUNT);
 		userProviderService.createDomainPattern(actor, domainPattern);
-		Assertions.assertNotNull(domainPattern);
+		assertNotNull(domainPattern);
 		Assertions.assertEquals(domainPattern.getLabel(), "EP_TEST_v233");
 		Assertions.assertEquals(domainPattern.getDescription(), "EP_TEST_v233");
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -470,13 +479,21 @@ public class UserProviderServiceImplTest {
 	 */
 	@Test
 	void autoCompleteWithLdapUserSameBranch(){
-		final User actor = this.userRepository.findByMail("oidc.dude@linshare.org");
-		final AbstractDomain domain = actor.getDomain();
-		final UserProvider userProvider = domain.getUserProvider();
+		final User actor = this.userRepository.findByMail("external.user@linshare.org");
+		assertNull(actor);
+		final UserProvider userProvider = this.userProviderRepository.findByUuid("6668197e-301e-11ec-8d3d-0242ac130003");
+		assertNotNull(userProvider);
+		final OIDCUserProvider oidcProvider = (OIDCUserProvider) userProvider;
+		assertEquals("ou=OidcDomain,dc=linshare,dc=org", oidcProvider.getLdapBaseDn());
+
+		final AbstractDomain domain = userProvider.getDomain();
+		assertNotNull(domain);
 
 		final List<User> users = this.userProviderService.autoCompleteUser(domain, userProvider,"external");
 		final List<String> emails = users.stream().map(User::getMail).collect(Collectors.toList());
+
 		assertTrue(emails.contains("external.user@linshare.org"));
+		assertEquals(1, users.size());
 	}
 
 	/**
@@ -485,10 +502,45 @@ public class UserProviderServiceImplTest {
 	@Test
 	void autoCompleteWithoutBaseDn() throws BusinessException{
 		final User user = this.userRepository.findByMail("oidc.without_baseDn@linshare.org");
-		final AbstractDomain domain = user.getDomain();
-		final UserProvider userProvider = domain.getUserProvider();
-		final List<User> users = this.userProviderService.autoCompleteUser(domain, userProvider, "user");
+		assertNull(user);
+
+		final UserProvider userProvider = this.userProviderRepository.findByUuid("6668197e-301e-11ec-8d3d-0242ac130053");
+		assertNotNull(userProvider);
+
+		final OIDCUserProvider oidcUserProvider = (OIDCUserProvider) userProvider;
+		assertNull(oidcUserProvider.getLdapBaseDn());
+
+		final AbstractDomain domain = userProvider.getDomain();
+		assertNotNull(domain);
+
+		final List<User> users = this.userProviderService.autoCompleteUser(domain, userProvider, "external");
 		assertTrue(users.isEmpty());
 	}
 
+	/**
+	 * Ensures autocomplete does not return users outside the configured LDAP base DN.
+	 * Verifies that a user from another LDAP branch is correctly excluded.
+	 */
+	@Test
+	void autoCompleteShouldNotReturnUsersFromUnconfiguredLdapBranch() {
+		final String mail = "external.ldap@linshare.org";
+		final String pattern = "external";
+
+		final User user = this.userRepository.findByMail(mail);
+		assertNull(user);
+
+		final UserProvider userProvider = this.userProviderRepository.findByUuid("6668197e-301e-11ec-8d3d-0242ac130003");
+		assertNotNull(userProvider);
+		OIDCUserProvider oidcProvider = (OIDCUserProvider) userProvider;
+		assertEquals("ou=OidcDomain,dc=linshare,dc=org", oidcProvider.getLdapBaseDn());
+
+		final AbstractDomain abstractDomain = userProvider.getDomain();
+		assertNotNull(abstractDomain);
+
+		final List<User> users = this.userProviderService.autoCompleteUser(abstractDomain, userProvider, pattern);
+		assertNotNull(users);
+
+		boolean found = users.stream().anyMatch(u -> mail.equals(u.getMail()));
+         assertFalse(found);
+	}
 }
