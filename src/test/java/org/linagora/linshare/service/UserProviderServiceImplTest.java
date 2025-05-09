@@ -484,7 +484,7 @@ public class UserProviderServiceImplTest {
 		final UserProvider userProvider = this.userProviderRepository.findByUuid("6668197e-301e-11ec-8d3d-0242ac130003");
 		assertNotNull(userProvider);
 		final OIDCUserProvider oidcProvider = (OIDCUserProvider) userProvider;
-		assertEquals("ou=OidcDomain,dc=linshare,dc=org", oidcProvider.getLdapBaseDn());
+		assertEquals("ou=OidcDomain,dc=linshare,dc=org", oidcProvider.getBaseDn());
 
 		final AbstractDomain domain = userProvider.getDomain();
 		assertNotNull(domain);
@@ -508,7 +508,7 @@ public class UserProviderServiceImplTest {
 		assertNotNull(userProvider);
 
 		final OIDCUserProvider oidcUserProvider = (OIDCUserProvider) userProvider;
-		assertNull(oidcUserProvider.getLdapBaseDn());
+		assertNull(oidcUserProvider.getBaseDn());
 
 		final AbstractDomain domain = userProvider.getDomain();
 		assertNotNull(domain);
@@ -532,7 +532,7 @@ public class UserProviderServiceImplTest {
 		final UserProvider userProvider = this.userProviderRepository.findByUuid("6668197e-301e-11ec-8d3d-0242ac130003");
 		assertNotNull(userProvider);
 		OIDCUserProvider oidcProvider = (OIDCUserProvider) userProvider;
-		assertEquals("ou=OidcDomain,dc=linshare,dc=org", oidcProvider.getLdapBaseDn());
+		assertEquals("ou=OidcDomain,dc=linshare,dc=org", oidcProvider.getBaseDn());
 
 		final AbstractDomain abstractDomain = userProvider.getDomain();
 		assertNotNull(abstractDomain);

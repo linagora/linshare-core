@@ -500,7 +500,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				final OIDCUserProvider oidcUserProvider = (OIDCUserProvider) userProvider;
 
 				if (oidcLdapConnection != null && oidcLdapPattern != null) {
-					final String baseDn = oidcUserProvider.getLdapBaseDn();
+					final String baseDn = oidcUserProvider.getBaseDn();
 					if (StringUtils.isBlank(baseDn)) {
 						logger.warn("BaseDn is not configured for OIDCProvider {}", oidcUserProvider.getUuid());
 						return users;
@@ -615,7 +615,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 				final OIDCUserProvider oidcUserProvider = (OIDCUserProvider) userProvider;
 
 				if (oidcLdapConnection != null && oidcLdapPattern != null) {
-					final String baseDn = oidcUserProvider.getLdapBaseDn();
+					final String baseDn = oidcUserProvider.getBaseDn();
 					if (StringUtils.isBlank(baseDn)) {
 						logger.warn("BaseDn is not configured for OIDCProvider {}", oidcUserProvider.getUuid());
 						return users;

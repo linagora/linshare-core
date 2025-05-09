@@ -37,7 +37,7 @@ public class OIDCUserProvider extends UserProvider {
 	 * Base DN used for LDAP queries when integrating OIDC with an LDAP directory.
 	 * This specifies the starting point for LDAP searches (e.g., "ou=users,dc=example,dc=com").
 	 */
-	private String ldapBaseDn;
+	private String baseDn;
 
 	public OIDCUserProvider() {
 		super();
@@ -101,12 +101,12 @@ public class OIDCUserProvider extends UserProvider {
 		this.moveBetweenDomainClaim = moveBetweenDomainClaim;
 	}
 
-	public String getLdapBaseDn() {
-		return this.ldapBaseDn;
+	public String getBaseDn() {
+		return this.baseDn;
 	}
 
-	public void setLdapBaseDn(@Nullable final String ldapBaseDn) {
-		this.ldapBaseDn = ldapBaseDn;
+	public void setBaseDn(@Nullable final String baseDn) {
+		this.baseDn = baseDn;
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class OIDCUserProvider extends UserProvider {
 		return "OIDCUserProvider{" + "domainDiscriminator='" + domainDiscriminator + '\'' + ", checkExternalUserID="
 				+ checkExternalUserID + ", useAccessClaim=" + useAccessClaim + ", useRoleClaim=" + useRoleClaim
 				+ ", useEmailLocaleClaim=" + useEmailLocaleClaim + ", moveBetweenDomainClaim=" + moveBetweenDomainClaim
-				+ ", ldapBaseDn='" + ldapBaseDn + '\'' + '}';
+				+ ", baseDn='" + baseDn + '\'' + '}';
 	}
 
 	@Deprecated

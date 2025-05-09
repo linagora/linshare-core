@@ -22,7 +22,7 @@
 			</many-to-one>
 		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.OIDCUserProvider" discriminator-value="OIDC_PROVIDER">
-			<property name="ldapBaseDn" column="ldapBaseDn" type="string" length="255" not-null="false" lazy="true" />
+			<property name="baseDn" column="baseDn" type="string" length="255" not-null="false" lazy="true" />
 			<property name="domainDiscriminator" column="domain_discriminator" type="string" length="255" not-null="false" />
 			<property name="useAccessClaim" column="use_access_claim" type="boolean" not-null="false" lazy="false"/>
 			<property name="useRoleClaim" column="use_role_claim" type="boolean" not-null="false" lazy="false"/>

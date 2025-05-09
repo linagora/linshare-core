@@ -192,7 +192,7 @@ public class UserProviderFacadeImpl extends AdminGenericFacadeImpl implements Us
 	private OIDCUserProviderDto createOidcUserProvider(OIDCUserProviderDto dto, AbstractDomain domain) {
 		Validate.notEmpty(dto.getDomainDiscriminator(), "Domain discriminator is mandatory for user provider creation");
 		OIDCUserProvider userProvider = new OIDCUserProvider(domain, dto.getDomainDiscriminator());
-		Optional.ofNullable(dto.getBaseDn()).ifPresent(userProvider::setLdapBaseDn);
+		Optional.ofNullable(dto.getBaseDn()).ifPresent(userProvider::setBaseDn);
 		if (dto.getCheckExternalUserID() != null) {
 			userProvider.setCheckExternalUserID(dto.getCheckExternalUserID());
 		}

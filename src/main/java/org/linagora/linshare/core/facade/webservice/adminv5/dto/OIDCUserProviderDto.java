@@ -61,8 +61,8 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 //			defaultValue = "false")
 //	private Boolean useMoveBetweenDomainClaim;
 
-	@Schema(description = "LdapBaseDn, starting point of the LDAP queries", required = false)
-	private String ldapBaseDn;
+	@Schema(description = "baseDn, starting point of the LDAP queries", required = false)
+	private String baseDn;
 
 	@Schema(defaultValue = "OIDC_PROVIDER")
 	@Override
@@ -82,7 +82,7 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 		this.useAccessClaim = up.getUseAccessClaim();
 		this.useRoleClaim = up.getUseRoleClaim();
 		this.type = UserProviderType.OIDC_PROVIDER;
-		this.ldapBaseDn = up.getLdapBaseDn();
+		this.baseDn = up.getBaseDn();
 	}
 
 	public String getDomainDiscriminator() {
@@ -126,18 +126,18 @@ public class OIDCUserProviderDto extends AbstractUserProviderDto {
 	}
 
 	public String getBaseDn() {
-		return this.ldapBaseDn;
+		return this.baseDn;
 	}
 
 	public void setBaseDn(@Nullable final String baseDn) {
-		this.ldapBaseDn = baseDn;
+		this.baseDn = baseDn;
 	}
 
 	@Override
 	public String toString() {
 		return "OIDCUserProviderDto{" + "domainDiscriminator='" + domainDiscriminator + '\'' + ", checkExternalUserID="
 				+ checkExternalUserID + ", useAccessClaim=" + useAccessClaim + ", useRoleClaim=" + useRoleClaim
-				+ ", useEmailLocaleClaim=" + useEmailLocaleClaim + ", baseDn='" + ldapBaseDn + '\'' + '}';
+				+ ", useEmailLocaleClaim=" + useEmailLocaleClaim + ", baseDn='" + baseDn + '\'' + '}';
 	}
 
 }
