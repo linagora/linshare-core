@@ -83,8 +83,37 @@ SET client_min_messages = warning;
 
 
 ---- Here your queries
+-- Create table Account_Contact_List
+CREATE TABLE account_contact_lists (
+    account_id int8,
+    contact_list_id int8,
+    can_view_contact_list_members bool,
+    CONSTRAINT nonnull_account_contact_lists_account_id CHECK (account_id IS NOT NULL),
+    CONSTRAINT nonnull_account_contact_lists_contact_list_id CHECK (contact_list_id IS NOT NULL),
+    CONSTRAINT pk_account_contact_lists PRIMARY KEY (account_id, contact_list_id),
+    CONSTRAINT fk_account_contact_lists_account_id FOREIGN KEY (account_id) REFERENCES account (id),
+    CONSTRAINT fk_account_contact_lists_contact_list_id FOREIGN KEY (contact_list_id) REFERENCES contact_list (id)
+);
+
+CREATE INDEX contact_list_identifier
+    ON contact_list (identifier);
+
+-- Functionality : GUESTS__CONTACT_LISTS
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (359, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (360, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (361, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+VALUES (89, false, 'GUESTS__CONTACT_LISTS', 359, 360, 361, 1, 'GUESTS', true, now(), now());
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+VALUES (89, true);
 
 -- update tables
+
+ALTER TABLE account
+    ADD COLUMN default_can_view_contact_list_members bool;
 
 UPDATE mail_layout SET messages_french='common.availableUntil = Expire le
 common.byYou= | Par vous
