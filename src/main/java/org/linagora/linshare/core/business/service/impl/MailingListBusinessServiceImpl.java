@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -35,11 +37,13 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountContactListsRepository;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,18 +58,21 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
 	private final AccountContactListsRepository accountContactListsRepository;
 	private final ModeratorBusinessService moderatorBusinessService;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public MailingListBusinessServiceImpl(MailingListRepository mailingListRepository,
 										  MailingListContactRepository mailingListContactRepository,
 										  DomainPermissionBusinessService domainPermissionBusinessService,
 			                              AccountContactListsRepository accountContactListsRepository,
-			                              ModeratorBusinessService moderatorBusinessService) {
+			                              ModeratorBusinessService moderatorBusinessService,
+										  FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super();
 		this.listRepository = mailingListRepository;
 		this.contactRepository = mailingListContactRepository;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.accountContactListsRepository = accountContactListsRepository;
 		this.moderatorBusinessService = moderatorBusinessService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	/**
@@ -395,7 +402,8 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void updateAccountContactLists(@Nonnull final Guest update, @Nullable final List<ContactList> contactLists) {
+	public void updateAccountContactLists(@Nonnull final Guest update, @Nullable final List<ContactList> contactLists,
+										  @Nullable final Map<String, Boolean> contactListViewPermissions) {
 		final List<ContactList> nonNullContactLists = contactLists != null ? contactLists : Collections.emptyList();
 		final Set<ContactList> newContactLists = new HashSet<>(nonNullContactLists);
 		final List<AccountContactLists> existingContactLists = accountContactListsRepository.findByAccount(update);
@@ -415,8 +423,90 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 			accountContactList.setId(accountContactListId);
 			accountContactList.setAccount(update);
 			accountContactList.setContactList(contact);
+
+			if (this.hasRightToHideMembersToGuest(contact.getOwner().getDomain())) {
+				Boolean canView = determineCanViewPermissionForCreate(contact, contactListViewPermissions);
+				accountContactList.setCanViewContactListMembers(canView);
+
+			} else {
+				throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUESTS__HIDE_MEMBERS_DISABLED,
+						"GUESTS__HIDE_MEMBERS feature is disabled");
+			}
+
 			this.accountContactListsRepository.create(accountContactList);
 		});
+
+		final Set<ContactList> toUpdate = new HashSet<>(existingContacts);
+		toUpdate.retainAll(newContactLists);
+
+		toUpdate.forEach(contactList -> {
+			final AccountContactLists accountContactLists = existingContactLists.stream()
+					.filter(acl -> acl.getContactList().getUuid().equals(contactList.getUuid()))
+					.findFirst().orElse(null);
+			if (accountContactLists != null) {
+				if (this.hasRightToHideMembersToGuest(contactList.getOwner().getDomain())) {
+					Boolean currentCanView = accountContactLists.getCanViewContactListMembers();
+					Boolean newCanView = determineCanViewPermissionForCreate(contactList, contactListViewPermissions);
+
+					if (!Objects.equals(currentCanView, newCanView)) {
+						accountContactLists.setCanViewContactListMembers(newCanView);
+						this.accountContactListsRepository.update(accountContactLists);
+					}
+				} else {
+					throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUESTS__HIDE_MEMBERS_DISABLED,
+							"GUESTS__HIDE_MEMBERS feature is disabled");
+				}
+			}
+		});
+
+	}
+
+	public Boolean determineCanViewPermissionForCreate(final @Nonnull ContactList contactList,
+													   final @Nonnull Map<String, Boolean> contactListViewPermissions) {
+		if (contactList.getOwner() == null) {
+			throw new BusinessException(
+					BusinessErrorCode.INVALID_CONTACT_LIST,
+					"ContactList has no owner: " + contactList.getUuid()
+			);
+		}
+		final AbstractDomain domain = contactList.getOwner().getDomain();
+		if (contactListViewPermissions == null || !contactListViewPermissions.containsKey(contactList.getUuid())) {
+			throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT,
+					"Permission visibility must be explicitly defined for contact list: " + contactList.getIdentifier() + " (" + contactList.getUuid() + ")");
+		}
+		Boolean permissionValue = contactListViewPermissions.get(contactList.getUuid());
+		if (this.hasDelegationPolicy(domain)) {
+			return permissionValue != null ? permissionValue : true;
+
+		} else {
+			if (permissionValue == null || permissionValue) {
+				throw new BusinessException(BusinessErrorCode.HIDE_MEMBERS_SHOULD_FALSE_WHEN_DELEGATION_DISABLED,
+						"You did not respect the authorization system. When delegation is disabled, all visibility permissions must be false.");
+			}
+			return false;
+		}
+	}
+
+	@Override
+	public boolean hasRightToHideMembersToGuest(final @Nonnull AbstractDomain domain) {
+		if (domain != null) {
+			final Functionality functionality = functionalityReadOnlyService.getCanHideMembersToGuest(domain);
+			if(functionality != null) {
+				return functionality.getActivationPolicy().getStatus();
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean hasDelegationPolicy(final @Nonnull AbstractDomain domain) {
+		if (domain != null) {
+			final Functionality functionality = functionalityReadOnlyService.getCanHideMembersToGuest(domain);
+			if(functionality != null) {
+				return functionality.getDelegationPolicy().getStatus();
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -428,7 +518,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	 * @param contactList The {@link ContactList} to be disassociated from the guest.
 	 *                Must not be {@code null}.
 	 */
-	private void deleteByAccountAndContactList(@Nonnull final Account account, @Nonnull final ContactList contactList) {
+	public void deleteByAccountAndContactList(@Nonnull final Account account, @Nonnull final ContactList contactList) {
 
 		Optional<AccountContactLists> accountContactLists = accountContactListsRepository.findByAccountAndContactList(account,
 				contactList);
@@ -437,14 +527,42 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 			try {
 				accountContactListsRepository.delete(accountContactList);
 			} catch (IllegalArgumentException | BusinessException e) {
-				e.printStackTrace();
+				throw new BusinessException(BusinessErrorCode.FAILED_DELETE_ACCOUNT_CONTACT_LISTS, "BUG !!!", e);
 			}
 		});
 
 	}
 
 	@Override
-	public @Nonnull List<AccountContactLists> findAccountContactListByAccount(@Nonnull final Account account) {
-		return accountContactListsRepository.findByAccount(account);
+	public @Nonnull List<AccountContactLists> findAccountContactListByAccount(@Nonnull final Account account) throws BusinessException{
+		final List<AccountContactLists> originalLists = accountContactListsRepository.findByAccount(account);
+
+		if (originalLists.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return originalLists.stream().map(acl -> {
+			final AccountContactLists accountContactLists = new AccountContactLists();
+			accountContactLists.setId(acl.getId());
+			accountContactLists.setAccount(acl.getAccount());
+			accountContactLists.setCanViewContactListMembers(acl.getCanViewContactListMembers());
+
+			final ContactList contactList = new ContactList();
+			contactList.setUuid(acl.getContactList().getUuid());
+			contactList.setIdentifier(acl.getContactList().getIdentifier());
+			contactList.setDescription(acl.getContactList().getDescription());
+			contactList.setDomain(acl.getContactList().getDomain());
+			contactList.setCreationDate(acl.getContactList().getCreationDate());
+			contactList.setModificationDate(acl.getContactList().getModificationDate());
+
+			if (acl.getCanViewContactListMembers() == null || acl.getCanViewContactListMembers()) {
+				contactList.setContactListContacts(acl.getContactList().getContactListContacts());
+
+			} else {
+				contactList.setContactListContacts(Collections.emptySet());
+			}
+			accountContactLists.setContactList(contactList);
+			return accountContactLists;
+		}).collect(Collectors.toList());
 	}
+
 }

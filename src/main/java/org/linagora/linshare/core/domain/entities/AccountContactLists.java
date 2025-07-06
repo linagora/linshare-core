@@ -81,7 +81,7 @@ public class AccountContactLists {
 		this.contactList = contactList;
 	}
 
-	public Boolean isCanViewContactListMembers() {
+	public Boolean getCanViewContactListMembers() {
 		return canViewContactListMembers;
 	}
 

@@ -15,10 +15,10 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
@@ -181,8 +181,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 	}
 
 	@Override
-	public Guest create(Account authUser, Account actor, Guest guest, List<String> restrictedMails,
-			@Nonnull List<String> contactListsUuid) throws BusinessException {
+	public Guest create(@Nonnull final Account authUser, @Nonnull final Account actor, @Nonnull final Guest guest, final List<String> restrictedMails,
+			final @Nonnull List<String> contactListsUuid, final Map<String, Boolean> contactListViewPermissions) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(guest);
 		Validate.notEmpty(guest.getMail(), "Guest mail must be set.");
@@ -232,7 +232,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 		}
 		final List<ContactList> contactLists = mailingListBusinessService.findByAccountAndContactListUuids(authUser, null, contactListsUuid);
 		Guest create = guestBusinessService.create(actor, guest, guestDomain, restrictedContacts,
-				contactLists);
+				contactLists, contactListViewPermissions);
 		createQuotaGuest(guest);
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(create);
 		resetGuestPassword.setKind(ResetTokenKind.NEW_PASSWORD);
@@ -255,7 +255,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 	}
 
 	@Override
-	public Guest update(Account authUser, User actor, Guest guest, List<String> restrictedMails, List<String> restrictedContactUuid)
+	public Guest update(@Nonnull final Account authUser, @Nonnull final User actor, @Nonnull final Guest guest, final List<String> restrictedMails, @Nonnull final List<String> restrictedContactUuid, final Map<String, Boolean> contactListViewPermissions)
 			throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(guest, "Guest object is required");
@@ -286,7 +286,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 		}
 		guest.setFirstName(sanitize(guest.getFirstName()));
 		guest.setLastName(sanitize(guest.getLastName()));
-		Guest result = guestBusinessService.update(actor, entity, guest, restrictedContacts,restrictedContactList);
+		Guest result = guestBusinessService.update(actor, entity, guest, restrictedContacts,restrictedContactList, contactListViewPermissions);
 		log.setResourceUpdated(new UserMto(result));
 		List<String> moderatorUuids = accountRepository.findAllModeratorUuidsByGuest(result);
 		log.addRelatedAccounts(moderatorUuids);

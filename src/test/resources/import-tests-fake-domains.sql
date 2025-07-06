@@ -87,6 +87,41 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (110027, t
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110028, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, creation_date, modification_date) VALUES (110014, true, 'GUESTS', 110027, 110028, 100001, now(), now());
 
+-- Functionality : GUESTS__RESTRICTED
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (110047, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (110048, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (1100112, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+VALUES (110024, false, 'GUESTS__RESTRICTED', 110047, 110048, 1100112, 100001, 'GUESTS', true, now(), now());
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+VALUES (110024, true);
+
+-- Functionality : GUESTS__CONTACT_LISTS
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (1100359, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (1100360, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (1100361, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+VALUES (110089, false, 'GUESTS__CONTACT_LISTS', 1100359, 1100360, 1100361, 100001, 'GUESTS', true, now(), now());
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+VALUES (110089, true);
+
+-- Functionality : GUESTS__HIDE_MEMBERS
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (1100362, true, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (1100363, true, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+VALUES (1100364, true, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+VALUES (110090, false, 'GUESTS__HIDE_MEMBERS', 1100362, 1100363, 1100364, 100001, 'GUESTS', true, now(), now());
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+VALUES (110090, true);
 
 -- Functionality : TEST_FUNC1
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (110059, true, true, 2, false);

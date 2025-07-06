@@ -737,4 +737,13 @@ public class FunctionalityReadOnlyServiceImpl implements
 				+ " should be inferior to \"" + maxValue + "\"";
 	}
 
+	@Override
+	public @Nonnull BooleanValueFunctionality getGuestHideMembers(final @Nonnull AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.GUESTS__HIDE_MEMBERS);
+	}
+
+	@Override
+	public @Nonnull Functionality getCanHideMembersToGuest(final @Nonnull AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.GUESTS__HIDE_MEMBERS);
+	}
 }

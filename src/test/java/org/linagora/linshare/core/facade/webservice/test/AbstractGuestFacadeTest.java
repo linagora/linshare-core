@@ -133,7 +133,7 @@ public abstract class AbstractGuestFacadeTest {
 
 		when(this.mongoTemplate.findOne(any(Query.class), eq(AuditLogEntryUser.class))).thenReturn(null);
 		when(this.moderatorService.findByActorAndGuest(any(), any(), any())).thenReturn(Optional.empty());
-		when(this.guestService.update(any(), any(), any(), any(), any())).thenReturn(guestEntity);
+		when(this.guestService.update(any(), any(), any(), any(), any(), any())).thenReturn(guestEntity);
 
 		final GuestDto updatedGuest = this.guestFacade.update(version, actorUuid, guestDto, guestUuid);
 
@@ -161,7 +161,7 @@ public abstract class AbstractGuestFacadeTest {
 		final Guest guestEntity = createSampleGuest(guestUuid);
 		guestEntity.setFirstName("Jane");
 		guestEntity.setLastName("Smith");
-		when(this.guestService.update(any(), any(), any(), anyList(), anyList())).thenReturn(guestEntity);
+		when(this.guestService.update(any(), any(), any(), anyList(), anyList(), any())).thenReturn(guestEntity);
 
 		final GuestDto updatedGuest = this.guestFacade.update(version, actorUuid, guestDto, guestUuid);
 
@@ -169,7 +169,7 @@ public abstract class AbstractGuestFacadeTest {
 		assertEquals("Jane", updatedGuest.getFirstName());
 
 		final ArgumentCaptor<List<String>> contactUuidCaptor = ArgumentCaptor.forClass(List.class);
-		verify(this.guestService).update(any(), any(), any(), anyList(), contactUuidCaptor.capture());
+		verify(this.guestService).update(any(), any(), any(), anyList(), contactUuidCaptor.capture(), any());
 		assertEquals(0, contactUuidCaptor.getValue().size(), "ContactUuid list should be empty");
 	}
 
@@ -213,7 +213,7 @@ public abstract class AbstractGuestFacadeTest {
 		guestEntity.setFirstName("Robert");
 		guestEntity.setLastName("Johnson");
 		guestEntity.setRestricted(true);
-		when(this.guestService.update(any(), any(), any(), anyList(), anyList())).thenReturn(guestEntity);
+		when(this.guestService.update(any(), any(), any(), anyList(), anyList(), any())).thenReturn(guestEntity);
 
 		final GuestDto updatedGuest = this.guestFacade.update(version, actorUuid, guestDto, guestUuid);
 
@@ -221,14 +221,14 @@ public abstract class AbstractGuestFacadeTest {
 		assertEquals("Robert", updatedGuest.getFirstName());
 
 		final ArgumentCaptor<List<String>> contactUuidCaptor = ArgumentCaptor.forClass(List.class);
-		verify(this.guestService).update(any(), any(), any(), anyList(), contactUuidCaptor.capture());
+		verify(this.guestService).update(any(), any(), any(), anyList(), contactUuidCaptor.capture(), any());
 		final List<String> capturedContactUuids = contactUuidCaptor.getValue();
 		assertEquals(2, capturedContactUuids.size(), "ContactUuid list should contain 2 items");
 		assertEquals("contactlist-uuid-1", capturedContactUuids.get(0));
 		assertEquals("contactlist-uuid-2", capturedContactUuids.get(1));
 
 		final ArgumentCaptor<List<String>> emailCaptor = ArgumentCaptor.forClass(List.class);
-		verify(this.guestService).update(any(), any(), any(), emailCaptor.capture(), anyList());
+		verify(this.guestService).update(any(), any(), any(), emailCaptor.capture(), anyList(), any());
 		final List<String> capturedEmails = emailCaptor.getValue();
 		assertEquals(2, capturedEmails.size(), "Email list should contain 2 items");
 		assertEquals("contact1@example.com", capturedEmails.get(0));

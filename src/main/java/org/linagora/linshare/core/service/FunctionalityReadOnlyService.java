@@ -48,6 +48,7 @@ public interface FunctionalityReadOnlyService {
 	TimeUnitValueFunctionality getGuestsExpiration (AbstractDomain domain);
 	BooleanValueFunctionality getGuestsRestricted(AbstractDomain domain);
 	BooleanValueFunctionality getGuestsRestrictedContact(AbstractDomain domain);
+	BooleanValueFunctionality getGuestHideMembers(@Nonnull final AbstractDomain domain);
 	BooleanValueFunctionality getGuestsCanUpload(AbstractDomain domain);
 	Functionality getGuestsExpirationDateProlongation(AbstractDomain domain);
 
@@ -63,6 +64,7 @@ public interface FunctionalityReadOnlyService {
 	StringValueFunctionality getAnonymousURLNotificationUrl(AbstractDomain domain);
 	Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
 	public @Nonnull Functionality getCanAssignContactListToGuest(@Nonnull final AbstractDomain domain);
+	public @Nonnull Functionality getCanHideMembersToGuest(@Nonnull final AbstractDomain domain);
 	Functionality getWorkGroupCreationRight(AbstractDomain domain);
 	BooleanValueFunctionality getWorkGroupFileVersioning(AbstractDomain domain);
 	StringValueFunctionality getWorkGroupFileEdition(AbstractDomain domain);

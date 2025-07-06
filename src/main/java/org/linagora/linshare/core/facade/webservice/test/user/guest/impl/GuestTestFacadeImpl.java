@@ -56,7 +56,7 @@ public class GuestTestFacadeImpl extends GenericFacadeImpl implements GuestTestF
 		ImmutableList<String> restrictedMails = ImmutableList.of();
 		ImmutableList<String> restrictedUuids = ImmutableList.of();
 		Guest guest = guestDto.toUserObject();
-		return GuestDto.getSimple(guestService.create(authUser, authUser, guest, restrictedMails, restrictedUuids));
+		return GuestDto.getSimple(guestService.create(authUser, authUser, guest, restrictedMails, restrictedUuids, null));
 	}
 
 	@Override

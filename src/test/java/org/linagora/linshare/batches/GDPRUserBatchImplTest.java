@@ -321,7 +321,7 @@ public class GDPRUserBatchImplTest {
 		guest.setFirstName("firstName");
 		guest.setLastName("lastName");
 		List<String> restrictedMails = new ArrayList<>();
-		return guestService.create(john, john, guest, restrictedMails, null);
+		return guestService.create(john, john, guest, restrictedMails, null, null);
 	}
 
 	@Test

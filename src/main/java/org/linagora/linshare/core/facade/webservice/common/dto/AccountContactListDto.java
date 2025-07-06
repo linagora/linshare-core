@@ -18,6 +18,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.ContactList;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -51,92 +52,115 @@ public class AccountContactListDto {
 	private ContactListDto contactList;
 
 	private AccountDto account;
+
+	@Schema(description = "can_view_contact_list_members")
+	private Boolean canViewContactListMembers;
+
 	public AccountContactListDto() {
 		super();
 	}
 
-	public AccountContactListDto(AccountContactLists list) {
-		this.uuid = list.getContactList().getUuid();
-		this.name = list.getContactList().getIdentifier();
-		this.description = list.getContactList().getDescription();
-		this.domain = new CommonDomainLightDto(list.getContactList().getDomain());
-		this.creationDate = list.getContactList().getCreationDate();
-		this.modificationDate = list.getContactList().getModificationDate();
-		this.contactList = new ContactListDto(list.getContactList()) ;
-	}
+	public AccountContactListDto(final AccountContactLists list) {
+		if (list == null) {
+			return;
+		}
+		final ContactList contactList = list.getContactList();
+		if (contactList != null) {
 
+			this.uuid = contactList.getUuid();
+			this.name = contactList.getIdentifier();
+			this.description = contactList.getDescription();
+			if (contactList.getDomain() != null) {
+				this.domain = new CommonDomainLightDto(contactList.getDomain());
+			}
+			this.creationDate = contactList.getCreationDate();
+			this.modificationDate = contactList.getModificationDate();
+			this.contactList = new ContactListDto(contactList);
+		}
+		this.canViewContactListMembers = list.getCanViewContactListMembers();
+	}
 	public AccountContactLists toObject() {
-		AccountContactLists list = new AccountContactLists();
-		list.getContactList().setUuid(getUuid());
-		list.getContactList().setIdentifier(getName());
-		list.getContactList().setDescription(getDescription());
+		final AccountContactLists list = new AccountContactLists();
+		final ContactList contactList = new ContactList();
+		contactList.setUuid(getUuid());
+		contactList.setIdentifier(getName());
+		contactList.setDescription(getDescription());
+		list.setContactList(contactList);
+		list.setCanViewContactListMembers(getCanViewContactListMembers());
 		return list;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
 	public String getUuid() {
-		return uuid;
+		return this.uuid;
 	}
 
-	public void setUuid(String uuid) {
+	public void setUuid(final String uuid) {
 		this.uuid = uuid;
 	}
 
 	public CommonDomainLightDto getDomain() {
-		return domain;
+		return this.domain;
 	}
 
-	public void setDomain(CommonDomainLightDto domain) {
+	public void setDomain(final CommonDomainLightDto domain) {
 		this.domain = domain;
 	}
 
 	public Date getCreationDate() {
-		return creationDate;
+		return this.creationDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
+	public void setCreationDate(final Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
 	public Date getModificationDate() {
-		return modificationDate;
+		return this.modificationDate;
 	}
 
-	public void setModificationDate(Date modificationDate) {
+	public void setModificationDate(final Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 
 	public AccountDto getAccount() {
-		return account;
+		return this.account;
 	}
 
-	public void setAccount(AccountDto account) {
+	public void setAccount(final AccountDto account) {
 		this.account = account;
 	}
 
 	public ContactListDto getContactList() {
-		return contactList;
+		return this.contactList;
 	}
 
-	public void setContactList(ContactListDto contactList) {
+	public void setContactList(final ContactListDto contactList) {
 		this.contactList = contactList;
 	}
 
+	public Boolean getCanViewContactListMembers() {
+		return this.canViewContactListMembers;
+	}
+
+	public void setCanViewContactListMembers(final Boolean canViewContactListMembers) {
+		this.canViewContactListMembers = canViewContactListMembers;
+	}
 	/*
 	 * Transformers
 	 */

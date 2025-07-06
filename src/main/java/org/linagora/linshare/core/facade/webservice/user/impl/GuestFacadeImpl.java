@@ -16,6 +16,7 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -169,59 +170,80 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 	}
 
 	@Override
-	public GuestDto create(Version version, String actorUuid, GuestDto guestDto) throws BusinessException {
+	public @Nonnull GuestDto create(final Version version, final String actorUuid, @Nonnull final GuestDto guestDto) throws BusinessException {
 		Validate.notNull(guestDto, "guest dto is required");
-		User authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);
+		final User authUser = checkAuthentication();
+		final User actor = getActor(authUser, actorUuid);
 		Guest guest = guestDto.toUserObject();
 		List<String> ac = null;
 		List<String> contactUuid = null;
+		Map<String, Boolean> contactListViewPermissions = guestDto.getContactListViewPermissions();
+
+		if (contactListViewPermissions == null) {
+			contactListViewPermissions = new HashMap<>();
+		}
+
 		if (guest.isRestricted()) {
 			if (guestDto.getRestrictedContacts() != null) {
 				ac = Lists.newArrayList();
-				for (GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
+				for (final GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
 					ac.add(contactDto.getMail());
 				}
 			}
 		}
-			if (guestDto.getRestrictedContactList() != null) {
-				contactUuid = Lists.newArrayList();
-				for (ContactListDto contactListDto : guestDto.getRestrictedContactList()) {
-					contactUuid.add(contactListDto.getUuid());
-				}
-			}
 
-		guest = guestService.create(authUser, actor, guest, ac, contactUuid);
+		if (guestDto.getRestrictedContactList() != null) {
+			contactUuid = Lists.newArrayList();
+			for (final ContactListDto contactListDto : guestDto.getRestrictedContactList()) {
+				contactUuid.add(contactListDto.getUuid());
+				if (contactListDto.getCanViewContactListMembers() != null) {
+					contactListViewPermissions.put(contactListDto.getUuid(),
+							contactListDto.getCanViewContactListMembers());
+				}
+
+			}
+		}
+
+		guest = this.guestService.create(authUser, actor, guest, ac, contactUuid, contactListViewPermissions);
 		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 
 	@Override
-	public GuestDto update(Version version, String actorUuid, GuestDto dtoIn, String uuid) throws BusinessException {
+	public @Nonnull GuestDto update(final Version version, final String actorUuid, @Nonnull final GuestDto dtoIn, final String uuid) throws BusinessException {
 		Validate.notNull(dtoIn, "guest dto is required");
 		if (!Strings.isNullOrEmpty(uuid)) {
 			dtoIn.setUuid(uuid);
 		}
 		Validate.notEmpty(dtoIn.getUuid(), "guest uuid is required");
-		User authUser = checkAuthentication();
-		User actor = getActor(authUser, null);
+		final User authUser = checkAuthentication();
+		final User actor = getActor(authUser, null);
 		Guest guest = dtoIn.toUserObject();
 		List<String> ac = Lists.newArrayList();
 		List<String> contactUuid = Lists.newArrayList();
+		Map<String, Boolean> contactListViewPermissions = dtoIn.getContactListViewPermissions();
+
+		if(contactListViewPermissions == null){
+			contactListViewPermissions = new HashMap<>();
+		}
+
 		if (guest.isRestricted()) {
-			for (GenericUserDto contactDto : dtoIn.getRestrictedContacts()) {
+			for (final GenericUserDto contactDto : dtoIn.getRestrictedContacts()) {
 				ac.add(contactDto.getMail());
 			}
 		}
 		if (dtoIn.getRestrictedContactList() != null) {
-			for (ContactListDto contactListDto : dtoIn.getRestrictedContactList()) {
+			for (final ContactListDto contactListDto : dtoIn.getRestrictedContactList()) {
 				contactUuid.add(contactListDto.getUuid());
+				if (contactListDto.getCanViewContactListMembers() != null) {
+					contactListViewPermissions.put(contactListDto.getUuid(), contactListDto.getCanViewContactListMembers());
+				}
 			}
 		}
 		logger.info("ancien contact list: {}", guest.getRestrictedContactLists());
-		guest = guestService.update(authUser, authUser, guest, ac, contactUuid);
+		guest = guestService.update(authUser, authUser, guest, ac, contactUuid, contactListViewPermissions);
 		logger.info("new contact list: {}", guest.getRestrictedContactLists());
-		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
+		final GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
 

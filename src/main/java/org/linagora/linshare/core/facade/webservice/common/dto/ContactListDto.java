@@ -15,7 +15,9 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,134 +27,169 @@ import org.linagora.linshare.core.domain.entities.ContactList;
 
 import com.google.common.base.Function;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 
 @XmlRootElement(name = "ContactList")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Schema(name = "ContactList", description = "Contact list")
 public class ContactListDto {
 
-	@Schema(description = "Name")
-	private String name;
+    @Schema(description = "Name")
+    private String name;
 
-	@Schema(description = "Description")
-	private String description;
+    @Schema(description = "Description")
+    private String description;
 
-	@Schema(description = "IsPublic")
-	private boolean isPublic;
+    @Schema(description = "IsPublic")
+    private boolean isPublic;
 
-	@Schema(description = "Owner")
-	private GenericUserDto owner;
+    @Schema(description = "Owner")
+    private GenericUserDto owner;
 
-	@Schema(description = "Uuid")
-	private String uuid;
+    @Schema(description = "Uuid")
+    private String uuid;
 
-	@Schema(description = "Domain")
-	private CommonDomainLightDto domain;
+    @Schema(description = "Domain")
+    private CommonDomainLightDto domain;
 
-	@Schema(description = "Creation Date")
-	protected Date creationDate;
+    @Schema(description = "Creation Date")
+    protected Date creationDate;
 
-	@Schema(description = "Modification Date")
-	protected Date modificationDate;
+    @Schema(description = "Modification Date")
+    protected Date modificationDate;
 
-	public ContactListDto() {
-		super();
-	}
+    @Schema(description = "can_view_contact_list_members")
+    private Boolean canViewContactListMembers;
 
-	public ContactListDto(ContactList list) {
-		this.uuid = list.getUuid();
-		this.name = list.getIdentifier();
-		this.description = list.getDescription();
-		this.isPublic = list.isPublic();
-		this.owner = new GenericUserDto(list.getOwner());
-		this.domain = new CommonDomainLightDto(list.getDomain());
-		this.creationDate = list.getCreationDate();
-		this.modificationDate = list.getModificationDate();
-	}
+    @Schema(description = "Contact list members")
+    private List<ContactListContactDto> contacts;
 
-	public ContactList toObject() {
-		ContactList list = new ContactList();
-		list.setUuid(getUuid());
-		list.setIdentifier(getName());
-		list.setDescription(getDescription());
-		list.setPublic(isPublic());
-		return list;
-	}
+    public ContactListDto() {
+        super();
+        this.contacts = new ArrayList<>();
+    }
 
-	public String getName() {
-		return name;
-	}
+    public ContactListDto(final ContactList list) {
+        this();
+        this.uuid = list.getUuid();
+        this.name = list.getIdentifier();
+        this.description = list.getDescription();
+        this.isPublic = list.isPublic();
 
-	public void setName(String name) {
-		this.name = name;
-	}
+        if (list.getOwner() != null) {
+            this.owner = new GenericUserDto(list.getOwner());
+        }
+        if (list.getDomain() != null) {
+            this.domain = new CommonDomainLightDto(list.getDomain());
+        }
+        this.creationDate = list.getCreationDate();
+        this.modificationDate = list.getModificationDate();
+        if (list.getContactListContacts() != null) {
+            for (final ContactListContact contact : list.getContactListContacts()) {
+                this.contacts.add(new ContactListContactDto(contact));
+            }
+        }
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public ContactList toObject() {
+        final ContactList list = new ContactList();
+        list.setUuid(getUuid());
+        list.setIdentifier(getName());
+        list.setDescription(getDescription());
+        list.setPublic(isPublic());
+        return list;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public boolean isPublic() {
-		return isPublic;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
-	}
+    public String getDescription() {
+        return this.description;
+    }
 
-	public GenericUserDto getOwner() {
-		return owner;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
+    public boolean isPublic() {
+        return this.isPublic;
+    }
 
-	public String getUuid() {
-		return uuid;
-	}
+    public void setPublic(final boolean isPublic) {
+        this.isPublic = isPublic;
+    }
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+    public GenericUserDto getOwner() {
+        return this.owner;
+    }
 
-	public CommonDomainLightDto getDomain() {
-		return domain;
-	}
+    public void setOwner(final GenericUserDto owner) {
+        this.owner = owner;
+    }
 
-	public void setDomain(CommonDomainLightDto domain) {
-		this.domain = domain;
-	}
+    public String getUuid() {
+        return this.uuid;
+    }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public CommonDomainLightDto getDomain() {
+        return this.domain;
+    }
 
-	public Date getModificationDate() {
-		return modificationDate;
-	}
+    public void setDomain(final CommonDomainLightDto domain) {
+        this.domain = domain;
+    }
 
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
+    public Date getCreationDate() {
+        return this.creationDate;
+    }
 
-	/*
-	 * Transformers
-	 */
+    public void setCreationDate(final Date creationDate) {
+        this.creationDate = creationDate;
+    }
 
-	public static Function<ContactList, ContactListDto> toDto() {
-		return new Function<ContactList, ContactListDto>() {
-			@Override
-			public ContactListDto apply(ContactList arg0) {
-				return new ContactListDto(arg0);
-			}
-		};
-	}
+    public Date getModificationDate() {
+        return this.modificationDate;
+    }
+
+    public void setModificationDate(final Date modificationDate) {
+        this.modificationDate = modificationDate;
+    }
+
+    public Boolean getCanViewContactListMembers() {
+        return this.canViewContactListMembers;
+    }
+
+    public void setCanViewContactListMembers(final Boolean canViewContactListMembers) {
+        this.canViewContactListMembers = canViewContactListMembers;
+    }
+
+    public List<ContactListContactDto> getContacts() {
+        return this.contacts;
+    }
+
+    public void setContacts(final List<ContactListContactDto> contacts) {
+        this.contacts = contacts;
+    }
+
+    /*
+     * Transformers
+     */
+
+    public static Function<ContactList, ContactListDto> toDto() {
+        return new Function<ContactList, ContactListDto>() {
+            @Override
+            public ContactListDto apply(ContactList arg0) {
+                return new ContactListDto(arg0);
+            }
+        };
+    }
 }

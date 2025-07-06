@@ -16,6 +16,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
@@ -23,7 +24,6 @@ import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -31,6 +31,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface GuestBusinessService {
 
@@ -47,12 +48,12 @@ public interface GuestBusinessService {
 	List<String> findOutdatedGuestIdentifiers();
 	List<String> findAllGuests();
 
-	Guest create(Account actor, Guest guest, AbstractDomain domain,
-			List<User> allowedContacts, List<ContactList> allowedContactLists)
+	public @Nonnull Guest create(@Nonnull final Account actor, @Nonnull final Guest guest, @Nonnull final AbstractDomain domain,
+			@Nullable final List<User> allowedContacts, @Nullable final List<ContactList> allowedContactLists, @Nullable final Map<String, Boolean> contactListViewPermissions)
 			throws BusinessException;
 
-	Guest update(Account actor, Guest entity, Guest guestDto,
-			List<User> allowedContacts , List<ContactList> allowedContactList) throws BusinessException;
+	public @Nonnull Guest update(@Nonnull final Account actor, @Nonnull final Guest entity, @Nonnull final Guest guestDto,
+			@Nullable final List<User> allowedContacts , @Nullable final List<ContactList> allowedContactList, @Nullable final Map<String, Boolean> contactListViewPermissions) throws BusinessException;
 
 	void delete(Guest guest) throws BusinessException;
 

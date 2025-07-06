@@ -897,8 +897,8 @@ CREATE TABLE moderator (
   PRIMARY KEY (id));
 CREATE TABLE account_contact_lists
 (
-    account_id      int8 NOT NULL CONSTRAINT nonnull_account_contact_lists_account_id,
-    contact_list_id int8 NOT NULL CONSTRAINT nonnull_account_contact_lists_contact_list_id,
+    account_id      int8  CONSTRAINT nonnull_account_contact_lists_account_id NOT NULL,
+    contact_list_id int8  CONSTRAINT nonnull_account_contact_lists_contact_list_id NOT NULL,
     can_view_contact_list_members bool ,
     CONSTRAINT pk_account_contact_lists PRIMARY KEY (account_id, contact_list_id),
     CONSTRAINT fk_account_contact_lists_account_id FOREIGN KEY (account_id) REFERENCES account (id),

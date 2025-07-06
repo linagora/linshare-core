@@ -16,6 +16,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
@@ -23,6 +24,7 @@ import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.exception.BusinessException;
 
 import javax.annotation.Nonnull;
@@ -203,7 +205,7 @@ public interface MailingListBusinessService {
 	 * @param contactLists The new list of allowed contacts, if applicable.
 	 * @throws BusinessException If a restricted guest is updated or created without contact lists.
 	 */
-	void updateAccountContactLists(@Nonnull Guest update, @Nonnull List<ContactList> contactLists);
+	void updateAccountContactLists(@Nonnull final Guest update, @Nonnull final List<ContactList> contactLists, @Nullable final Map<String, Boolean> contactListViewPermissions);
 
 	/**
 	 * Finds and retrieves the list of {@link AccountContactLists} associated with a
@@ -212,5 +214,31 @@ public interface MailingListBusinessService {
 	 * @return                A {@link List} of {@link AccountContactLists}
 	 */
 	public @Nonnull List<AccountContactLists> findAccountContactListByAccount(@Nonnull final Account account);
+
+	/**
+	 * Checks if the domain has permission to hide list members from guests.
+	 *
+	 * @param domain Domain to check (non-null)
+	 * @return true if the functionality is active, false otherwise
+	 */
+	public boolean hasRightToHideMembersToGuest(@Nonnull final AbstractDomain domain);
+
+	/**
+	 * Checks if delegation policy is enabled for the domain.
+	 *
+	 * @param domain Domain to check (non-null)
+	 * @return true if delegation is enabled, false otherwise
+	 */
+	public boolean hasDelegationPolicy(@Nonnull final AbstractDomain domain);
+
+	/**
+	 * Determines visibility permission when creating a contact list.
+	 * Behavior depends on delegation policy:
+	 * - Delegation enabled: Uses provided value or defaults to true
+	 * - Delegation disabled: Requires explicit false value
+	 *
+	 * @throws BusinessException For specific business rule violations
+	 */
+	public Boolean determineCanViewPermissionForCreate(@Nonnull final ContactList contactList, @Nonnull final Map<String, Boolean> contactListViewPermissions);
 
 }

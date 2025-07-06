@@ -17,6 +17,7 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountContactListsRepository;
@@ -51,6 +53,7 @@ import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +81,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	private final WorkGroupNodeBusinessService workGroupNodeBusinessService;
 	private final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
 	private final AccountContactListsRepository accountContactListRepository;
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public GuestBusinessServiceImpl(final GuestRepository guestRepository, final UserRepository<User> userRepository,
 			final AllowedContactRepository allowedContactRepository,
@@ -90,7 +94,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			final SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService,
 			final WorkGroupNodeBusinessService workGroupNodeBusinessService,
 			final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
-			final AccountContactListsRepository accountContactListRepository) {
+			final AccountContactListsRepository accountContactListRepository,
+									final FunctionalityReadOnlyService functionalityReadOnlyService) {
 		this.guestRepository = guestRepository;
 		this.userRepository = userRepository;
 		this.allowedContactRepository = allowedContactRepository;
@@ -105,6 +110,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		this.workGroupNodeBusinessService = workGroupNodeBusinessService;
 		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
 		this.accountContactListRepository = accountContactListRepository;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
@@ -157,9 +163,12 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public Guest create(@Nonnull final Account actor, @Nonnull final Guest guest, @Nonnull final AbstractDomain domain,
-			@Nullable final List<User> allowedContacts, @Nullable final List<ContactList> contactLists)
-			throws BusinessException {
+	public @Nonnull Guest create(@Nonnull final Account actor, @Nonnull final Guest guest,
+						@Nonnull final AbstractDomain domain,
+						@Nullable final List<User> allowedContacts,
+						@Nullable final List<ContactList> contactLists,
+						@Nullable final Map<String, Boolean> contactListViewPermissions) throws BusinessException {
+
 		final String password = passwordService.generatePassword();
 		final String hashedPassword = passwordService.encode(password);
 		guest.setMail(guest.getMail().toLowerCase());
@@ -175,32 +184,73 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		Guest guestCreated = this.guestRepository.create(guest);
 		final Set<AllowedContact> allowedContactsToAdd = Sets.newHashSet();
 		final Set<AccountContactLists> accountContactListToAdd = Sets.newHashSet();
-		if (guestCreated.isRestricted()) {
-			if (allowedContacts == null || allowedContacts.isEmpty()) {
-				throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT,
-						"You can not create a restricted guest without a list of contacts.");
-			} else {
-				for (final User contact : allowedContacts) {
-					final AllowedContact allowedContact = new AllowedContact(guestCreated, contact);
-					this.allowedContactRepository.create(allowedContact);
-					allowedContactsToAdd.add(allowedContact);
+		if (hasRightToAssignContactToGuest(domain)) {
+			if (guestCreated.isRestricted()) {
+				if (allowedContacts == null || allowedContacts.isEmpty()) {
+					throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT,
+							"You can not create a restricted guest without a list of contacts.");
+				} else {
+					for (final User contact : allowedContacts) {
+						final AllowedContact allowedContact = new AllowedContact(guestCreated, contact);
+						this.allowedContactRepository.create(allowedContact);
+						allowedContactsToAdd.add(allowedContact);
+					}
+					guestCreated.addContacts(allowedContactsToAdd);
 				}
 			}
 		}
-		Optional.ofNullable(contactLists)
-				.ifPresent(nonNullLists -> nonNullLists.stream().distinct().forEach(contactList -> {
-					AccountContactListId accountContactListId = new AccountContactListId(guestCreated, contactList);
-					AccountContactLists accountContactList = new AccountContactLists();
-					accountContactList.setId(accountContactListId);
-					accountContactList.setAccount(guestCreated);
-					accountContactList.setContactList(contactList);
-					accountContactListRepository.create(accountContactList);
-					accountContactListToAdd.add(accountContactList);
-				}));
+		else {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED,
+					"GUESTS__RESTRICTED feature is disabled");
+		}
+		if (hasRightsToAssignContactListToGuest(domain)) {
+			Optional.ofNullable(contactLists)
+					.ifPresent(nonNullLists -> nonNullLists.stream().distinct().forEach(contactList -> {
+						final AccountContactListId accountContactListId = new AccountContactListId(guestCreated, contactList);
+						final AccountContactLists accountContactList = new AccountContactLists();
+						accountContactList.setId(accountContactListId);
+						accountContactList.setAccount(guestCreated);
+						accountContactList.setContactList(contactList);
+						if (this.mailingListBusinessServiceImpl.hasRightToHideMembersToGuest(domain)) {
+							Boolean canView = this.mailingListBusinessServiceImpl.determineCanViewPermissionForCreate(contactList, contactListViewPermissions);
+							accountContactList.setCanViewContactListMembers(canView);
+						} else {
+							throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUESTS__HIDE_MEMBERS_DISABLED,
+									"GUESTS__HIDE_MEMBERS feature is disabled");
+						}
+						this.accountContactListRepository.create(accountContactList);
+						accountContactListToAdd.add(accountContactList);
 
-		guestCreated.addContacts(allowedContactsToAdd);
-		guestCreated.addContactList(accountContactListToAdd);
+					}));
+			guestCreated.addContactList(accountContactListToAdd);
+		}
+		else {
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED,
+					"GUESTS__CONTACT_LISTS feature is disabled");
+		}
 		return guestCreated;
+	}
+
+	/**
+	 * Checks if assigning contact lists to guests is allowed in the given domain.
+	 */
+	private boolean hasRightsToAssignContactListToGuest(final AbstractDomain domain){
+		if(domain != null){
+			final Functionality functinality = this.functionalityReadOnlyService.getCanAssignContactListToGuest(domain);
+			return functinality.getActivationPolicy().getStatus();
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if assigning restricted contacts to guests is allowed in the given domain.
+	 */
+	private boolean hasRightToAssignContactToGuest(final AbstractDomain domain){
+		if(domain != null){
+			final Functionality functionality = this.functionalityReadOnlyService.getRestrictedGuestFunctionality(domain);
+			return functionality.getActivationPolicy().getStatus();
+		}
+		return false;
 	}
 
 	/**
@@ -221,8 +271,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	 *                             required contacts for a restricted guest.
 	 */
 	@Override
-	public @Nonnull Guest update(Account actor, Guest entity, Guest guest, @Nullable final List<User> allowedContacts,
-			@Nullable final List<ContactList> contactLists) throws BusinessException {
+	public @Nonnull Guest update(@Nonnull final Account actor, @Nonnull final  Guest entity, @Nonnull final Guest guest, @Nullable final List<User> allowedContacts,
+			@Nullable final List<ContactList> contactLists, @Nullable final Map<String, Boolean> contactListViewPermissions) throws BusinessException {
 		boolean wasRestricted = entity.isRestricted();
 		// fields that can not be null
 		entity.setCanUpload(guest.isCanUpload());
@@ -233,17 +283,29 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		entity.setBusinessLastName(guest.getLastName());
 		entity.setBusinessFirstName(guest.getFirstName());
 		entity.setExpirationDate(guest.getExpirationDate());
-		Guest update = guestRepository.update(entity);
+		final Guest update = this.guestRepository.update(entity);
 		// Management of authorized contacts
-		updateAllowedContacts(update, guest, wasRestricted, allowedContacts);
+		if(hasRightToAssignContactToGuest(entity.getDomain())) {
+			updateAllowedContacts(update, guest, wasRestricted, allowedContacts);
+		}
+		else{
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED,
+					"GUESTS__RESTRICTED feature is disabled");
+		}
 		// Management of authorized contact list
-		mailingListBusinessServiceImpl.updateAccountContactLists(update, contactLists != null ? contactLists : Collections.emptyList());
+		if(hasRightsToAssignContactListToGuest(entity.getDomain())) {
+		this.mailingListBusinessServiceImpl.updateAccountContactLists(update, contactLists != null ? contactLists : Collections.emptyList(), contactListViewPermissions);
+		}
+		else{
+			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED,
+					"GUESTS__CONTACT_LISTS feature is disabled");
+		}
 		logger.info("restricted contact list: {}", update.getRestrictedContactLists());
 		logger.info("update: {}", update);
 		return update;
 	}
 
-	private void updateAllowedContacts(Guest update, Guest guest, boolean wasRestricted, List<User> allowedContacts) throws BusinessException {
+	private void updateAllowedContacts(@Nonnull final Guest update, @Nonnull final Guest guest, final boolean wasRestricted, @Nullable final List<User> allowedContacts) throws BusinessException {
 		if (wasRestricted == guest.isRestricted()) {
 			if (allowedContacts != null) {
 				if ((update.isRestricted() && allowedContacts.isEmpty())) {
@@ -251,17 +313,17 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 							"You can not update a restricted guest without a list of contacts.");
 				}
 				// update
-				allowedContactRepository.purge(update);
-				Set<String> contacts = Sets.newHashSet();
-				for (User contact : allowedContacts) {
-					allowedContactRepository.create(new AllowedContact(update, contact));
+				this.allowedContactRepository.purge(update);
+				final Set<String> contacts = Sets.newHashSet();
+				for (final User contact : allowedContacts) {
+					this.allowedContactRepository.create(new AllowedContact(update, contact));
 					contacts.add(contact.getMail());
 				}
-				updateRecipientFavorites(update, contacts);
+				this.updateRecipientFavorites(update, contacts);
 			}
 		} else if (wasRestricted) {
 			// it is not restricted anymore. purge
-			allowedContactRepository.purge(update);
+			this.allowedContactRepository.purge(update);
 		} else {
 			// it was not restricted,
 			if (guest.isRestricted()) {
@@ -269,12 +331,12 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 				if (allowedContacts == null || allowedContacts.isEmpty()) {
 					throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT, "You can not update a restricted guest without a list of contacts.");
 				} else {
-					Set<String> contacts = Sets.newHashSet();
-					for (User contact : allowedContacts) {
-						allowedContactRepository.create(new AllowedContact(update, contact));
+					final Set<String> contacts = Sets.newHashSet();
+					for (final User contact : allowedContacts) {
+						this.allowedContactRepository.create(new AllowedContact(update, contact));
 						contacts.add(contact.getMail());
 					}
-					updateRecipientFavorites(update, contacts);
+					this.updateRecipientFavorites(update, contacts);
 				}
 			}
 		}

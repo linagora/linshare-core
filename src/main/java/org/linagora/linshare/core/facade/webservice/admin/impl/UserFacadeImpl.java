@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -38,6 +39,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.InconsistentSearchDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ContactListDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.PasswordDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
@@ -187,14 +189,22 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		if (entity.isGuest()) {
 			List<String> ac = null;
 			List<String> contactUuid = null;
+			Map<String, Boolean> contactListViewPermissions = null;
 			if (userDto.isRestricted()) {
 				ac = Lists.newArrayList();
 				for (UserDto contactDto : userDto.getRestrictedContacts()) {
 					ac.add(contactDto.getMail());
 				}
 			}
+			if(userDto.getRestrictedContactList() != null){
+				for(ContactListDto contactListDto : userDto.getRestrictedContactList()){
+					contactUuid.add(contactListDto.getUuid());
+					contactListViewPermissions.put(contactListDto.getUuid(), contactListDto.getCanViewContactListMembers());
+				}
+
+			}
 			update = guestService.update(authUser, authUser,
-					(Guest) userToUpdate, ac, contactUuid);
+					(Guest) userToUpdate, ac, contactUuid, contactListViewPermissions);
 		} else {
 			update = userService.updateUser(authUser, userToUpdate,
 					userDto.getDomain());

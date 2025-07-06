@@ -110,9 +110,11 @@ public class UserDto extends AccountDto {
 					}
 				}
 					restrictedContactList = Lists.newArrayList();
+				if(g.getRestrictedContactLists() != null) {
 					for (AccountContactLists contact : g.getRestrictedContactLists()) {
 						this.restrictedContactList.add(new ContactListDto(contact.getContactList()));
 					}
+				}
 			}
 			this.canUpload = u.isCanUpload();
 			this.canCreateGuest = u.isCanCreateGuest();
@@ -256,6 +258,14 @@ public class UserDto extends AccountDto {
 
 	public void setRestrictedContacts(List<UserDto> restrictedContacts) {
 		this.restrictedContacts = restrictedContacts;
+	}
+
+	public List<ContactListDto> getRestrictedContactList() {
+		return restrictedContactList;
+	}
+
+	public void setRestrictedContactList(List<ContactListDto> restrictedContactList) {
+		this.restrictedContactList = restrictedContactList;
 	}
 
 	public String getQuotaUuid() {

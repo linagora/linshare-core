@@ -17,12 +17,12 @@ package org.linagora.linshare.core.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -68,7 +68,7 @@ public interface GuestService {
 	 * @return created guest
 	 * @throws BusinessException
 	 */
-	Guest create(Account authUser, Account actor, Guest guest, List<String> restrictedMails, List<String> restrictedContactUuid)
+	public @Nonnull Guest create(@Nonnull final Account authUser, @Nonnull final Account actor, @Nonnull final Guest guest, final List<String> restrictedMails, final @Nonnull List<String> restrictedContactUuid, final Map<String, Boolean> contactListViewPermissions)
 			throws BusinessException;
 
 	/**
@@ -81,7 +81,7 @@ public interface GuestService {
 	 * @return Guest
 	 * @throws BusinessException
 	 */
-	Guest update(Account authUser, User actor, Guest guest, List<String> restrictedMails, List<String> restrictedContactUuid)
+	public @Nonnull Guest update(@Nonnull final Account authUser, @Nonnull final User actor, @Nonnull final Guest guest, final List<String> restrictedMails, final @Nonnull List<String> restrictedContactUuid, final Map<String, Boolean> contactListViewPermissions)
 			throws BusinessException;
 
 	/**

@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -86,6 +88,10 @@ public class GuestDto extends AccountDto {
 	@JsonIgnore
 	private boolean restrictedContact;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@Schema(description = "contactListViewPermissions")
+	private Map<String, Boolean> contactListViewPermissions;
+
 	public GuestDto() {
 		super();
 	}
@@ -119,9 +125,23 @@ public class GuestDto extends AccountDto {
 						.getContact()));
 			}
 		}
-			for (AccountContactLists contact : guest.getRestrictedContactLists()) {
+		if (guest.getRestrictedContactLists() != null) {
+			for (final AccountContactLists contact : guest.getRestrictedContactLists()) {
 				this.contactLists.add(new ContactListDto(contact.getContactList()));
 			}
+			try{
+			this.contactListViewPermissions = guest.getRestrictedContactLists()
+					.stream()
+					.collect(Collectors.toMap(
+							acl -> acl.getContactList().getUuid(),
+							acl -> acl.getCanViewContactListMembers()
+					));
+		}
+			catch(NullPointerException e){
+				this.contactListViewPermissions = new HashMap<>();
+			}
+		}
+
 	}
 
 	public Guest toUserObject() {
@@ -143,6 +163,7 @@ public class GuestDto extends AccountDto {
 			return accountContactList;
 		})
 				.collect(Collectors.toSet());
+		guest.setContactLists(accountContactLists);
 		return guest;
 	}
 
@@ -299,6 +320,14 @@ public class GuestDto extends AccountDto {
 
 	public void setRestrictedContact(boolean restrictedContact) {
 		this.restrictedContact = restrictedContact;
+	}
+
+	public Map<String, Boolean> getContactListViewPermissions() {
+		return this.contactListViewPermissions;
+	}
+
+	public void setContactListViewPermissions(final Map<String, Boolean> contactListViewPermissions) {
+		this.contactListViewPermissions = contactListViewPermissions;
 	}
 
 	/*

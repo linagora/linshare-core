@@ -18,6 +18,8 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
@@ -28,6 +30,8 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Moderator;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -39,6 +43,7 @@ import org.linagora.linshare.core.notifications.context.GuestModeratorDeletionEm
 import org.linagora.linshare.core.notifications.context.GuestModeratorUpdateEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ModeratorResourceAccessControl;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ModeratorService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -62,6 +67,8 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 
 	private final LogEntryService logEntryService;
 
+	private final AccountService accountService;
+
 	public ModeratorServiceImpl(
 			ModeratorResourceAccessControl rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
@@ -69,13 +76,15 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 			GuestBusinessService guestBusinessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
-			LogEntryService logEntryService) {
+			LogEntryService logEntryService,
+			AccountService accountService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.moderatorBusinessService = moderatorBusinessService;
 		this.guestBusinessService = guestBusinessService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.logEntryService = logEntryService;
+		this.accountService = accountService;
 	}
 
 	@Override
@@ -91,7 +100,13 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		}
 		moderator = moderatorBusinessService.create(moderator);
 		guest.addModerator(moderator);
-		guestBusinessService.update(actor, guest, guest,null,null);
+		final List<AccountContactLists> accountContactListsList = this.accountService.findAccountContactListsByAccount(guest);
+		final List<ContactList> contactLists = accountContactListsList.stream().map(AccountContactLists :: getContactList).collect(
+				Collectors.toList());
+		final Map<String, Boolean> contactListViewPermissions = accountContactListsList.stream().collect(Collectors.toMap(
+				acl -> acl.getContactList().getUuid(), AccountContactLists::getCanViewContactListMembers
+		));
+		this.guestBusinessService.update(actor, guest, guest,null,contactLists, contactListViewPermissions);
 		if (!actor.equals(moderator.getAccount())) {
 			GuestModeratorCreationEmailContext mailContext = new GuestModeratorCreationEmailContext(actor, moderator);
 			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
@@ -156,7 +171,7 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		Guest guest = guestBusinessService.findByLsUuid(moderator.getGuest().getLsUuid());
 		moderatorBusinessService.delete(moderator);
 		guest.removeModerator(moderator);
-		guestBusinessService.update(actor, guest, guest,null, null);
+		guestBusinessService.update(actor, guest, guest,null, null, null);
 		if (!actor.equals(moderator.getAccount())) {
 			GuestModeratorDeletionEmailContext mailContext = new GuestModeratorDeletionEmailContext(actor,
 					moderator);

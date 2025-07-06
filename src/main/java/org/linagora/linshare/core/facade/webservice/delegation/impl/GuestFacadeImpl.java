@@ -184,7 +184,7 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements Gues
 					contactUuid.add(contactListDto.getUuid());
 				}
 			}
-		guest = guestService.create(authUser, actor, guest, ac, contactUuid);
+		guest = guestService.create(authUser, actor, guest, ac, contactUuid, null);
 		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}
@@ -211,7 +211,7 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements Gues
 				contactUuid.add(contactListDto.getUuid());
 			}
 		}
-		guest = guestService.update(authUser, authUser, guest, ac, contactUuid);
+		guest = guestService.update(authUser, authUser, guest, ac, contactUuid, null);
 		GuestDto dto = GuestDto.getFull(guest, utilGuestAuthor.getAuthor(guest.getLsUuid()));
 		return addModeratorRoletoGuestDto(version, authUser, actor, guest, dto);
 	}

@@ -51,6 +51,8 @@ public class FunctionalityBusinessServiceImpl extends
 		exclude.add(FunctionalityNames.GUESTS__CAN_UPLOAD.toString());
 		exclude.add(FunctionalityNames.GUESTS__EXPIRATION_ALLOW_PROLONGATION
 				.toString());
+		exclude.add(FunctionalityNames.GUESTS__HIDE_MEMBERS.toString());
+
 	}
 
 	protected BusinessException getBusinessNotFoundException() {
