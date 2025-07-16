@@ -33,6 +33,8 @@ public class ShareEntry extends Entry {
 
 	protected ShareEntryGroup shareEntryGroup;
 
+	private String contactListUuid;
+
 	public ShareEntry() {
 		super();
 	}
@@ -46,6 +48,15 @@ public class ShareEntry extends Entry {
 		this.downloaded = Long.valueOf(0);
 		this.expirationDate = expirationDate;
 		this.shareEntryGroup = shareEntryGroup;
+
+	}
+
+	public ShareEntry(Account entryOwner, String name, String comment,
+					  User recipient, DocumentEntry documentEntry,
+					  Calendar expirationDate, ShareEntryGroup shareEntryGroup,
+					  String contactListUuid) {
+		this(entryOwner, name, comment, recipient, documentEntry, expirationDate, shareEntryGroup);
+		this.contactListUuid = contactListUuid;
 	}
 
 	@Override
@@ -89,10 +100,18 @@ public class ShareEntry extends Entry {
 		++downloaded;
 	}
 
+	public String getContactListUuid() {
+		return contactListUuid;
+	}
+
+	public void setContactListUuid(String contactListUuid) {
+		this.contactListUuid = contactListUuid;
+	}
+
 	@Override
 	public String toString() {
 		return "ShareEntry [downloaded=" + downloaded + ", name=" + name
-				+ ", uuid=" + uuid + "]";
+				+ ", uuid=" + uuid+ ", contactListUuid=" +contactListUuid  + "]" ;
 	}
 
 	/* useful getters */

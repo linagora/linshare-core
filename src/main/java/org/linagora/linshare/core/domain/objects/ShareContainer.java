@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -113,6 +114,8 @@ public class ShareContainer {
 	protected List<EventNotification> events = Lists.newArrayList();
 
 	private Optional<Language> externalMailLocale;
+
+	protected Set<ContactList> contactLists = new HashSet<>();
 
 	public ShareContainer(String subject, String message, Boolean secured, Boolean creationAcknowledgement) {
 		this();
@@ -443,13 +446,12 @@ public class ShareContainer {
 		}
 		for (final AccountContactLists accountContactList : accountContactLists) {
 			final ContactList contactList = accountContactList.getContactList();
-
+			this.contactLists.add(contactList);
 			for (final ContactListContact contact : contactList.getContactListContacts()) {
 				this.allowedRecipients.put(contact.getMail(), new Recipient(contact));
 			}
 		}
 	}
-
 
 	public Boolean isAcknowledgement() {
 		return creationAcknowledgement;
@@ -457,6 +459,14 @@ public class ShareContainer {
 
 	public void setAcknowledgement(Boolean creationAcknowledgement) {
 		this.creationAcknowledgement = creationAcknowledgement;
+	}
+
+	public Set<ContactList> getContactLists() {
+		return contactLists;
+	}
+
+	public void setContactLists(Set<ContactList> contactLists) {
+		this.contactLists = contactLists;
 	}
 
 	public List<AuditLogEntryUser> getLogs() {

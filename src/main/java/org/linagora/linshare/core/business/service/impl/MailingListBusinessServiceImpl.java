@@ -307,8 +307,27 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	@Override
 	public ContactList delete(ContactList entity) throws BusinessException {
 		logger.debug("List to delete: " + entity.getUuid());
+		deleteAllAccountContactLists(entity);
 		listRepository.delete(entity);
 		return entity;
+	}
+
+	private void deleteAllAccountContactLists(ContactList contactList) throws BusinessException {
+		try {
+			List<AccountContactLists> associations = accountContactListsRepository
+					.findByContactList(contactList);
+
+			associations.forEach(assoc ->
+					accountContactListsRepository.delete(assoc)
+			);
+
+		} catch (Exception e) {
+			throw new BusinessException(
+					BusinessErrorCode.FAILED_DELETE_ACCOUNT_CONTACT_LISTS,
+					"Failed to delete associations for contact list: " + contactList.getUuid(),
+					e
+			);
+		}
 	}
 
 	@Override
@@ -429,8 +448,11 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 				accountContactList.setCanViewContactListMembers(canView);
 
 			} else {
-				throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUESTS__HIDE_MEMBERS_DISABLED,
-						"GUESTS__HIDE_MEMBERS feature is disabled");
+				if (contactListViewPermissions != null && contactListViewPermissions.containsKey(contact.getUuid())) {
+					throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUESTS__HIDE_MEMBERS_DISABLED,
+							"GUESTS__HIDE_MEMBERS feature is disabled - Cannot set view permissions");
+				}
+				accountContactList.setCanViewContactListMembers(true);
 			}
 
 			this.accountContactListsRepository.create(accountContactList);
@@ -452,9 +474,6 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 						accountContactLists.setCanViewContactListMembers(newCanView);
 						this.accountContactListsRepository.update(accountContactLists);
 					}
-				} else {
-					throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUESTS__HIDE_MEMBERS_DISABLED,
-							"GUESTS__HIDE_MEMBERS feature is disabled");
 				}
 			}
 		});
@@ -462,7 +481,12 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	public Boolean determineCanViewPermissionForCreate(final @Nonnull ContactList contactList,
-													   final @Nonnull Map<String, Boolean> contactListViewPermissions) {
+													   final @Nullable Map<String, Boolean> contactListViewPermissions) {
+
+		if (!hasRightToHideMembersToGuest(contactList.getOwner().getDomain())) {
+			throw new IllegalStateException("This method should not be called when GUESTS__HIDE_MEMBERS is disabled");
+		}
+
 		if (contactList.getOwner() == null) {
 			throw new BusinessException(
 					BusinessErrorCode.INVALID_CONTACT_LIST,
@@ -470,11 +494,28 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 			);
 		}
 		final AbstractDomain domain = contactList.getOwner().getDomain();
-		if (contactListViewPermissions == null || !contactListViewPermissions.containsKey(contactList.getUuid())) {
+		if (contactListViewPermissions == null ) {
 			throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT,
-					"Permission visibility must be explicitly defined for contact list: " + contactList.getIdentifier() + " (" + contactList.getUuid() + ")");
+					"Visibility permissions map is required");
 		}
+
+		if (!contactListViewPermissions.containsKey(contactList.getUuid())) {
+			throw new BusinessException(
+					BusinessErrorCode.GUEST_INVALID_INPUT,
+					"Visibility permission must be explicitly defined for contact list: "
+							+ contactList.getIdentifier() + " (" + contactList.getUuid() + ")"
+			);
+		}
+
 		Boolean permissionValue = contactListViewPermissions.get(contactList.getUuid());
+		if (permissionValue == null) {
+			throw new BusinessException(
+					BusinessErrorCode.GUEST_INVALID_INPUT,
+					"Visibility permission cannot be null for contact list: "
+							+ contactList.getUuid()
+			);
+		}
+
 		if (this.hasDelegationPolicy(domain)) {
 			return permissionValue != null ? permissionValue : true;
 

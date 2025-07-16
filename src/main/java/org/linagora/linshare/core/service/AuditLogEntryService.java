@@ -33,6 +33,8 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 import org.linagora.linshare.webservice.utils.PageContainer;
 
+import javax.annotation.Nonnull;
+
 public interface AuditLogEntryService {
 
 	Set<AuditLogEntryUser> findAllForUsers(Account authUser, Account actor, List<LogAction> action, List<AuditLogEntryType> type,
@@ -89,4 +91,6 @@ public interface AuditLogEntryService {
 			Optional<String> resourceName,
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<AuditLogEntry> container);
+
+	public Optional<String> findLastDeletedContactListName(@Nonnull final String contactListUuid);
 }

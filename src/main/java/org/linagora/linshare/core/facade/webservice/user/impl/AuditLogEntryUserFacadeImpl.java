@@ -22,11 +22,9 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.delegation.impl.DelegationGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
-import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements AuditLogEntryUserFacade {

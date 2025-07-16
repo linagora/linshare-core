@@ -58,6 +58,7 @@
 				<column name="entry_id"/>
 			</key>
 			<property name="downloaded" column="downloaded" type="long" not-null="true" lazy="false"/>
+			<property name="contactListUuid" column="contact_list_uuid"  type="string" length="255" not-null="false" lazy="false"/>
 			<many-to-one name="recipient" column="recipient_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="proxy" fetch="join" >
 			</many-to-one>
 			<many-to-one name="documentEntry" column="document_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry"

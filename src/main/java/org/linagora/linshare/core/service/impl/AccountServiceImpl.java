@@ -16,13 +16,16 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -104,5 +107,14 @@ public class AccountServiceImpl extends GenericServiceImpl<Account,User> impleme
 		Validate.notEmpty(accountUuid, "Account uuid is required");
 		Account account = accountRepository.findByLsUuid(accountUuid);
 		return mailingListBusinessService.findAccountContactListByAccount(account);
+	}
+
+	@NotNull
+	@Override
+	public Optional<AccountContactLists> findAccountContactListByAccountAndContactList(@NotNull Account account, @NotNull ContactList contactList) {
+		if(account == null || contactList == null){
+			return Optional.empty();
+		}
+		return accountContactListRepository.findByAccountAndContactList(account, contactList);
 	}
 }

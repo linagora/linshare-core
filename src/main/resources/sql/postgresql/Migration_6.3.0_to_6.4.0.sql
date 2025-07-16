@@ -109,18 +109,6 @@ VALUES (89, false, 'GUESTS__CONTACT_LISTS', 359, 360, 361, 1, 'GUESTS', true, no
 INSERT INTO functionality_boolean(functionality_id, boolean_value)
 VALUES (89, true);
 
--- Functionality : GUESTS__HIDE_MEMBERS
-INSERT INTO policy(id, status, default_status, policy, system)
-VALUES (362, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-VALUES (363, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-VALUES (364, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
-VALUES (90, false, 'GUESTS__HIDE_MEMBERS', 362, 363, 364, 1, 'GUESTS', true, now(), now());
-INSERT INTO functionality_boolean(functionality_id, boolean_value)
-VALUES (90, true);
-
 -- update tables
 
 ALTER TABLE account

@@ -99,6 +99,12 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 	@Schema(description = "Message")
 	protected String message;
 
+	@Schema(description = "ContactListName")
+	protected String contactListName;
+
+	@Schema(description = "HideRecipientDetails")
+	protected Boolean hideRecipientDetails;
+
 	/**
 	 * Constructor
 	 * 
@@ -110,7 +116,7 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 		this.creationDate = entry.getCreationDate().getTime();
 		this.modificationDate = entry.getModificationDate().getTime();
 		this.description = entry.getComment();
-		if(entry.getExpirationDate() != null)
+		if (entry.getExpirationDate() != null)
 			this.expirationDate = entry.getExpirationDate().getTime();
 		if (entry.getEntryType().equals(EntryType.SHARE)) {
 			ShareEntry sa = (ShareEntry) entry;
@@ -121,7 +127,7 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 					this.size = sa.getDocumentEntry().getSize();
 					this.type = sa.getDocumentEntry().getType();
 					if (version.isGreaterThanOrEquals(Version.V5)) {
-						this.humanMimeType= sa.getDocumentEntry().getHumanMimeType();
+						this.humanMimeType = sa.getDocumentEntry().getHumanMimeType();
 					}
 					this.ciphered = sa.getDocumentEntry().getCiphered();
 					this.hasThumbnail = sa.getDocumentEntry().isHasThumbnail();
@@ -290,6 +296,22 @@ public class ShareDto implements Serializable, Comparable<ShareDto> {
 
 	public void setHumanMimeType(String humanMimeType) {
 		this.humanMimeType = humanMimeType;
+	}
+
+	public String getContactListName() {
+		return contactListName;
+	}
+
+	public void setContactListName(String contactListName) {
+		this.contactListName = contactListName;
+	}
+
+	public Boolean getHideRecipientDetails() {
+		return hideRecipientDetails;
+	}
+
+	public void setHideRecipientDetails(Boolean hideRecipientDetails) {
+		this.hideRecipientDetails = hideRecipientDetails;
 	}
 
 	/*

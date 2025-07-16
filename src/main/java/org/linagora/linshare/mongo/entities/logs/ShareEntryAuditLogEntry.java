@@ -32,6 +32,7 @@ import org.linagora.linshare.mongo.entities.mto.ShareEntryGroupMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @XmlRootElement
 public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
@@ -46,6 +47,11 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected ShareEntryGroupMto shareEntryGroup;
 
+	protected String contactListName;
+
+	@Field("contactListUuid")
+	protected String contactListUuid;
+
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected CopyMto copiedTo;
 
@@ -54,7 +60,7 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 	}
 
 	public ShareEntryAuditLogEntry(Account authUser, Account actor, LogAction action, ShareEntry entry,
-			AuditLogEntryType type) {
+								    AuditLogEntryType type) {
 		super(new AccountMto(authUser), new AccountMto(actor), action, type, entry.getUuid());
 		this.recipientMail = entry.getRecipient().getMail();
 		this.recipientUuid = entry.getRecipient().getLsUuid();
@@ -147,5 +153,21 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
 	public void setCopiedTo(CopyMto copiedTo) {
 		this.copiedTo = copiedTo;
+	}
+
+	public String getContactListUuid() {
+		return contactListUuid;
+	}
+
+	public void setContactListUuid(String contactListUuid) {
+		this.contactListUuid = contactListUuid;
+	}
+
+	public String getContactListName() {
+		return contactListName;
+	}
+
+	public void setContactListName(String contactListName) {
+		this.contactListName = contactListName;
 	}
 }

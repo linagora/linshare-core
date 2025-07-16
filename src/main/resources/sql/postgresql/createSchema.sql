@@ -276,6 +276,10 @@ CREATE TABLE share_entry (
   recipient_id         int8 NOT NULL,
   share_entry_group_id int8,
   PRIMARY KEY (entry_id));
+
+ALTER TABLE share_entry
+    ADD COLUMN contact_list_uuid  varchar(255);
+
 CREATE TABLE share_expiry_rules (
   domain_id       int8 NOT NULL,
   expiry_time     int4,

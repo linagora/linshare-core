@@ -24,12 +24,14 @@ import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.Optional;
 
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
@@ -37,6 +39,8 @@ import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
@@ -51,6 +55,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
 import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
@@ -96,6 +101,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 
 	protected final UploadRequestEntryService requestEntryService;
 
+	protected final MailingListBusinessService mailingListBusinessService;
+
 	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
 			final MimePolicyService mimePolicyService,
@@ -106,7 +113,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			final WorkGroupNodeService workGroupNodeService,
 			final SignatureService signatureService,
 			final WorkGroupDocumentRevisionService revisionService,
-			final UploadRequestEntryService requestEntryService) {
+			final UploadRequestEntryService requestEntryService,
+							  final MailingListBusinessService mailingListBusinessService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
 		this.mimePolicyService = mimePolicyService;
@@ -118,6 +126,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		this.workGroupNodeService = workGroupNodeService;
 		this.revisionService = revisionService;
 		this.requestEntryService = requestEntryService;
+		this.mailingListBusinessService = mailingListBusinessService;
 	}
 
 	@Override
@@ -139,14 +148,73 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 				shares.add(ShareDto.getSentShare(Version.V2, share, false));
 			}
 			for (ShareEntry share : entryBusinessService.findAllMyShareEntries(authUser, entry)) {
-				shares.add(ShareDto.getSentShare(Version.V2, share, false));
+				Boolean canView = true;
+				String contactListName = null;
+				if (share.getContactListUuid() != null) {
+					try {
+						ContactList contactList = mailingListBusinessService.findByUuid(share.getContactListUuid());
+						if (contactList != null) {
+							if (authUser.isGuest()) {
+								Optional<AccountContactLists> accountContactLists = accountService.findAccountContactListByAccountAndContactList(authUser, contactList);
+								if (accountContactLists.isPresent()) {
+									canView = accountContactLists.get().getCanViewContactListMembers();
+								}
+							}
+							contactListName = contactList.getIdentifier();
+						}
+					} catch (BusinessException e) {
+						if (e.getErrorCode() == BusinessErrorCode.LIST_DO_NOT_EXIST) {
+							contactListName = auditLogEntryService.findLastDeletedContactListName(share.getContactListUuid())
+									.orElse("Deleted List");
+							logger.debug("Using audit log name for deleted list: {}", share.getContactListUuid());
+						} else {
+							logger.warn("Error processing contact list: {}", e.getMessage());
+						}
+					}
+				}
+				ShareDto shareDto;
+				if (share.getContactListUuid() != null) {
+					shareDto = createContactListOnlyShareDto(share, contactListName, version);
+				} else {
+					shareDto = ShareDto.getSentShare(version, share, false);
+				}
+
+				shares.add(shareDto);
 			}
 		}
 		Collections.sort(shares);
 		documentDto.setShares(shares);
 		return documentDto;
 	}
-	
+
+	private ShareDto createContactListOnlyShareDto(ShareEntry share, String contactListIdentifier, Version version) {
+		ShareDto shareDto = new ShareDto();
+		shareDto.setUuid(share.getUuid());
+		shareDto.setName(share.getName());
+		shareDto.setCreationDate(share.getCreationDate().getTime());
+		shareDto.setModificationDate(share.getModificationDate().getTime());
+		shareDto.setDescription(share.getComment());
+		shareDto.setDownloaded(share.getDownloaded());
+
+		if (share.getExpirationDate() != null) {
+			shareDto.setExpirationDate(share.getExpirationDate().getTime());
+		}
+
+		shareDto.setDocument(new DocumentDto(share.getDocumentEntry(), version));
+
+		GenericUserDto recipient = new GenericUserDto();
+		recipient.setFirstName("");
+		recipient.setLastName("");
+		recipient.setMail("");
+		recipient.setUuid("");
+		shareDto.setRecipient(recipient);
+
+		shareDto.setContactListName(contactListIdentifier);
+		shareDto.setHideRecipientDetails(true);
+
+		return shareDto;
+	}
+
 	@Override
 	public DocumentDto create(File tempFile, String fileName, String description, String metadata)
 			throws BusinessException {

@@ -31,11 +31,14 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.math3.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.AuditEntryField;
@@ -44,12 +47,15 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
+import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
@@ -64,6 +70,8 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import org.bson.Document;
 
 public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditLogEntry> implements AuditLogEntryService {
 
@@ -84,6 +92,10 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 
 	protected final MongoTemplate mongoTemplate;
 
+	protected final AccountService accountService;
+
+	protected final MailingListBusinessService mailingListBusinessService;
+
 	public AuditLogEntryServiceImpl(
 			AuditAdminMongoRepository auditMongoRepository,
 			AuditUserMongoRepository userMongoRepository,
@@ -92,7 +104,9 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			MongoTemplate mongoTemplate,
 			AbstractDomainService domainService,
 			AuditLogEntryResourceAccessControl rac,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			AccountService accountService,
+			MailingListBusinessService mailingListBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.adminMongoRepository = auditMongoRepository;
 		this.userMongoRepository = userMongoRepository;
@@ -100,6 +114,8 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		this.timeService = timeService;
 		this.mongoTemplate = mongoTemplate;
 		this.domainService = domainService;
+		this.accountService = accountService;
+		this.mailingListBusinessService = mailingListBusinessService;
 	}
 
 	/**
@@ -120,11 +136,46 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			Date begin = getBeginDate(beginDate, end);
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, begin, end);
 		}
+		if (authUser.isGuest()) {
+			res = processAuditLogsForGuest(res, authUser);
+		}
 		if (!res.isEmpty()) {
 			checkListPermission(authUser, actor, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
 					res.iterator().next());
 		}
 		return res;
+	}
+
+	private Set<AuditLogEntryUser> processAuditLogsForGuest(Set<AuditLogEntryUser> rawLogs, Account actor) {
+		Set<AuditLogEntryUser> processedLogs = Sets.newHashSet();
+		for (AuditLogEntryUser log : rawLogs) {
+			if (log instanceof ShareEntryAuditLogEntry) {
+				ShareEntryAuditLogEntry shareLog = (ShareEntryAuditLogEntry) log;
+				String contactListUuid = shareLog.getContactListUuid();
+
+				if (contactListUuid != null) {
+					try {
+						ContactList contactList = mailingListBusinessService.findByUuid(contactListUuid);
+
+						Optional<AccountContactLists> accountContactLists =
+								accountService.findAccountContactListByAccountAndContactList(actor, contactList);
+
+						if (accountContactLists.isPresent() && !accountContactLists.get().getCanViewContactListMembers()) {
+							processedLogs.add(createHiddenContactListAuditLog(shareLog, contactList));
+							continue;
+						}
+					} catch (BusinessException e) {
+						if (e.getErrorCode() == BusinessErrorCode.LIST_DO_NOT_EXIST) {
+							logger.debug("Processing audit for deleted contact list: {}", contactListUuid);
+						} else {
+							logger.error("Error processing audit log: {}", e.getMessage());
+						}
+					}
+				}
+			}
+			processedLogs.add(log);
+		}
+		return processedLogs;
 	}
 
 	/**
@@ -209,18 +260,85 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		Validate.notNull(entryUuid);
-		Set<AuditLogEntryUser> res = Sets.newHashSet();
 		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
 		supportedTypes.add(AuditLogEntryType.DOCUMENT_ENTRY);
 		supportedTypes.add(AuditLogEntryType.SHARE_ENTRY);
 		supportedTypes.add(AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
 		List<AuditLogEntryType> types = getEntryTypes(type, supportedTypes, true);
 		List<LogAction> actions = getActions(action);
-		res = userMongoRepository.findDocumentHistoryForUser(
+		Set<AuditLogEntryUser> rawLogs = userMongoRepository.findDocumentHistoryForUser(
 				owner.getLsUuid(), entryUuid,
 				actions, types,
 				Sort.by(Sort.Direction.DESC, CREATION_DATE));
-		return res;
+		return processAuditLogs(rawLogs, actor);
+
+	}
+
+	private Set<AuditLogEntryUser> processAuditLogs(Set<AuditLogEntryUser> rawLogs, Account actor) {
+		if (!actor.isGuest()) {
+			return rawLogs;
+		}
+		Set<AuditLogEntryUser> processedLogs = Sets.newHashSet();
+
+		for (AuditLogEntryUser log : rawLogs) {
+			if (log instanceof ShareEntryAuditLogEntry) {
+				ShareEntryAuditLogEntry shareLog = (ShareEntryAuditLogEntry) log;
+				processedLogs.add(processShareEntryLog(shareLog, actor));
+			} else {
+				processedLogs.add(log);
+			}
+		}
+		return processedLogs;
+	}
+
+	@Override
+	public Optional<String> findLastDeletedContactListName(String contactListUuid) {
+		return userMongoRepository.findLastDeletedContactList(contactListUuid)
+				.map(doc -> {
+					Document resource = doc.get("resource", Document.class);
+					return resource != null ? resource.getString("name") : null;
+				});
+	}
+
+	private ShareEntryAuditLogEntry processShareEntryLog(ShareEntryAuditLogEntry shareLog, Account actor) {
+		String contactListUuid = shareLog.getContactListUuid();
+		if (contactListUuid != null) {
+			try {
+				ContactList contactList = mailingListBusinessService.findByUuid(contactListUuid);
+				if (contactList != null) {
+					Optional<AccountContactLists> acl = accountService.findAccountContactListByAccountAndContactList(actor, contactList);
+					if (acl.isPresent() && !acl.get().getCanViewContactListMembers()) {
+						return createHiddenContactListAuditLog(shareLog, contactList);
+					}
+				}
+			} catch (Exception e) {
+				logger.debug("Error processing audit log for contact list: {}", contactListUuid, e);
+			}
+		}
+		return shareLog;
+	}
+
+	private ShareEntryAuditLogEntry createHiddenContactListAuditLog(
+			ShareEntryAuditLogEntry originalLog, ContactList contactList) {
+
+		ShareEntryAuditLogEntry hiddenLog = new ShareEntryAuditLogEntry();
+		hiddenLog.setUuid(originalLog.getUuid());
+		hiddenLog.setCreationDate(originalLog.getCreationDate());
+		hiddenLog.setActor(originalLog.getActor());
+		ShareEntryMto ressource = (ShareEntryMto)originalLog.getResource();
+		ressource.setRecipient(null);
+		hiddenLog.setResource(ressource);
+		hiddenLog.setResourceUpdated(originalLog.getResourceUpdated());
+		hiddenLog.setType(originalLog.getType());
+		hiddenLog.setAction(originalLog.getAction());
+		hiddenLog.setContactListUuid(contactList.getUuid());
+		hiddenLog.setContactListName(contactList.getIdentifier());
+		hiddenLog.setAction(originalLog.getAction());
+		hiddenLog.setAuthUser(originalLog.getAuthUser());
+		hiddenLog.setCause(originalLog.getCause());
+		hiddenLog.setFromResourceUuid(originalLog.getFromResourceUuid());
+		hiddenLog.setResourceUuid(originalLog.getResourceUuid());
+		return hiddenLog;
 	}
 
 	protected List<AuditLogEntryType> getEntryTypes(List<AuditLogEntryType> entryTypes, List<AuditLogEntryType> supportedTypes, boolean defaultType) {

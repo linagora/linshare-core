@@ -203,7 +203,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED,
 					"GUESTS__RESTRICTED feature is disabled");
 		}
-		if (hasRightsToAssignContactListToGuest(domain)) {
+		if (hasRightToAssignContactListToGuest(domain)) {
 			Optional.ofNullable(contactLists)
 					.ifPresent(nonNullLists -> nonNullLists.stream().distinct().forEach(contactList -> {
 						final AccountContactListId accountContactListId = new AccountContactListId(guestCreated, contactList);
@@ -215,8 +215,11 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 							Boolean canView = this.mailingListBusinessServiceImpl.determineCanViewPermissionForCreate(contactList, contactListViewPermissions);
 							accountContactList.setCanViewContactListMembers(canView);
 						} else {
-							throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUESTS__HIDE_MEMBERS_DISABLED,
-									"GUESTS__HIDE_MEMBERS feature is disabled");
+							if (contactListViewPermissions != null && contactListViewPermissions.containsKey(contactList.getUuid())) {
+								throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUESTS__HIDE_MEMBERS_DISABLED,
+										"GUESTS__HIDE_MEMBERS feature is disabled - Cannot set view permissions");
+							}
+							accountContactList.setCanViewContactListMembers(true);
 						}
 						this.accountContactListRepository.create(accountContactList);
 						accountContactListToAdd.add(accountContactList);
@@ -234,7 +237,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	/**
 	 * Checks if assigning contact lists to guests is allowed in the given domain.
 	 */
-	private boolean hasRightsToAssignContactListToGuest(final AbstractDomain domain){
+	private boolean hasRightToAssignContactListToGuest(final AbstractDomain domain){
 		if(domain != null){
 			final Functionality functinality = this.functionalityReadOnlyService.getCanAssignContactListToGuest(domain);
 			return functinality.getActivationPolicy().getStatus();
@@ -293,7 +296,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 					"GUESTS__RESTRICTED feature is disabled");
 		}
 		// Management of authorized contact list
-		if(hasRightsToAssignContactListToGuest(entity.getDomain())) {
+		if(hasRightToAssignContactListToGuest(entity.getDomain())) {
 		this.mailingListBusinessServiceImpl.updateAccountContactLists(update, contactLists != null ? contactLists : Collections.emptyList(), contactListViewPermissions);
 		}
 		else{

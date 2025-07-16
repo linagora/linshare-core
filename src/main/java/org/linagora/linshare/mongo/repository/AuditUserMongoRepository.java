@@ -17,8 +17,10 @@ package org.linagora.linshare.mongo.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import org.bson.Document;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -83,6 +85,13 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	@Query("{ 'relatedAccounts': {'$elemMatch' : { '$eq' : ?0 }}, 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } , $or: [ {'resourceUuid' : ?1} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?1 }} } ] }")
 	Set<AuditLogEntryUser> findDocumentHistoryForUser(String ownerUuid, String entryUuid,
 			List<LogAction> actions, List<AuditLogEntryType> types, Sort sort);
+
+	@Query(
+			value = "{ 'type': 'CONTACTS_LISTS', 'action': 'DELETE', 'resource.uuid': ?0 }",
+			fields = "{ 'resource.name': 1, '_id': 0 }",
+			sort = "{ 'creationDate': -1 }"
+	)
+	Optional<Document> findLastDeletedContactList(String contactListUuid);
 
 	@Query("{ $or: [ {'resourceUuid' : ?0 } , { 'list.uuid' : ?0 } ], 'type' : { '$in' : ?1 } }")
 	Set<AuditLogEntryUser> findContactListsActivity(String entryUuid,

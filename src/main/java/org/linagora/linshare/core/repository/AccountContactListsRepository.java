@@ -46,4 +46,6 @@ public interface AccountContactListsRepository extends AbstractRepository<Accoun
 	public @Nonnull Optional<AccountContactLists> findByAccountAndContactList(@NotNull final Account account,
 			@NotNull final ContactList contactList);
 
+	public @Nonnull List<AccountContactLists> findByContactList(final @Nonnull ContactList contactList);
+
 }

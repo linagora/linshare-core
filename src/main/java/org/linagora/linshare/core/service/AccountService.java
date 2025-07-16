@@ -16,9 +16,11 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.exception.BusinessException;
 
 import javax.annotation.Nonnull;
@@ -62,4 +64,6 @@ public interface AccountService {
 	 * @throws IllegalArgumentException if the UUID is empty.
 	 */
 	public @Nonnull List<AccountContactLists> findAccountContactListsByAccount(@Nonnull final String accountUuid);
+
+	public @Nonnull Optional<AccountContactLists> findAccountContactListByAccountAndContactList(@Nonnull Account account, @Nonnull final ContactList contactList);
 }

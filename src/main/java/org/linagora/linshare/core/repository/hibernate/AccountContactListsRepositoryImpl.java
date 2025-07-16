@@ -62,6 +62,13 @@ public class AccountContactListsRepositoryImpl extends AbstractRepositoryImpl<Ac
 
 	}
 
+	@Override
+	public List<AccountContactLists> findByContactList(final @Nonnull ContactList contactList) {
+		return findByCriteria(Restrictions.and(
+				Restrictions.eq("contactList", contactList)
+		));
+	}
+
 }
 
 

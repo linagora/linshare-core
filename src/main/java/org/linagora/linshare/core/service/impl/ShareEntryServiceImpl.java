@@ -37,6 +37,8 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -274,17 +276,41 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		TimeUnitValueFunctionality functionality = functionalityService.getCollectedEmailsExpirationTimeFunctionality(owner.getDomain());
 		Date contactExpirationDate = functionality.getContactExpirationDate();
 		for (User recipient : sc.getShareRecipients()) {
+			logger.debug("la liste des share recipients {}", sc.getShareRecipients());
+			logger.debug("Un élement de liste des share recipients {}", sc.getShareRecipients());
 			Set<ShareEntry> shares = Sets.newHashSet();
+			String contactListUuid = null;
+			String contactListName = null;
+			if (!sc.getContactLists().isEmpty()) {
+				ContactList contactList = findContactListForRecipient(sc.getContactLists(), recipient);
+				if (contactList != null) {
+					contactListUuid = contactList.getUuid();
+					contactListName = contactList.getIdentifier();
+					logger.debug("Partage créé avec liste de contacts: uuid={}, nom={}, destinataire={}",
+							contactListUuid, contactListName, recipient.getMail());
+				} else {
+					logger.warn("Aucune liste de contacts trouvée pour le destinataire: {}", recipient.getMail());
+				}
+			}
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareEntry createShare = shareEntryBusinessService.create(
 						documentEntry, owner, recipient, sc.getExpiryCalendar(), shareEntryGroup, sc.getSharingNote());
 				updateGuestExpiryDate(recipient);
+				if (contactListUuid != null) {
+					createShare.setContactListUuid(contactListUuid);
+					logger.debug("UUID de liste associé au partage: {}", contactListUuid);
+				}
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
 						recipient.getMail(), contactExpirationDate, false);
 				ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.CREATE, createShare,
 						AuditLogEntryType.SHARE_ENTRY);
 				String recipientUuid = recipient.getLsUuid();
+				if (contactListUuid != null) {
+					log.setContactListUuid(contactListUuid);
+					log.setContactListName(contactListName);
+					logger.debug("Log d'audit créé avec liste: uuid={}, nom={}", contactListUuid, contactListName);
+				}
 				log.addRelatedAccounts(recipientUuid);
 				sc.addLog(log);
 			}
@@ -301,6 +327,18 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		}
 		return entries;
 	}
+
+	private ContactList findContactListForRecipient(Set<ContactList> contactLists, User recipient) {
+		for (ContactList contactList : contactLists) {
+			for (ContactListContact contact : contactList.getContactListContacts()) {
+				if (contact.getMail().equals(recipient.getMail())) {
+					return contactList;
+				}
+			}
+		}
+		return null;
+	}
+
 
 	private void updateGuestExpiryDate(User recipient) {
 		// update guest account expiry date
