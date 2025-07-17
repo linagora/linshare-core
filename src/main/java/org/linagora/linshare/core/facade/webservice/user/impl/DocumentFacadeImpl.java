@@ -150,15 +150,16 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			for (ShareEntry share : entryBusinessService.findAllMyShareEntries(authUser, entry)) {
 				Boolean canView = true;
 				String contactListName = null;
+				boolean isDeletedList = false;
 				if (share.getContactListUuid() != null) {
 					try {
 						ContactList contactList = mailingListBusinessService.findByUuid(share.getContactListUuid());
 						if (contactList != null) {
 							if (authUser.isGuest()) {
-								Optional<AccountContactLists> accountContactLists = accountService.findAccountContactListByAccountAndContactList(authUser, contactList);
-								if (accountContactLists.isPresent()) {
-									canView = accountContactLists.get().getCanViewContactListMembers();
-								}
+								Optional<AccountContactLists> accountContactLists =
+										accountService.findAccountContactListByAccountAndContactList(authUser, contactList);
+								canView = accountContactLists.map(AccountContactLists::getCanViewContactListMembers)
+										.orElse(false);
 							}
 							contactListName = contactList.getIdentifier();
 						}
@@ -166,14 +167,17 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 						if (e.getErrorCode() == BusinessErrorCode.LIST_DO_NOT_EXIST) {
 							contactListName = auditLogEntryService.findLastDeletedContactListName(share.getContactListUuid())
 									.orElse("Deleted List");
+							isDeletedList = true;
+							canView = false;
 							logger.debug("Using audit log name for deleted list: {}", share.getContactListUuid());
 						} else {
 							logger.warn("Error processing contact list: {}", e.getMessage());
 						}
 					}
 				}
+
 				ShareDto shareDto;
-				if (share.getContactListUuid() != null) {
+				if ((share.getContactListUuid() != null && !canView) || isDeletedList) {
 					shareDto = createContactListOnlyShareDto(share, contactListName, version);
 				} else {
 					shareDto = ShareDto.getSentShare(version, share, false);

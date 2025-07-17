@@ -91,7 +91,7 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 			fields = "{ 'resource.name': 1, '_id': 0 }",
 			sort = "{ 'creationDate': -1 }"
 	)
-	Optional<Document> findLastDeletedContactList(String contactListUuid);
+	List<Document> findLastDeletedContactLists(String contactListUuid);
 
 	@Query("{ $or: [ {'resourceUuid' : ?0 } , { 'list.uuid' : ?0 } ], 'type' : { '$in' : ?1 } }")
 	Set<AuditLogEntryUser> findContactListsActivity(String entryUuid,

@@ -293,11 +293,13 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 
 	@Override
 	public Optional<String> findLastDeletedContactListName(String contactListUuid) {
-		return userMongoRepository.findLastDeletedContactList(contactListUuid)
-				.map(doc -> {
-					Document resource = doc.get("resource", Document.class);
-					return resource != null ? resource.getString("name") : null;
-				});
+		List<Document> results = userMongoRepository.findLastDeletedContactLists(contactListUuid);
+		if (results.isEmpty()) {
+			return Optional.empty();
+		}
+		Document doc = results.get(0);
+		Document resource = doc.get("resource", Document.class);
+		return Optional.ofNullable(resource != null ? resource.getString("name") : null);
 	}
 
 	private ShareEntryAuditLogEntry processShareEntryLog(ShareEntryAuditLogEntry shareLog, Account actor) {
