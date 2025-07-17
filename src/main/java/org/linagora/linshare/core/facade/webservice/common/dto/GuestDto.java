@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
@@ -88,9 +89,11 @@ public class GuestDto extends AccountDto {
 	@JsonIgnore
 	private boolean restrictedContact;
 
+	@JsonProperty("contactListViewPermissions")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@Schema(description = "contactListViewPermissions")
 	private Map<String, Boolean> contactListViewPermissions;
+
 
 	public GuestDto() {
 		super();
