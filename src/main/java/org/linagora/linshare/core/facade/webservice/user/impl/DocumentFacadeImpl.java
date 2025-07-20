@@ -136,44 +136,6 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		return ImmutableList.copyOf(Lists.transform(docs, DocumentDto.toDto(version)));
 	}
 
-	/**
-	 * Retrieve a document by UUID and optionally enrich it with its associated shares.
-	 *
-	 * <p>
-	 * This method returns a {@link DocumentDto} built from the document identified by the given UUID,
-	 * and if {@code withShares} is true, includes all anonymous and regular shares related to this document.
-	 * </p>
-	 *
-	 * <p>
-	 * When {@code withShares} is enabled:
-	 * <ul>
-	 *   <li>Anonymous shares are retrieved using {@code findAllMyAnonymousShareEntries}.</li>
-	 *   <li>Standard shares are retrieved using {@code findAllMyShareEntries} and processed according to
-	 *       the contact list visibility of the current authenticated user.</li>
-	 * </ul>
-	 * </p>
-	 *
-	 * <p><b>Contact List Visibility:</b></p>
-	 * <ul>
-	 *   <li>If a share is associated with a contact list and the user is a guest who does not have permission
-	 *       to view the members of that list (i.e., {@code canViewContactListMembers == false}),
-	 *       then only the contact list name will be shown in the share (using a special {@code ShareDto}).</li>
-	 *   <li>For each individual member of such a contact list, the list name will appear **repeated** in the display,
-	 *       once per member.</li>
-	 *   <li>If the same member exists in **multiple contact lists**, and the user does not have visibility
-	 *       over any of them, the displayed list name might not reflect the actual list chosen by the sender.
-	 *       In this case, the list name shown is **not guaranteed** to match the user’s intent. It will be the
-	 *       first list found matching the member and the guest's visibility restrictions.</li>
-	 *   <li>If the contact list was deleted, its name will be recovered from the audit logs when available.
-	 *       The result will indicate the list was deleted and the visibility will be set to false.</li>
-	 * </ul>
-	 *
-	 * @param version     the API version used to build the {@link DocumentDto} and {@link ShareDto}
-	 * @param uuid        the UUID of the document to retrieve (must not be null or empty)
-	 * @param withShares  whether to include share information in the response
-	 * @return the document DTO enriched with share data if requested
-	 * @throws BusinessException if the document cannot be found or another service-level error occurs
-	 */
 	@Override
 	public DocumentDto find(Version version, String uuid, boolean withShares) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required document uuid");
