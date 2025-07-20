@@ -114,7 +114,6 @@ VALUES (89, true);
 ALTER TABLE account
     ADD COLUMN default_can_view_contact_list_members bool;
 
----- End of your queries
 
 -- Upgrade LinShare version
 SELECT ls_version();
