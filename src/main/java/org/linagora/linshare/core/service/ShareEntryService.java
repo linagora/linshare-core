@@ -57,6 +57,17 @@ public interface ShareEntryService {
 
 	List<ShareEntry> findAllMyRecievedShareEntries(Account actor, Account owner);
 
+	/**
+	 * Creates document shares (ShareEntry) for recipients defined in a ShareContainer.
+	 *
+	 * <p>
+	 * If a recipient belongs to one of the provided contact lists:
+	 * <ul>
+	 *   <li>The created ShareEntry stores the contactListUuid.</li>
+	 *   <li>The associated ShareEntryAuditLogEntry stores both the contactListUuid and contactListName.</li>
+	 * </ul>
+	 * </p>
+	 */
 	Set<ShareEntry> create(Account actor, User owner, ShareContainer shareContainer, ShareEntryGroup shareEntryGroup);
 
 	List<String> findAllExpiredEntries(Account actor, Account owner);

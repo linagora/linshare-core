@@ -40,6 +40,18 @@ public interface AuditLogEntryService {
 	Set<AuditLogEntryUser> findAllForUsers(Account authUser, Account actor, List<LogAction> action, List<AuditLogEntryType> type,
 			boolean forceAll, String beginDate, String endDate);
 
+	/**
+	 * Retrieve audit logs for a given document or share entry based on various filters.
+	 *
+	 * @param authUser      the account requesting the audit logs (must not be null)
+	 * @param actor       the account that owns the entry (must not be null)
+	 * @param entryUuid   the UUID of the document or share entry (must not be null)
+	 * @param action      a list of log actions to filter on (can be null or empty)
+	 * @param type        a list of audit log entry types to filter on (can be null or empty)
+	 * @param beginDate   the start date for filtering logs (not currently used)
+	 * @param endDate     the end date for filtering logs (not currently used)
+	 * @return a set of filtered and processed {@link AuditLogEntryUser} entries visible to the actor
+	 */
 	Set<AuditLogEntryUser> findAll(Account authUser, Account actor, String entryUuid, List<LogAction> action,
 			List<AuditLogEntryType> type, String beginDate, String endDate);
 
@@ -92,5 +104,11 @@ public interface AuditLogEntryService {
 			Optional<String> beginDate, Optional<String> endDate,
 			PageContainer<AuditLogEntry> container);
 
+	/**
+	 * Retrieves the name of the most recently deleted contact list for a given UUID.
+	 *
+	 * @param contactListUuid the UUID of the contact list
+	 * @return an {@link Optional} containing the contact list name if found, otherwise empty
+	 */
 	public Optional<String> findLastDeletedContactListName(@Nonnull final String contactListUuid);
 }

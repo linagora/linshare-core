@@ -274,6 +274,16 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 
 	}
 
+	/**
+	 * Process a raw set of audit log entries and applies guest-level visibility rules.
+	 *
+	 * For guest users, some {@link ShareEntryAuditLogEntry} entries may be modified
+	 * to hide sensitive recipient data based on the guest's visibility permissions.
+	 *
+	 * @param rawLogs the set of raw audit logs retrieved from the repository
+	 * @param actor   the account requesting the logs (used to determine visibility rules)
+	 * @return a processed set of audit log entries respecting guest visibility constraints
+	 */
 	private Set<AuditLogEntryUser> processAuditLogs(Set<AuditLogEntryUser> rawLogs, Account actor) {
 		if (!actor.isGuest()) {
 			return rawLogs;
@@ -302,6 +312,16 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return Optional.ofNullable(resource != null ? resource.getString("name") : null);
 	}
 
+	/**
+	 * Processes a single {@link ShareEntryAuditLogEntry} to apply guest visibility rules.
+	 *
+	 * If the actor is not allowed to view the contact list members, this method returns
+	 * a sanitized version of the log entry with hidden recipient information.
+	 *
+	 * @param shareLog the original share log entry
+	 * @param actor    the account requesting the log
+	 * @return the original or sanitized log entry depending on the guest's permissions
+	 */
 	private ShareEntryAuditLogEntry processShareEntryLog(ShareEntryAuditLogEntry shareLog, Account actor) {
 		String contactListUuid = shareLog.getContactListUuid();
 		if (contactListUuid != null) {
@@ -320,6 +340,14 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return shareLog;
 	}
 
+	/**
+	 * Creates a sanitized version of a {@link ShareEntryAuditLogEntry} where recipient details
+	 * are hidden and only basic contact list info is retained.
+	 *
+	 * @param originalLog  the original audit log entry
+	 * @param contactList  the contact list associated with the entry
+	 * @return a new {@link ShareEntryAuditLogEntry} with hidden recipient information
+	 */
 	private ShareEntryAuditLogEntry createHiddenContactListAuditLog(
 			ShareEntryAuditLogEntry originalLog, ContactList contactList) {
 

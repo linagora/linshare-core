@@ -232,18 +232,19 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 		int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
 		Set<UserDto> userList = findUser(pattern);
 		if (mailingListsList == null) mailingListsList = Lists.newArrayList();
-		List<AccountContactLists> accountContactList = null;
+
 		if(authUser instanceof Guest) {
-			accountContactList = accountContactListRepository.findByAccountAndContactListName(authUser, pattern);
+			if(!userList.isEmpty()) {
+				result.addAll(ImmutableList.copyOf(
+						Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
+			}
+
+			List<AccountContactLists> accountContactList = accountContactListRepository.findByAccountAndContactListName(authUser, pattern);
 			if (accountContactList == null) accountContactList = Lists.newArrayList();
 			int range_contactList = (accountContactList .size() < AUTO_COMPLETE_LIMIT ? accountContactList .size() : AUTO_COMPLETE_LIMIT);
 			if(!accountContactList.isEmpty() ) {
 				result.addAll(ImmutableList.copyOf(Lists.transform(accountContactList.subList(0, range_contactList),
 						ListAutoCompleteResultDto.fromAllowedContactList())));
-			}
-			if(!userList.isEmpty() && authUser.isRestricted()){
-				result.addAll(ImmutableList.copyOf(
-						Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
 			}
 		}
 		else {

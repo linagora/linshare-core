@@ -276,8 +276,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		TimeUnitValueFunctionality functionality = functionalityService.getCollectedEmailsExpirationTimeFunctionality(owner.getDomain());
 		Date contactExpirationDate = functionality.getContactExpirationDate();
 		for (User recipient : sc.getShareRecipients()) {
-			logger.debug("la liste des share recipients {}", sc.getShareRecipients());
-			logger.debug("Un élement de liste des share recipients {}", sc.getShareRecipients());
 			Set<ShareEntry> shares = Sets.newHashSet();
 			String contactListUuid = null;
 			String contactListName = null;
@@ -286,10 +284,10 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				if (contactList != null) {
 					contactListUuid = contactList.getUuid();
 					contactListName = contactList.getIdentifier();
-					logger.debug("Partage créé avec liste de contacts: uuid={}, nom={}, destinataire={}",
+					logger.debug("Share created with contact list: uuid={}, name={}, recipient={}",
 							contactListUuid, contactListName, recipient.getMail());
 				} else {
-					logger.warn("Aucune liste de contacts trouvée pour le destinataire: {}", recipient.getMail());
+					logger.warn("No contact list found for recipient: {}", recipient.getMail());
 				}
 			}
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
@@ -298,7 +296,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				updateGuestExpiryDate(recipient);
 				if (contactListUuid != null) {
 					createShare.setContactListUuid(contactListUuid);
-					logger.debug("UUID de liste associé au partage: {}", contactListUuid);
+					logger.debug("Contact list UUID associated with share: {}", contactListUuid);
 				}
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
@@ -309,7 +307,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				if (contactListUuid != null) {
 					log.setContactListUuid(contactListUuid);
 					log.setContactListName(contactListName);
-					logger.debug("Log d'audit créé avec liste: uuid={}, nom={}", contactListUuid, contactListName);
+					logger.debug("Audit log created with list: uuid={}, name={}", contactListUuid, contactListName);
 				}
 				log.addRelatedAccounts(recipientUuid);
 				sc.addLog(log);

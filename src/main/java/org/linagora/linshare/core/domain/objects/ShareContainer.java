@@ -356,22 +356,22 @@ public class ShareContainer {
 		}
 	}
 
+	public boolean isRecipientAllowed(User user) {
+		if (!restrictedMode()) {
+			return true;
+		}
+		if (user.isGuest()) {
+			return allowedRecipients.containsKey(user.getLsUuid());
+		}
+		return true;
+	}
+
 	public void addShareRecipient(final User user) throws BusinessException {
 		Validate.notNull(user, "user must not be null.");
-		if (restrictedMode()) {
-			// In restricted mode, the current user is only allowed to create share with internals and guests.
-			Recipient recipient = allowedRecipients.get(user.getLsUuid());
-			if (recipient == null) {
-				boolean isMailAuthorized = allowedRecipients.values().stream()
-						.anyMatch(r -> r.getMail().equals(user.getMail()));
-				// The current user is not an allowed recipient.
-				if (!isMailAuthorized) {
-					throw new BusinessException(BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN,
-							"You are not authorized to create anonymous share entries.");
-				}
-			}
+		if (!isRecipientAllowed(user)) {
+			throw new BusinessException(BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN,
+					"You are not authorized to create anonymous share entries.");
 		}
-
 		this.shareRecipients.add(user);
 	}
 
