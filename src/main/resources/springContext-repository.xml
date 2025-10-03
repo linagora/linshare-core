@@ -86,7 +86,7 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="allowedContactListRepository" class="org.linagora.linshare.core.repository.hibernate.AccountContactListsRepositoryImpl ">
+	<bean name="accountContactListsRepository" class="org.linagora.linshare.core.repository.hibernate.AccountContactListsRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 

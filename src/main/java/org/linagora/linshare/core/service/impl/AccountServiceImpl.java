@@ -44,19 +44,16 @@ public class AccountServiceImpl extends GenericServiceImpl<Account,User> impleme
 	
 	private final AccountRepository<Account> accountRepository;
 	private final AccountContactListsRepository accountContactListRepository;
-	private final GuestBusinessService guestBusinessService;
 	private final MailingListBusinessService mailingListBusinessService;
     
 	public AccountServiceImpl(AccountRepository<Account> accountRepository,
 			 SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			 UserResourceAccessControl rac,
 			AccountContactListsRepository accountContactListRepository,
-			GuestBusinessService guestBusinessService,
 			MailingListBusinessService mailingListBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.accountRepository = accountRepository;
 		this.accountContactListRepository = accountContactListRepository;
-		this.guestBusinessService = guestBusinessService;
 		this.mailingListBusinessService = mailingListBusinessService;
 	}
 

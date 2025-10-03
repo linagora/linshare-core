@@ -16,6 +16,7 @@
 package org.linagora.linshare.business.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.linagora.linshare.core.domain.constants.LinShareTestConstants.GUEST_DOMAIN;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -53,7 +54,20 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.linagora.linshare.core.business.service.ModeratorBusinessService;
 import org.linagora.linshare.core.business.service.impl.MailingListBusinessServiceImpl;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
-import org.linagora.linshare.core.domain.entities.*;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Moderator;
+import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.GuestDomain;
+import org.linagora.linshare.core.domain.entities.SubDomain;
+import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
+
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -218,6 +232,7 @@ class ContactListBusinessServiceTest {
         verify(this.accountContactListsRepository, times(2)).create(any(AccountContactLists.class));
         verify(this.accountContactListsRepository, never()).delete(any(AccountContactLists.class));
     }
+
     /**
      * Tests update scenario with partial list changes.
      * Verifies:
@@ -271,9 +286,10 @@ class ContactListBusinessServiceTest {
      */
     @Test
     void updateAccountContactLists_WhenNullContactLists_ShouldProcessEmptyList() {
-        this.mailingListBusinessService.updateAccountContactLists(guest, null, null);
-        verify(accountContactListsRepository, never()).create(any());
-        verify(accountContactListsRepository, never()).delete(any());
+        final List<ContactList> emptyList = Collections.emptyList();
+        this.mailingListBusinessService.updateAccountContactLists(guest, emptyList, null);
+        verify(this.accountContactListsRepository, never()).create(any());
+        verify(this.accountContactListsRepository, never()).delete(any());
     }
 
     /**
@@ -286,7 +302,7 @@ class ContactListBusinessServiceTest {
         final AccountContactLists link = new AccountContactLists(guest, contact);
 
         when(this.accountContactListsRepository.findByAccount(guest)).thenReturn(List.of(link));
-        Map<String, Boolean> permissions = new HashMap<>();
+        final Map<String, Boolean> permissions = new HashMap<>();
         permissions.put(contact.getUuid(), true);
 
         this.mailingListBusinessService.updateAccountContactLists(guest, List.of(contact), permissions);
@@ -314,7 +330,7 @@ class ContactListBusinessServiceTest {
         assertEquals(BusinessErrorCode.FAILED_DELETE_ACCOUNT_CONTACT_LISTS, exception.getErrorCode());
         assertTrue(exception.getMessage().contains("BUG !!!"));
 
-        assertTrue(exception.getCause() instanceof IllegalArgumentException);
+		assertInstanceOf(IllegalArgumentException.class, exception.getCause());
         assertEquals("DB error", exception.getCause().getMessage());
     }
 
@@ -607,9 +623,11 @@ class ContactListBusinessServiceTest {
         final String uuid = UUID.randomUUID().toString();
         when(this.mailingListRepository.findByUuid(uuid)).thenReturn(null);
 
-        assertThrows(RuntimeException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             this.mailingListBusinessService.findByAccountAndContactListUuids(this.owner, this.guest, List.of(uuid));
         });
+        assertTrue(exception.getCause() instanceof BusinessException);
+        assertEquals("The current mailing list do not exist : " + uuid, exception.getCause().getMessage());
     }
 
     /**
@@ -633,8 +651,11 @@ class ContactListBusinessServiceTest {
         permissions.put(contactList.getUuid(), permissionValue);
 
         final Functionality functionality = mock(Functionality.class);
+        final Policy activationPolicy = mock(Policy.class);
         final Policy delegationPolicy = mock(Policy.class);
 
+        when(activationPolicy.getStatus()).thenReturn(true);
+        when(functionality.getActivationPolicy()).thenReturn(activationPolicy);
         when(functionality.getDelegationPolicy()).thenReturn(delegationPolicy);
         when(delegationPolicy.getStatus()).thenReturn(delegationPolicyStatus);
         when(this.functionalityReadOnlyService.getCanHideMembersToGuest(any(AbstractDomain.class))).thenReturn(functionality);
@@ -656,7 +677,7 @@ class ContactListBusinessServiceTest {
         return Stream.of(
                 Arguments.of("Delegation enabled, permission true", true, true, null, true),
                 Arguments.of("Delegation enabled, permission false", true, false, null, false),
-                Arguments.of("Delegation enabled, permission null", true, null, null, true),
+                Arguments.of("Delegation enabled, permission null", true, true, null, true),
                 Arguments.of("Delegation disabled, permission true", false, true, BusinessException.class, null),
                 Arguments.of("Delegation disabled, permission false", false, false, null, false),
                 Arguments.of("Delegation disabled, permission null", false, null, BusinessException.class, null)
@@ -670,7 +691,8 @@ class ContactListBusinessServiceTest {
     @Test
     void updateAccountContactLists_WhenHideMembersFeatureDisabled_ShouldThrowException() {
         final ContactList contact = createContactList("test", "Test", owner, topDomain);
-
+        final Map<String, Boolean> permissions = new HashMap<>();
+        permissions.put(contact.getUuid(), true);
         final Functionality functionality = mock(Functionality.class);
         final Policy activationPolicy = mock(Policy.class);
         when(activationPolicy.getStatus()).thenReturn(false);
@@ -678,7 +700,7 @@ class ContactListBusinessServiceTest {
         when(this.functionalityReadOnlyService.getCanHideMembersToGuest(any(AbstractDomain.class))).thenReturn(functionality);
 
         BusinessException exception = assertThrows(BusinessException.class, () -> {
-            this.mailingListBusinessService.updateAccountContactLists(guest, List.of(contact), null);
+            this.mailingListBusinessService.updateAccountContactLists(guest, List.of(contact), permissions);
         });
 
         assertEquals(BusinessErrorCode.FUNCTIONALITY_GUESTS__HIDE_MEMBERS_DISABLED, exception.getErrorCode());
@@ -719,5 +741,30 @@ class ContactListBusinessServiceTest {
         });
 
         assertEquals(BusinessErrorCode.GUEST_INVALID_INPUT, exception.getErrorCode());
+    }
+
+    /**
+     * Tests that an IllegalStateException is thrown when the GUESTS__HIDE_MEMBERS functionality is disabled.
+     */
+    @Test
+    void determineCanViewPermissionForCreate_WhenHideMembersFunctionalityDisabled_ShouldThrowIllegalStateException() {
+        final ContactList contactList = new ContactList();
+        contactList.setUuid(UUID.randomUUID().toString());
+        contactList.setIdentifier("test-list");
+        contactList.setOwner(owner);
+
+        final Map<String, Boolean> permissions = new HashMap<>();
+        permissions.put(contactList.getUuid(), true);
+        final Functionality functionality = mock(Functionality.class);
+        final Policy activationPolicy = mock(Policy.class);
+        when(activationPolicy.getStatus()).thenReturn(false);
+        when(functionality.getActivationPolicy()).thenReturn(activationPolicy);
+        when(functionalityReadOnlyService.getCanHideMembersToGuest(any(AbstractDomain.class))).thenReturn(functionality);
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+            mailingListBusinessService.determineCanViewPermissionForCreate(contactList, permissions);
+        });
+
+        assertEquals("This method should not be called when GUESTS__HIDE_MEMBERS is disabled", exception.getMessage());
     }
 }

@@ -84,7 +84,6 @@ public class GuestDto extends AccountDto {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@Schema(description = "My moderator role for this guest.", accessMode = AccessMode.READ_ONLY)
 	protected GuestModeratorRole myRole;
-	private Set<AccountContactLists> accountContactLists;
 
 	@JsonIgnore
 	private boolean restrictedContact;

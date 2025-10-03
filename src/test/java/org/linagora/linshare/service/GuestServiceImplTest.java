@@ -24,8 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -237,7 +239,6 @@ public class GuestServiceImplTest {
 		Functionality functionality = functionalityService.find(
 				root, LoadingServiceTestDatas.sqlSubDomain,
 				FunctionalityNames.GUESTS.toString());
-		functionality.getActivationPolicy().setStatus(true);
 		functionalityService.update(root, LoadingServiceTestDatas.sqlSubDomain,
 				functionality);
 		guest = new Guest("Guest", "Doe", "guest1@linshare.org");
@@ -551,7 +552,15 @@ public class GuestServiceImplTest {
 		List<String> restrictedContactList = Lists.newArrayList();
 		restrictedContactList.add(restrictedContact1.getUuid());
 		restrictedContactList.add(restrictedContact2.getUuid());
-		guest = guestService.create(owner1, owner1, guest, null, restrictedContactList, null);
+		final Map<String, Boolean> permissions = new HashMap<>();
+		permissions.put(restrictedContact1.getUuid(), false);
+		permissions.put(restrictedContact2.getUuid(), false);
+		Functionality functionality_contact_list = functionalityReadOnlyService.getCanAssignContactListToGuest(
+				owner1.getDomain());
+		Functionality functionality_hide_members = functionalityReadOnlyService.getCanHideMembersToGuest(owner1.getDomain());
+		functionality_contact_list.getActivationPolicy().setStatus(true);
+		functionality_hide_members.getActivationPolicy().setStatus(true);
+		guest = guestService.create(owner1, owner1, guest, null, restrictedContactList, permissions);
 		assertTrue(guest.isGuest());
 		assertEquals(2, guest.getRestrictedContactLists().size());
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -565,6 +574,9 @@ public class GuestServiceImplTest {
 		guest.setCmisLocale("en");
 		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guest.setDomain(guestDomain);
+		Functionality functionality_contact_list = functionalityReadOnlyService.getCanAssignContactListToGuest(
+				owner1.getDomain());
+		functionality_contact_list.getActivationPolicy().setStatus(true);
 		// Initialize restricted contact list
 		List<String> restrictedContactList = Lists.newArrayList(restrictedContact1.getUuid(), restrictedContact2.getUuid());
 		guest = guestService.create(owner1, owner1, guest, null, restrictedContactList, null);
@@ -679,6 +691,10 @@ public class GuestServiceImplTest {
 		List<String> restrictedContactList = Lists.newArrayList();
 		restrictedContactList.add(restrictedContact1.getUuid());
 		restrictedContactList.add(restrictedContact2.getUuid());
+		Functionality functionality_contact_list = functionalityReadOnlyService.getCanAssignContactListToGuest(
+				owner1.getDomain());
+		functionality_contact_list.getActivationPolicy().setStatus(true);
+
 		guest = guestService.create(owner1, owner1, guest, null,restrictedContactList, null );
 		assertEquals(2, guest.getRestrictedContactLists().size());
 

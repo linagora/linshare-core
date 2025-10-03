@@ -421,10 +421,9 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void updateAccountContactLists(@Nonnull final Guest update, @Nullable final List<ContactList> contactLists,
+	public void updateAccountContactLists(@Nonnull final Guest update, @Nonnull final List<ContactList> contactLists,
 										  @Nullable final Map<String, Boolean> contactListViewPermissions) {
-		final List<ContactList> nonNullContactLists = contactLists != null ? contactLists : Collections.emptyList();
-		final Set<ContactList> newContactLists = new HashSet<>(nonNullContactLists);
+		final Set<ContactList> newContactLists = new HashSet<>(contactLists);
 		final List<AccountContactLists> existingContactLists = accountContactListsRepository.findByAccount(update);
 		final Set<ContactList> existingContacts = existingContactLists.stream()
 				.map(AccountContactLists::getContactList)
@@ -477,15 +476,13 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 				}
 			}
 		});
-
+		update.getRestrictedContactLists().clear();
+		final List<AccountContactLists> updatedContactLists = this.accountContactListsRepository.findByAccount(update);
+		update.getRestrictedContactLists().addAll(updatedContactLists);
 	}
 
 	public Boolean determineCanViewPermissionForCreate(final @Nonnull ContactList contactList,
 													   final @Nullable Map<String, Boolean> contactListViewPermissions) {
-
-		if (!hasRightToHideMembersToGuest(contactList.getOwner().getDomain())) {
-			throw new IllegalStateException("This method should not be called when GUESTS__HIDE_MEMBERS is disabled");
-		}
 
 		if (contactList.getOwner() == null) {
 			throw new BusinessException(
@@ -493,6 +490,11 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 					"ContactList has no owner: " + contactList.getUuid()
 			);
 		}
+
+		if (!hasRightToHideMembersToGuest(contactList.getOwner().getDomain())) {
+			throw new IllegalStateException("This method should not be called when GUESTS__HIDE_MEMBERS is disabled");
+		}
+
 		final AbstractDomain domain = contactList.getOwner().getDomain();
 		if (contactListViewPermissions == null ) {
 			throw new BusinessException(BusinessErrorCode.GUEST_INVALID_INPUT,

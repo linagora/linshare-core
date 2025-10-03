@@ -199,8 +199,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 				}
 			}
 		}
-		else {
-			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED,
+		else if (allowedContacts != null) {
+							throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED,
 					"GUESTS__RESTRICTED feature is disabled");
 		}
 		if (hasRightToAssignContactListToGuest(domain)) {
@@ -227,7 +227,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 					}));
 			guestCreated.addContactList(accountContactListToAdd);
 		}
-		else {
+		else if (contactLists != null && !contactLists.isEmpty()) {
 			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED,
 					"GUESTS__CONTACT_LISTS feature is disabled");
 		}
@@ -288,18 +288,17 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		entity.setExpirationDate(guest.getExpirationDate());
 		final Guest update = this.guestRepository.update(entity);
 		// Management of authorized contacts
-		if(hasRightToAssignContactToGuest(entity.getDomain())) {
+		if (hasRightToAssignContactToGuest(entity.getDomain())) {
 			updateAllowedContacts(update, guest, wasRestricted, allowedContacts);
 		}
-		else{
+		if (allowedContacts != null && !hasRightToAssignContactToGuest(entity.getDomain())) {
 			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED,
 					"GUESTS__RESTRICTED feature is disabled");
 		}
-		// Management of authorized contact list
-		if(hasRightToAssignContactListToGuest(entity.getDomain())) {
+		if (hasRightToAssignContactListToGuest(entity.getDomain())) {
 		this.mailingListBusinessServiceImpl.updateAccountContactLists(update, contactLists != null ? contactLists : Collections.emptyList(), contactListViewPermissions);
 		}
-		else{
+		if (contactLists != null && !contactLists.isEmpty() && !hasRightToAssignContactListToGuest(entity.getDomain())) {
 			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED,
 					"GUESTS__CONTACT_LISTS feature is disabled");
 		}

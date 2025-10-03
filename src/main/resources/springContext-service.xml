@@ -166,8 +166,8 @@
 	<bean name="contactListService" class="org.linagora.linshare.core.service.impl.ContactListServiceImpl">
 		<constructor-arg ref="mailingListBusinessService" />
 		<constructor-arg ref="userService" />
-		<constructor-arg ref="mailingListResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="mailingListResourceAccessControl" />
 		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="mailingListContactRepository" />
 	</bean>

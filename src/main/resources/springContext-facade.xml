@@ -15,5 +15,6 @@
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="oidcUserProviderRepository" />
+		<constructor-arg ref="guestService" />
 	</bean>
 </beans>

@@ -318,7 +318,7 @@ public class GuestFacadeImpl extends GenericFacadeImpl implements
 			throws BusinessException {
 		Validate.notNull(uuid,"uuid is required");
 		List<AccountContactLists> accountContactLists = accountService.findAccountContactListsByAccount(uuid);
-		logger.info("allowed contact list guest",accountContactLists);
+		logger.debug("Found {} contact lists for guest '{}'", accountContactLists.size(), uuid);
 		return new ArrayList<>(Lists.transform(accountContactLists, AccountContactListDto.toDto()));
 	}
 

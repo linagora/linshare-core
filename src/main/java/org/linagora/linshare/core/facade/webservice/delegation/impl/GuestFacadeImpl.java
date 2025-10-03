@@ -51,6 +51,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import javax.annotation.Nonnull;
+
 public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements GuestFacade {
 
 	private final GuestService guestService;
@@ -283,7 +285,7 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements Gues
 	}
 
 	@Override
-	public List<AccountContactListDto> findContactListsByGuest(Version version, String uuid)
+	public @Nonnull List<AccountContactListDto> findContactListsByGuest(@Nonnull Version version, @Nonnull String uuid)
 			throws BusinessException {
 		Validate.notNull(uuid, "uuid is required");
 		List<AccountContactLists> accountContactLists = accountService.findAccountContactListsByAccount(uuid);

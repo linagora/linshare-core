@@ -51,8 +51,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @Disabled
 @ExtendWith(SpringExtension.class)
-@Sql({
-	})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",

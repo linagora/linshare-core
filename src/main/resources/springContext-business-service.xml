@@ -90,7 +90,9 @@
 		<constructor-arg ref="mailingListRepository" />
 		<constructor-arg ref="mailingListContactRepository" />
 		<constructor-arg ref="domainPermissionBusinessService" />
-		<constructor-arg ref="allowedContactListRepository" />
+		<constructor-arg ref="accountContactListsRepository" />
+		<constructor-arg ref="moderatorBusinessService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
 	<bean id="mailConfigBusinessService" class="org.linagora.linshare.core.business.service.impl.MailConfigBusinessServiceImpl">
@@ -285,12 +287,11 @@
 		class="org.linagora.linshare.core.service.impl.TimeStampingServiceImpl">
 	</bean>
 	<!--  Ugly workaround -->
-	<bean name="accountService"
-		class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
+	<bean name="accountService" class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="userResourceAccessControl" />
-		<constructor-arg ref="allowedContactListRepository" />
+		<constructor-arg ref="accountContactListsRepository" />
 		<constructor-arg ref="mailingListBusinessService" />
 
 	</bean>

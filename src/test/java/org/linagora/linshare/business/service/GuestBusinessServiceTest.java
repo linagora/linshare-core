@@ -12,6 +12,7 @@
  */
 package org.linagora.linshare.business.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -413,7 +414,7 @@ class GuestBusinessServiceTest {
 		when(this.passwordService.generatePassword()).thenReturn("pwd");
 		when(this.passwordService.encode("pwd")).thenReturn("hashed");
 
-		final Guest created = this.guestBusinessService.create(this.user, this.guest, this.domainGuest, null, null, null);
+		final Guest created = this.guestBusinessService.create(this.user, this.guest, this.domainGuest, null, new ArrayList<>(), null);
 		assertEquals("guest@example.com", created.getMail());
 	}
 
@@ -433,7 +434,7 @@ class GuestBusinessServiceTest {
 		when(this.passwordService.generatePassword()).thenReturn("pwd");
 		when(this.passwordService.encode(anyString())).thenReturn("hashed");
 
-		this.guestBusinessService.create(this.user, this.guest, this.domainGuest, allowedContacts, null, null);
+		this.guestBusinessService.create(this.user, this.guest, this.domainGuest, allowedContacts, new ArrayList<>(), null);
 
 		verify(this.allowedContactRepository, times(2)).create(any(AllowedContact.class));
 		assertEquals(2, this.guest.getRestrictedContacts().size());
@@ -469,7 +470,7 @@ class GuestBusinessServiceTest {
 		when(this.passwordService.encode(rawPassword)).thenReturn(hashedPassword);
 		when(this.guestRepository.create(any(Guest.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-		final Guest created = this.guestBusinessService.create(this.user, this.guest, this.domainGuest, null, null, null);
+		final Guest created = this.guestBusinessService.create(this.user, this.guest, this.domainGuest, null, new ArrayList<>(), null);
 
 		assertEquals(hashedPassword, created.getPassword());
 		verify(this.passwordService).generatePassword();
@@ -537,7 +538,7 @@ class GuestBusinessServiceTest {
 			return ac;
 		}).when(this.allowedContactRepository).create(any(AllowedContact.class));
 
-		this.guestBusinessService.update(null, basicGuest, basicGuest, List.of(contactUser), null, null);
+		this.guestBusinessService.update(null, basicGuest, basicGuest, List.of(contactUser), new ArrayList<>(), null);
 
 		when(this.guestRepository.findByDomainAndMail(this.domainGuest, "restricted@linshare.org")).thenReturn(basicGuest);
 
@@ -744,6 +745,133 @@ class GuestBusinessServiceTest {
 		});
 
 		assertEquals(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED, exception.getErrorCode());
+	}
+
+	/**
+	 * Tests that creating a guest with allowed contacts when the restricted guest feature is disabled
+	 * throws a BusinessException with the appropriate error code.
+	 */
+	@Test
+	void createGuest_WithAllowedContacts_WhenRestrictedFeatureDisabled_ThrowsException() {
+		final Functionality restrictedFunctionality = createDisabledFunctionality();
+		when(functionalityReadOnlyService.getRestrictedGuestFunctionality(any(AbstractDomain.class)))
+				.thenReturn(restrictedFunctionality);
+
+		final List<User> allowedContacts = List.of(new Internal("c1", "c1", "c1@test.com", "cid1"));
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
+			this.guestBusinessService.create(this.user, this.guest, this.domainGuest, allowedContacts, null, null);
+		});
+
+		assertEquals(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED, exception.getErrorCode());
+		assertTrue(exception.getMessage().contains("GUESTS__RESTRICTED feature is disabled"));
+	}
+
+	/**
+	 * Tests that creating a guest with contact lists when the contact list feature is disabled
+	 * throws a BusinessException with the appropriate error code.
+	 */
+	@Test
+	void createGuest_WithContactLists_WhenContactListFeatureDisabled_ThrowsException() {
+		final Functionality contactListFunctionality = createDisabledFunctionality();
+		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
+				.thenReturn(contactListFunctionality);
+
+		final List<ContactList> contactLists = List.of(this.contactList1);
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
+			this.guestBusinessService.create(this.user, this.guest, this.domainGuest, null, contactLists, null);
+		});
+
+		assertEquals(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED, exception.getErrorCode());
+		assertTrue(exception.getMessage().contains("GUESTS__CONTACT_LISTS feature is disabled"));
+	}
+
+	/**
+	 * Tests that creating a guest without any contacts or contact lists when features are disabled
+	 * should succeed (no exception thrown).
+	 */
+	@Test
+	void createGuest_WithoutContactsOrLists_WhenFeaturesDisabled_Succeeds() {
+		final Functionality restrictedFunctionality = createDisabledFunctionality();
+		final Functionality contactListFunctionality = createDisabledFunctionality();
+
+		when(functionalityReadOnlyService.getRestrictedGuestFunctionality(any(AbstractDomain.class)))
+				.thenReturn(restrictedFunctionality);
+		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
+				.thenReturn(contactListFunctionality);
+
+		when(this.guestRepository.create(any(Guest.class))).thenReturn(this.guest);
+		assertDoesNotThrow(() -> {
+			this.guestBusinessService.create(this.user, this.guest, this.domainGuest, null, null, null);
+		});
+	}
+
+	/**
+	 * Tests that updating a guest with allowed contacts when the restricted guest feature is disabled
+	 * throws a BusinessException with the appropriate error code.
+	 */
+	@Test
+	void updateGuest_WithAllowedContacts_WhenRestrictedFeatureDisabled_ThrowsException() {
+		final Functionality restrictedFunctionality = createDisabledFunctionality();
+		when(functionalityReadOnlyService.getRestrictedGuestFunctionality(any(AbstractDomain.class)))
+				.thenReturn(restrictedFunctionality);
+
+		final List<User> allowedContacts = List.of(new Internal("c1", "c1", "c1@test.com", "cid1"));
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
+			this.guestBusinessService.update(this.user, this.guest, this.guest, allowedContacts, null, null);
+		});
+
+		assertEquals(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED, exception.getErrorCode());
+		assertTrue(exception.getMessage().contains("GUESTS__RESTRICTED feature is disabled"));
+	}
+
+	/**
+	 * Tests that updating a guest with contact lists when the contact list feature is disabled
+	 * throws a BusinessException with the appropriate error code.
+	 */
+	@Test
+	void updateGuest_WithContactLists_WhenContactListFeatureDisabled_ThrowsException() {
+		final Functionality contactListFunctionality = createDisabledFunctionality();
+		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
+				.thenReturn(contactListFunctionality);
+
+		final List<ContactList> contactLists = List.of(this.contactList1);
+		final BusinessException exception = assertThrows(BusinessException.class, () -> {
+			this.guestBusinessService.update(this.user, this.guest, this.guest, null, contactLists, null);
+		});
+
+		assertEquals(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED, exception.getErrorCode());
+		assertTrue(exception.getMessage().contains("GUESTS__CONTACT_LISTS feature is disabled"));
+	}
+
+	/**
+	 * Tests that updating a guest with empty contact lists when the contact list feature is disabled
+	 * should succeed (no exception thrown).
+	 */
+	@Test
+	void updateGuest_WithEmptyContactLists_WhenContactListFeatureDisabled_Succeeds() {
+		final Functionality contactListFunctionality = createDisabledFunctionality();
+		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
+				.thenReturn(contactListFunctionality);
+
+		final List<ContactList> emptyContactLists = Collections.emptyList();
+		assertDoesNotThrow(() -> {
+			this.guestBusinessService.update(this.user, this.guest, this.guest, null, emptyContactLists, null);
+		});
+	}
+
+	/**
+	 * Tests that updating a guest with null contact lists when the contact list feature is disabled
+	 * should succeed (no exception thrown).
+	 */
+	@Test
+	void updateGuest_WithNullContactLists_WhenContactListFeatureDisabled_Succeeds() {
+		final Functionality contactListFunctionality = createDisabledFunctionality();
+		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
+				.thenReturn(contactListFunctionality);
+
+		assertDoesNotThrow(() -> {
+			this.guestBusinessService.update(this.user, this.guest, this.guest, null, null, null);
+		});
 	}
 
 	private Functionality createDisabledFunctionality() {
