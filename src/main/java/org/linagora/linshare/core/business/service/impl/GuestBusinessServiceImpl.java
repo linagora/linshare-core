@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -263,8 +264,11 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	 * contact lists are properly managed based on the updated restrictions.
 	 *
 	 * @param actor                The {@link Account} performing the update operation.
-	 * @param entity               The {@link Guest} entity to be updated. It contains the existing state
-	 *                             nd will be modified with the new values.
+	 * @param entity               The existing {@link Guest} entity retrieved from the database.
+	 *                             It represents the current persisted state and will be updated
+	 *                             with the new values provided in the {@code guest} parameter.
+	 * @param guest                The {@link Guest} object containing the new values to apply
+	 *                             to the existing entity.
 	 * @param allowedContacts      A list of {@link User} objects representing the new authorized
 	 *                             contacts for the guest. Can be empty or null if not restricted.
 	 * @param contactLists   A list of {@link ContactList} objects representing the new
@@ -291,7 +295,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		if (hasRightToAssignContactToGuest(entity.getDomain())) {
 			updateAllowedContacts(update, guest, wasRestricted, allowedContacts);
 		}
-		if (allowedContacts != null && !hasRightToAssignContactToGuest(entity.getDomain())) {
+		else if (allowedContacts != null && !allowedContacts.isEmpty()) {
 			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED,
 					"GUESTS__RESTRICTED feature is disabled");
 		}
@@ -302,8 +306,13 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 			throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED,
 					"GUESTS__CONTACT_LISTS feature is disabled");
 		}
-		logger.info("restricted contact list: {}", update.getRestrictedContactLists());
-		logger.info("update: {}", update);
+		if (logger.isDebugEnabled()) {
+			logger.debug("restricted contact lists: {}", update.getRestrictedContactLists().stream()
+									.map(accountContactList -> String.format("id=%s, name='%s'", accountContactList.getId(),
+											accountContactList.getContactList().getIdentifier()))
+									.collect(Collectors.joining(", ")));
+			logger.debug("update: {}", update);
+		}
 		return update;
 	}
 

@@ -12,80 +12,83 @@
  */
 package org.linagora.linshare.business.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.linagora.linshare.core.domain.constants.LinShareTestConstants.GUEST_DOMAIN;
 import static org.linagora.linshare.core.domain.constants.LinShareTestConstants.TOP_DOMAIN;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.business.service.PasswordService;
+import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
+import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl;
 import org.linagora.linshare.core.business.service.impl.MailingListBusinessServiceImpl;
 import org.linagora.linshare.core.business.service.impl.UploadRequestGroupBusinessServiceImpl;
-import org.linagora.linshare.core.business.service.EntryBusinessService;
-import org.linagora.linshare.core.business.service.ShareEntryGroupBusinessService;
-import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
-import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
-import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
-import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
-
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.ContactList;
-import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.Root;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Policy;
-import org.linagora.linshare.core.domain.entities.AllowedContact;
-
+import org.linagora.linshare.core.domain.entities.Root;
+import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountContactListsRepository;
+import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
-import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.RootUserRepository;
-import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
-
+import org.linagora.linshare.core.repository.RootUserRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.FunctionalityService;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -106,6 +109,53 @@ import org.springframework.test.context.jdbc.Sql;
 class GuestBusinessServiceTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GuestBusinessServiceTest.class);
+	private static final String CONTACT_LIST_1_ID = "cl1";
+	private static final String CONTACT_LIST_2_ID = "cl2";
+	private static final String CONTACT_LIST_3_ID = "cl3";
+
+	private static final String CONTACT_1_MAIL = "contact1@test.com";
+	private static final String CONTACT_1_FNAME = "Contact1";
+	private static final String CONTACT_1_LNAME = "One";
+	private static final String CONTACT_1_UID = "cid1";
+
+	private static final String CONTACT_2_MAIL = "contact2@test.com";
+	private static final String CONTACT_2_FNAME = "Contact2";
+	private static final String CONTACT_2_LNAME = "Two";
+	private static final String CONTACT_2_UID = "cid2";
+
+	private static final String CONTACT_3_MAIL = "contact3@test.com";
+	private static final String CONTACT_3_FNAME = "Contact3";
+	private static final String CONTACT_3_LNAME = "Three";
+	private static final String CONTACT_3_UID = "cid3";
+
+	private static final List<String> INITIAL_EMPTY = List.of();
+	private static final List<String> INITIAL_SINGLE_CONTACT_LIST = List.of(CONTACT_LIST_1_ID);
+	private static final List<String> INITIAL_MULTIPLE_CONTACT_LISTS = List.of(CONTACT_LIST_1_ID, CONTACT_LIST_2_ID);
+	private static final List<String> INITIAL_SINGLE_CONTACT = List.of(CONTACT_1_MAIL);
+	private static final List<String> INITIAL_MULTIPLE_CONTACTS = List.of(CONTACT_1_MAIL, CONTACT_2_MAIL);
+
+	private static final List<String> NEW_EMPTY = List.of();
+	private static final List<String> NEW_SINGLE_CONTACT_LIST = List.of(CONTACT_LIST_1_ID);
+	private static final List<String> NEW_MULTIPLE_CONTACT_LISTS = List.of(CONTACT_LIST_1_ID, CONTACT_LIST_2_ID);
+	private static final List<String> NEW_DIFFERENT_CONTACT_LISTS = List.of(CONTACT_LIST_2_ID, CONTACT_LIST_3_ID);
+	private static final List<String> NEW_SINGLE_CONTACT = List.of(CONTACT_1_MAIL);
+	private static final List<String> NEW_MULTIPLE_CONTACTS = List.of(CONTACT_1_MAIL, CONTACT_2_MAIL);
+	private static final List<String> NEW_EXTENDED_CONTACTS = List.of(CONTACT_1_MAIL, CONTACT_2_MAIL, CONTACT_3_MAIL);
+	private static final List<String> NEW_DIFFERENT_CONTACTS = List.of(CONTACT_3_MAIL);
+
+	private static final List<String> EXPECTED_EMPTY = List.of();
+	private static final List<String> EXPECTED_SINGLE_CONTACT_LIST = List.of(CONTACT_LIST_1_ID);
+	private static final List<String> EXPECTED_MULTIPLE_CONTACT_LISTS = List.of(CONTACT_LIST_1_ID, CONTACT_LIST_2_ID);
+	private static final List<String> EXPECTED_DIFFERENT_CONTACT_LISTS = List.of(CONTACT_LIST_2_ID, CONTACT_LIST_3_ID);
+	private static final List<String> EXPECTED_SINGLE_CONTACT = List.of(CONTACT_1_MAIL);
+	private static final List<String> EXPECTED_MULTIPLE_CONTACTS = List.of(CONTACT_1_MAIL, CONTACT_2_MAIL);
+	private static final List<String> EXPECTED_EXTENDED_CONTACTS = List.of(CONTACT_1_MAIL, CONTACT_2_MAIL, CONTACT_3_MAIL);
+	private static final List<String> EXPECTED_DIFFERENT_CONTACTS = List.of(CONTACT_3_MAIL);
+	private static final Map<String, User> CONTACT_MAP = Map.of(
+			CONTACT_1_MAIL, new Internal(CONTACT_1_FNAME, CONTACT_1_LNAME, CONTACT_1_MAIL, CONTACT_1_UID),
+			CONTACT_2_MAIL, new Internal(CONTACT_2_FNAME, CONTACT_2_LNAME, CONTACT_2_MAIL, CONTACT_2_UID),
+			CONTACT_3_MAIL, new Internal(CONTACT_3_FNAME, CONTACT_3_LNAME, CONTACT_3_MAIL, CONTACT_3_UID)
+	);
 
 	@Mock
 	private GuestRepository guestRepository;
@@ -202,9 +252,9 @@ class GuestBusinessServiceTest {
 
 		when(this.guestRepository.update(any(Guest.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-		Functionality assignContactListFunctionality = createEnabledFunctionality();
-		Functionality hideMembersFunctionality = createEnabledFunctionality();
-		Functionality restrictedGuestFunctionality = createEnabledFunctionality();
+		Functionality assignContactListFunctionality = createFunctionality(true);
+		Functionality hideMembersFunctionality = createFunctionality(true);
+		Functionality restrictedGuestFunctionality = createFunctionality(true);
 
 		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
 				.thenReturn(assignContactListFunctionality);
@@ -230,27 +280,6 @@ class GuestBusinessServiceTest {
 		when(passwordService.encode(anyString())).thenReturn("hashed");
 		when(guestRepository.create(any(Guest.class))).thenReturn(guest);
 
-	}
-
-	private Functionality createEnabledFunctionality() {
-		final Functionality functionality = mock(Functionality.class);
-		final Policy activationPolicy = createEnabledPolicy();
-		final Policy delegationPolcy = createEnabledDelegation();
-		when(functionality.getActivationPolicy()).thenReturn(activationPolicy);
-		when(functionality.getDelegationPolicy()).thenReturn(delegationPolcy);
-		return functionality;
-	}
-
-	private Policy createEnabledDelegation() {
-		final Policy policy = mock(Policy.class);
-		when(policy.getStatus()).thenReturn(true);
-		return policy;
-	}
-
-	private Policy createEnabledPolicy() {
-		final Policy policy = mock(Policy.class);
-		when(policy.getStatus()).thenReturn(true);
-		return policy;
 	}
 
 	/**
@@ -720,7 +749,7 @@ class GuestBusinessServiceTest {
 
 	@Test
 	void createRestrictedGuest_WhenFeatureDisabled_ThrowsException() {
-		final Functionality restrictedFunctionality = createDisabledFunctionality();
+		final Functionality restrictedFunctionality = createFunctionality(false);
 		when(functionalityReadOnlyService.getRestrictedGuestFunctionality(any(AbstractDomain.class)))
 				.thenReturn(restrictedFunctionality);
 
@@ -736,7 +765,7 @@ class GuestBusinessServiceTest {
 
 	@Test
 	void addContactLists_WhenFeatureDisabled_ThrowsException() {
-		final Functionality contactListFunctionality = createDisabledFunctionality();
+		final Functionality contactListFunctionality = createFunctionality(false);
 		when(this.functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
 				.thenReturn(contactListFunctionality);
 
@@ -753,7 +782,7 @@ class GuestBusinessServiceTest {
 	 */
 	@Test
 	void createGuest_WithAllowedContacts_WhenRestrictedFeatureDisabled_ThrowsException() {
-		final Functionality restrictedFunctionality = createDisabledFunctionality();
+		final Functionality restrictedFunctionality = createFunctionality(false);
 		when(functionalityReadOnlyService.getRestrictedGuestFunctionality(any(AbstractDomain.class)))
 				.thenReturn(restrictedFunctionality);
 
@@ -772,7 +801,7 @@ class GuestBusinessServiceTest {
 	 */
 	@Test
 	void createGuest_WithContactLists_WhenContactListFeatureDisabled_ThrowsException() {
-		final Functionality contactListFunctionality = createDisabledFunctionality();
+		final Functionality contactListFunctionality = createFunctionality(false);
 		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
 				.thenReturn(contactListFunctionality);
 
@@ -791,8 +820,8 @@ class GuestBusinessServiceTest {
 	 */
 	@Test
 	void createGuest_WithoutContactsOrLists_WhenFeaturesDisabled_Succeeds() {
-		final Functionality restrictedFunctionality = createDisabledFunctionality();
-		final Functionality contactListFunctionality = createDisabledFunctionality();
+		final Functionality restrictedFunctionality = createFunctionality(false);
+		final Functionality contactListFunctionality = createFunctionality(false);
 
 		when(functionalityReadOnlyService.getRestrictedGuestFunctionality(any(AbstractDomain.class)))
 				.thenReturn(restrictedFunctionality);
@@ -806,84 +835,392 @@ class GuestBusinessServiceTest {
 	}
 
 	/**
-	 * Tests that updating a guest with allowed contacts when the restricted guest feature is disabled
-	 * throws a BusinessException with the appropriate error code.
+	 * Parametrized tests for updating guests with existing contacts
 	 */
-	@Test
-	void updateGuest_WithAllowedContacts_WhenRestrictedFeatureDisabled_ThrowsException() {
-		final Functionality restrictedFunctionality = createDisabledFunctionality();
-		when(functionalityReadOnlyService.getRestrictedGuestFunctionality(any(AbstractDomain.class)))
-				.thenReturn(restrictedFunctionality);
+	@ParameterizedTest
+	@MethodSource("provideContactUpdateScenarios")
+	void update_contacts(
+			final @Nonnull String testName,
+			final @Nonnull List<String> initialContactMails,
+			final @Nonnull List<String> newContactMails,
+			boolean restrictedFunctionalityEnabled,
+			final @Nonnull List<String> expectedContactMails,
+			final @Nullable BusinessErrorCode expectedErrorCode) {
 
-		final List<User> allowedContacts = List.of(new Internal("c1", "c1", "c1@test.com", "cid1"));
-		final BusinessException exception = assertThrows(BusinessException.class, () -> {
-			this.guestBusinessService.update(this.user, this.guest, this.guest, allowedContacts, null, null);
-		});
+		final Functionality restrictedFunctionality = restrictedFunctionalityEnabled
+				? this.createFunctionality(true)
+				: this.createFunctionality(false);
 
-		assertEquals(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED, exception.getErrorCode());
-		assertTrue(exception.getMessage().contains("GUESTS__RESTRICTED feature is disabled"));
+		when(this.functionalityReadOnlyService.getRestrictedGuestFunctionality(any(AbstractDomain.class))).thenReturn(
+				restrictedFunctionality);
+
+		final Guest existingGuest = new Guest("Existing", "Guest", "existing@linshare.org");
+		existingGuest.setDomain(this.domainGuest);
+		boolean hasInitialContacts = !initialContactMails.isEmpty();
+		existingGuest.setRestricted(hasInitialContacts);
+
+		final Map<String, User> contactMap = CONTACT_MAP;
+		final Set<AllowedContact> initialAllowedContacts = new HashSet<>();
+		for (final String mail : initialContactMails) {
+			final User contact = contactMap.get(mail);
+			if (contact != null) {
+				final AllowedContact allowedContact = new AllowedContact(existingGuest, contact);
+				initialAllowedContacts.add(allowedContact);
+			}
+		}
+		if (!initialAllowedContacts.isEmpty()) {
+			existingGuest.addContacts(initialAllowedContacts);
+		}
+
+		final List<User> newContactsToAdd = new ArrayList<>();
+		for (final String mail : newContactMails) {
+			final User contact = contactMap.get(mail);
+			if (contact != null) {
+				newContactsToAdd.add(contact);
+			}
+		}
+
+		this.setupGuestUpdateMocks(existingGuest);
+
+		if (expectedErrorCode != null) {
+			final List<User> contactsToPass = newContactsToAdd.isEmpty() &&
+					!initialContactMails.isEmpty() ? Collections.emptyList() :
+					(newContactsToAdd.isEmpty() ? null : newContactsToAdd);
+			final BusinessException exception = assertThrows(BusinessException.class, () -> {
+				this.guestBusinessService.update(this.user, existingGuest, existingGuest,
+						contactsToPass,
+						null,
+						null);
+			});
+			assertEquals(expectedErrorCode, exception.getErrorCode(),
+					String.format("Error code mismatch in test '%s'", testName));
+		}
+		else {
+			final List<User> contactsToPass = newContactsToAdd.isEmpty() && !initialContactMails.isEmpty()
+					? Collections.emptyList()
+					: (newContactsToAdd.isEmpty() ? null : newContactsToAdd);
+			this.guestBusinessService.update(this.user, existingGuest, existingGuest, contactsToPass, null, null);
+			final Set<AllowedContact> actualContacts = existingGuest.getRestrictedContacts();
+			assertThat(actualContacts).extracting(ac -> ac.getContact().getMail())
+					.containsExactlyInAnyOrderElementsOf(expectedContactMails);
+			verify(this.guestRepository).update(existingGuest);
+			if (contactsToPass != null && !contactsToPass.isEmpty()) {
+				verify(this.allowedContactRepository).purge(existingGuest);
+				verify(this.allowedContactRepository, times(contactsToPass.size())).create(any(AllowedContact.class));
+			} else if (contactsToPass != null && contactsToPass.isEmpty() && !initialContactMails.isEmpty()) {
+				verify(this.allowedContactRepository).purge(existingGuest);
+			}
+		}
+	}
+
+	private static Stream<Arguments> provideContactUpdateScenarios() {
+		return Stream.of(
+				Arguments.of("Add contacts to guest without initial contacts",
+						INITIAL_EMPTY, NEW_MULTIPLE_CONTACTS, true, EXPECTED_MULTIPLE_CONTACTS, null),
+
+				Arguments.of("Add contacts to guest with existing contacts",
+						INITIAL_SINGLE_CONTACT, NEW_EXTENDED_CONTACTS, true, EXPECTED_EXTENDED_CONTACTS, null),
+
+				Arguments.of("Add contacts when restricted functionality disabled - feature disabled",
+						INITIAL_EMPTY, NEW_SINGLE_CONTACT, false, EXPECTED_EMPTY, BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED),
+
+				Arguments.of("Remove some contacts",
+						INITIAL_MULTIPLE_CONTACTS, NEW_SINGLE_CONTACT, true, EXPECTED_SINGLE_CONTACT, null),
+
+				Arguments.of("Remove all contacts from restricted guest",
+						INITIAL_MULTIPLE_CONTACTS, NEW_EMPTY, true, EXPECTED_EMPTY, BusinessErrorCode.GUEST_INVALID_INPUT),
+
+				Arguments.of("Remove all contacts from non-restricted guest",
+						INITIAL_EMPTY, NEW_EMPTY, true, EXPECTED_EMPTY, null),
+
+				Arguments.of("Replace contacts when restricted functionality disabled - feature disabled",
+						INITIAL_MULTIPLE_CONTACTS, NEW_DIFFERENT_CONTACTS, false, EXPECTED_MULTIPLE_CONTACTS, BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED),
+
+				Arguments.of("Replace all existing contacts with new ones",
+						INITIAL_MULTIPLE_CONTACTS, NEW_DIFFERENT_CONTACTS, true, EXPECTED_DIFFERENT_CONTACTS, null),
+
+				Arguments.of("Add contacts when restricted functionality disabled",
+						INITIAL_EMPTY, NEW_SINGLE_CONTACT, false, EXPECTED_EMPTY, BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACTS_DISABLED),
+
+				Arguments.of("Update with null contacts when functionality disabled - should succeed",
+						INITIAL_EMPTY, INITIAL_EMPTY, false, EXPECTED_EMPTY, null),
+
+				Arguments.of("Update with empty contacts when functionality disabled - should succeed",
+						INITIAL_EMPTY, NEW_EMPTY, false, EXPECTED_EMPTY, null),
+
+				Arguments.of("Update with same contacts",
+						INITIAL_MULTIPLE_CONTACTS, INITIAL_MULTIPLE_CONTACTS, true, EXPECTED_MULTIPLE_CONTACTS, null)
+		);
 	}
 
 	/**
-	 * Tests that updating a guest with contact lists when the contact list feature is disabled
-	 * throws a BusinessException with the appropriate error code.
+	 * Parametrized tests for updating guests with existing contact lists
 	 */
-	@Test
-	void updateGuest_WithContactLists_WhenContactListFeatureDisabled_ThrowsException() {
-		final Functionality contactListFunctionality = createDisabledFunctionality();
-		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
+	@ParameterizedTest
+	@MethodSource("provideContactListUpdateScenarios")
+	void update_contactLists(
+			final @Nonnull String testName,
+			final @Nonnull List<String> initialContactListIds,
+			final @Nonnull List<String> newContactListIds,
+			boolean contactListFunctionalityEnabled,
+			final @Nonnull List<String> expectedContactListIds,
+			final @Nullable BusinessErrorCode expectedErrorCode) {
+
+		final Functionality contactListFunctionality = contactListFunctionalityEnabled ?
+				this.createFunctionality(true) : this.createFunctionality(false);
+
+		when(this.functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
 				.thenReturn(contactListFunctionality);
 
-		final List<ContactList> contactLists = List.of(this.contactList1);
-		final BusinessException exception = assertThrows(BusinessException.class, () -> {
-			this.guestBusinessService.update(this.user, this.guest, this.guest, null, contactLists, null);
-		});
+		final User owner = new Internal("Test", "Owner", "owner@test.com", "ownerId");
+		final Guest existingGuest = new Guest("Existing", "Guest", "existing@linshare.org");
+		existingGuest.setDomain(this.domainGuest);
+		existingGuest.setRestricted(!initialContactListIds.isEmpty());
 
-		assertEquals(BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED, exception.getErrorCode());
-		assertTrue(exception.getMessage().contains("GUESTS__CONTACT_LISTS feature is disabled"));
+		final Map<String, ContactList> contactListMap = new HashMap<>();
+		final Set<AccountContactLists> currentContactLists = new HashSet<>();
+		for (final String clId : initialContactListIds) {
+			final ContactList cl = createContactList(clId, null, owner, null);
+			contactListMap.put(clId, cl);
+			final AccountContactLists acl = new AccountContactLists(existingGuest, cl);
+			acl.setCanViewContactListMembers(true);
+			currentContactLists.add(acl);
+		}
+		existingGuest.setContactLists(currentContactLists);
+		final List<ContactList> newContactListsToAdd = new ArrayList<>();
+		for (final String clId : newContactListIds) {
+			final ContactList cl = contactListMap.computeIfAbsent(clId, id -> createContactList(id, null, owner, null));
+			newContactListsToAdd.add(cl);
+			when(this.contactListRepository.findByUuid(cl.getUuid())).thenReturn(cl);
+		}
+		this.setupGuestUpdateMocks(existingGuest);
+		if (expectedErrorCode != null) {
+			final Map<String, Boolean> defaultPermissions = this.createDefaultPermissions(newContactListsToAdd);
+			final List<ContactList> contactListsToPass = newContactListsToAdd.isEmpty() &&
+					!initialContactListIds.isEmpty() ? Collections.emptyList() :
+					(newContactListsToAdd.isEmpty() ? null : newContactListsToAdd);
+			final BusinessException exception = assertThrows(BusinessException.class, () -> {
+				this.guestBusinessService.update(this.user, existingGuest, existingGuest,
+						null,
+						contactListsToPass,
+						defaultPermissions);
+			});
+			assertEquals(expectedErrorCode, exception.getErrorCode(),
+					String.format("Error code mismatch in test '%s'", testName));
+		}
+		else {
+			final Map<String, Boolean> defaultPermissions = this.createDefaultPermissions(newContactListsToAdd);
+			final List<ContactList> contactListsToPass = newContactListsToAdd.isEmpty() &&
+					!initialContactListIds.isEmpty() ? Collections.emptyList() :
+					(newContactListsToAdd.isEmpty() ? null : newContactListsToAdd);
+			this.guestBusinessService.update(this.user, existingGuest, existingGuest,
+					null,
+					contactListsToPass,
+					defaultPermissions);
+			final Set<AccountContactLists> actualContactLists = existingGuest.getRestrictedContactLists();
+			assertThat(actualContactLists)
+					.extracting(acl -> acl.getContactList().getIdentifier())
+					.containsExactlyInAnyOrderElementsOf(expectedContactListIds);
+			verify(this.guestRepository).update(existingGuest);
+		}
 	}
 
-	/**
-	 * Tests that updating a guest with empty contact lists when the contact list feature is disabled
-	 * should succeed (no exception thrown).
-	 */
-	@Test
-	void updateGuest_WithEmptyContactLists_WhenContactListFeatureDisabled_Succeeds() {
-		final Functionality contactListFunctionality = createDisabledFunctionality();
-		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
-				.thenReturn(contactListFunctionality);
+	private static Stream<Arguments> provideContactListUpdateScenarios() {
+		return Stream.of(
+				Arguments.of("Add contact lists to guest without initial lists",
+						INITIAL_EMPTY, NEW_MULTIPLE_CONTACT_LISTS, true, EXPECTED_MULTIPLE_CONTACT_LISTS, null),
 
-		final List<ContactList> emptyContactLists = Collections.emptyList();
-		assertDoesNotThrow(() -> {
-			this.guestBusinessService.update(this.user, this.guest, this.guest, null, emptyContactLists, null);
-		});
+				Arguments.of("Add contact lists when functionality disabled - feature disabled",
+						INITIAL_EMPTY, NEW_SINGLE_CONTACT_LIST, false, EXPECTED_EMPTY, BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED),
+
+				Arguments.of("Add contact lists to guest with existing lists",
+						INITIAL_SINGLE_CONTACT_LIST, NEW_EXTENDED_CONTACTS, true, EXPECTED_EXTENDED_CONTACTS, null),
+
+				Arguments.of("Remove some contact lists",
+						INITIAL_MULTIPLE_CONTACT_LISTS, NEW_SINGLE_CONTACT_LIST, true, EXPECTED_SINGLE_CONTACT_LIST, null),
+
+				Arguments.of("Remove all contact lists",
+						INITIAL_MULTIPLE_CONTACT_LISTS, NEW_EMPTY, true, EXPECTED_EMPTY, null),
+
+				Arguments.of("Remove contact lists when functionality disabled - should keep existing",
+						INITIAL_MULTIPLE_CONTACT_LISTS, NEW_EMPTY, false, EXPECTED_MULTIPLE_CONTACT_LISTS, null),
+
+				Arguments.of("Replace contact lists with different ones",
+						INITIAL_SINGLE_CONTACT_LIST, NEW_DIFFERENT_CONTACT_LISTS, true, EXPECTED_DIFFERENT_CONTACT_LISTS, null),
+
+				Arguments.of("Replace contact lists when functionality disabled - should throw an exception",
+						INITIAL_SINGLE_CONTACT_LIST, NEW_DIFFERENT_CONTACT_LISTS, false, EXPECTED_SINGLE_CONTACT_LIST, BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED),
+
+				Arguments.of("Add contact lists when functionality disabled",
+						INITIAL_EMPTY, NEW_SINGLE_CONTACT_LIST, false, EXPECTED_EMPTY, BusinessErrorCode.FUNCTIONALITY_GUEST_CONTACT_LISTS_DISABLED),
+
+				Arguments.of("Update with null contact lists when functionality disabled - should succeed",
+						INITIAL_EMPTY, INITIAL_EMPTY, false, EXPECTED_EMPTY, null),
+
+				Arguments.of("Update with empty contact lists when functionality disabled - should succeed",
+						INITIAL_EMPTY, NEW_EMPTY, false, EXPECTED_EMPTY, null),
+
+				Arguments.of("Update with same contact lists",
+						INITIAL_MULTIPLE_CONTACT_LISTS, INITIAL_MULTIPLE_CONTACT_LISTS, true, EXPECTED_MULTIPLE_CONTACT_LISTS, null),
+
+				Arguments.of("Remove all lists from guest without lists",
+						INITIAL_EMPTY, NEW_EMPTY, true, EXPECTED_EMPTY, null)
+		);
 	}
 
-	/**
-	 * Tests that updating a guest with null contact lists when the contact list feature is disabled
-	 * should succeed (no exception thrown).
-	 */
-	@Test
-	void updateGuest_WithNullContactLists_WhenContactListFeatureDisabled_Succeeds() {
-		final Functionality contactListFunctionality = createDisabledFunctionality();
-		when(functionalityReadOnlyService.getCanAssignContactListToGuest(any(AbstractDomain.class)))
-				.thenReturn(contactListFunctionality);
-
-		assertDoesNotThrow(() -> {
-			this.guestBusinessService.update(this.user, this.guest, this.guest, null, null, null);
-		});
+	private Map<String, Boolean> createDefaultPermissions(final @Nullable List<ContactList> contactLists) {
+		final Map<String, Boolean> permissions = new HashMap<>();
+		if (contactLists != null) {
+			for (final ContactList cl : contactLists) {
+				permissions.put(cl.getUuid(), true);
+			}
+		}
+		return permissions;
 	}
 
-	private Functionality createDisabledFunctionality() {
+	private void setupGuestUpdateMocks(final @Nonnull Guest existingGuest) {
+		when(this.guestRepository.findByLsUuid(existingGuest.getLsUuid())).thenReturn(existingGuest);
+		when(this.guestRepository.update(any(Guest.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(this.allowedContactRepository.findByOwner(existingGuest))
+				.thenAnswer(invocation -> new ArrayList<>(existingGuest.getRestrictedContacts()));
+
+		doAnswer(invocation -> {
+			final Guest guest = invocation.getArgument(0);
+			guest.getRestrictedContacts().clear();
+			return null;
+		}).when(this.allowedContactRepository).purge(any(Guest.class));
+
+		doAnswer(invocation -> {
+			final AllowedContact newContact = invocation.getArgument(0);
+			final Guest owner = (Guest) newContact.getOwner();
+			owner.getRestrictedContacts().add(newContact);
+			return newContact;
+		}).when(this.allowedContactRepository).create(any(AllowedContact.class));
+
+		when(this.recipientFavouriteRepository.getElementsOrderByWeight(any())).thenReturn(Collections.emptyList());
+		doNothing().when(this.recipientFavouriteRepository).delete(any());
+
+		when(this.accountContactListRepository.findByAccount(any(Guest.class)))
+				.thenAnswer(invocation -> {
+					final Guest guest = invocation.getArgument(0);
+					return new ArrayList<>(guest.getRestrictedContactLists());
+				});
+
+		when(this.accountContactListRepository.findByAccountAndContactList(any(Guest.class), any(ContactList.class)))
+				.thenAnswer(invocation -> {
+					final Guest guest = invocation.getArgument(0);
+					final ContactList contactList = invocation.getArgument(1);
+					return guest.getRestrictedContactLists().stream()
+							.filter(acl -> acl.getContactList().getUuid().equals(contactList.getUuid()))
+							.findFirst();
+				});
+
+		doAnswer(invocation -> {
+			final AccountContactLists listToDelete = invocation.getArgument(0);
+			final Guest owner = (Guest) listToDelete.getAccount();
+			owner.getRestrictedContactLists().remove(listToDelete);
+			LOGGER.debug("Deleted contact list: {}", listToDelete.getContactList().getIdentifier());
+			return null;
+		}).when(this.accountContactListRepository).delete(any(AccountContactLists.class));
+
+		doAnswer(invocation -> {
+			final AccountContactLists newList = invocation.getArgument(0);
+			final Guest owner = (Guest) newList.getAccount();
+			owner.getRestrictedContactLists().add(newList);
+			return newList;
+		}).when(this.accountContactListRepository).create(any(AccountContactLists.class));
+
+		doAnswer(invocation -> {
+			final AccountContactLists updatedList = invocation.getArgument(0);
+			return updatedList;
+		}).when(this.accountContactListRepository).update(any(AccountContactLists.class));
+
+		when(this.mailingListBusinessServiceImpl.determineCanViewPermissionForCreate(any(ContactList.class), any(Map.class)))
+				.thenAnswer(invocation -> {
+					final ContactList contactList = invocation.getArgument(0);
+					final Map<String, Boolean> permissions = invocation.getArgument(1);
+					if (permissions != null && permissions.containsKey(contactList.getUuid())) {
+						return permissions.get(contactList.getUuid());
+					}
+					return true;
+				});
+
+		when(this.mailingListBusinessServiceImpl.hasRightToHideMembersToGuest(any(AbstractDomain.class))).thenReturn(true);
+		when(this.mailingListBusinessServiceImpl.hasDelegationPolicy(any(AbstractDomain.class))).thenReturn(true);
+
+		doAnswer(invocation -> {
+			final Guest account = invocation.getArgument(0);
+			final ContactList contactList = invocation.getArgument(1);
+			final Optional<AccountContactLists> toDelete = account.getRestrictedContactLists().stream()
+					.filter(acl -> acl.getContactList().getUuid().equals(contactList.getUuid()))
+					.findFirst();
+			toDelete.ifPresent(acl -> {
+				account.getRestrictedContactLists().remove(acl);
+			});
+			return null;
+		}).when(this.mailingListBusinessServiceImpl).deleteByAccountAndContactList(any(Guest.class), any(ContactList.class));
+		doAnswer(invocation -> {
+			final Guest guest = invocation.getArgument(0);
+			final List<ContactList> newContactLists = invocation.getArgument(1);
+			final Map<String, Boolean> permissions = invocation.getArgument(2);
+
+			LOGGER.debug("updateAccountContactLists called with {} new contact lists",
+					newContactLists != null ? newContactLists.size() : 0);
+			final List<AccountContactLists> existingACLs = new ArrayList<>(guest.getRestrictedContactLists());
+			final Set<String> existingIds = existingACLs.stream()
+					.map(acl -> acl.getContactList().getUuid())
+					.collect(Collectors.toSet());
+
+			final Set<String> newIds = newContactLists != null
+					? newContactLists.stream().map(ContactList::getUuid).collect(Collectors.toSet())
+					: Collections.emptySet();
+			existingACLs.stream()
+					.filter(acl -> !newIds.contains(acl.getContactList().getUuid()))
+					.forEach(acl -> {
+						guest.getRestrictedContactLists().remove(acl);
+						LOGGER.debug("Removed contact list: {}", acl.getContactList().getIdentifier());
+					});
+			if (newContactLists != null) {
+				for (final ContactList cl : newContactLists) {
+					if (!existingIds.contains(cl.getUuid())) {
+						final AccountContactLists newACL = new AccountContactLists(guest, cl);
+						boolean canView = permissions != null && permissions.containsKey(cl.getUuid())
+								? permissions.get(cl.getUuid())
+								: true;
+						newACL.setCanViewContactListMembers(canView);
+						guest.getRestrictedContactLists().add(newACL);
+						LOGGER.debug("Added contact list: {} with canView={}", cl.getIdentifier(), canView);
+					} else {
+						guest.getRestrictedContactLists().stream()
+								.filter(acl -> acl.getContactList().getUuid().equals(cl.getUuid()))
+								.findFirst()
+								.ifPresent(acl -> {
+									boolean canView = permissions != null && permissions.containsKey(cl.getUuid())
+											? permissions.get(cl.getUuid())
+											: acl.getCanViewContactListMembers();
+									acl.setCanViewContactListMembers(canView);
+									LOGGER.debug("Updated contact list: {} with canView={}", cl.getIdentifier(), canView);
+								});
+					}
+				}
+			}
+
+			return null;
+		}).when(this.mailingListBusinessServiceImpl).updateAccountContactLists(any(Guest.class), any(), any());
+	}
+
+	private Functionality createFunctionality(boolean isFunctionalityEnabled) {
 		final Functionality functionality = mock(Functionality.class);
-		final Policy activationPolicy = createDisabledPolicy();
+		final Policy activationPolicy = createPolicy(isFunctionalityEnabled);
+		final Policy delegationPolicy = createPolicy(isFunctionalityEnabled);
 		when(functionality.getActivationPolicy()).thenReturn(activationPolicy);
+		when(functionality.getDelegationPolicy()).thenReturn(delegationPolicy);
 		return functionality;
 	}
 
-	private Policy createDisabledPolicy() {
+	private Policy createPolicy(boolean isPolicyEnabled) {
 		final Policy policy = mock(Policy.class);
-		when(policy.getStatus()).thenReturn(false);
+		when(policy.getStatus()).thenReturn(isPolicyEnabled);
 		return policy;
 	}
 	/**
@@ -896,7 +1233,7 @@ class GuestBusinessServiceTest {
 	 * @return A new {@link ContactList} instance.
 	 */
 	// TODO: Extract this method to a common utility class to avoid duplication with ContactListBusinessServiceTest.
-	private ContactList createContactList(@Nonnull final String identifier, @Nullable final String description, @Nonnull final User owner,
+	private static ContactList createContactList(@Nonnull final String identifier, @Nullable final String description, @Nonnull final User owner,
 										  @Nonnull final AbstractDomain domain) {
 		final ContactList contactList = new ContactList();
 		contactList.setIdentifier(identifier);
@@ -908,4 +1245,5 @@ class GuestBusinessServiceTest {
 		contactList.setUuid(UUID.randomUUID().toString());
 		return contactList;
 	}
+
 }
