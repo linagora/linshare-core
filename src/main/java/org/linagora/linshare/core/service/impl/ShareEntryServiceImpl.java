@@ -150,7 +150,9 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		log.setCause(LogActionCause.COPY);
 		log.setCopiedTo(copiedTo);
 		logEntryService.insert(log);
-		notifierService.sendNotification(mail);
+		if (mail != null) {
+			notifierService.sendNotification(mail);
+		}
 		return share;
 	}
 
