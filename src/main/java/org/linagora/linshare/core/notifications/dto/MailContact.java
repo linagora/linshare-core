@@ -30,6 +30,11 @@ public class MailContact {
 
 	protected String lastName;
 
+	protected String contactListName;
+
+	public MailContact() {
+	}
+
 	public MailContact(String mail, String firstName, String lastName) {
 		super();
 		this.mail = mail;
@@ -102,8 +107,19 @@ public class MailContact {
 		this.lastName = lastName;
 	}
 
+	public String getContactListName() {
+		return contactListName;
+	}
+
+	public void setContactListName(String contactListName) {
+		this.contactListName = contactListName;
+	}
+
 	@Override
 	public String toString() {
-		return "MailContact [mail=" + mail + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+		final String TEMPLATE = "MailContact{mail='%s', firstName='%s', lastName='%s', contactListName='%s'}";
+		return String.format(TEMPLATE, mail, firstName, lastName, contactListName);
 	}
+
+
 }

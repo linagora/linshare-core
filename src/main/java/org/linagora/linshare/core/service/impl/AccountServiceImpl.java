@@ -18,9 +18,9 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
-import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -36,19 +36,16 @@ import org.linagora.linshare.core.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-
 public class AccountServiceImpl extends GenericServiceImpl<Account,User> implements AccountService {
-	
+
 	final private static Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
-	
+
 	private final AccountRepository<Account> accountRepository;
 	private final AccountContactListsRepository accountContactListRepository;
 	private final MailingListBusinessService mailingListBusinessService;
-    
+
 	public AccountServiceImpl(AccountRepository<Account> accountRepository,
-			 SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			 UserResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService, UserResourceAccessControl rac,
 			AccountContactListsRepository accountContactListRepository,
 			MailingListBusinessService mailingListBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
@@ -60,15 +57,15 @@ public class AccountServiceImpl extends GenericServiceImpl<Account,User> impleme
 	@Override
 	public Account findByLsUuid(String uuid) {
 		Account acc = accountRepository.findByLsUuid(uuid);
-		if(acc == null) {
+		if (acc == null) {
 			logger.error("Can't find logged user  : " + uuid);
 		}
 		return acc;
 	}
 
 	/**
-	 * The goal of this method is to raise an exception when the account is not
-	 * found, and to not change the old behavior with the old method findByLsUuid
+	 * The goal of this method is to raise an exception when the account is not found, and to not change the old
+	 * behavior with the old method findByLsUuid
 	 */
 	@Override
 	public Account findAccountByLsUuid(String uuid) {
@@ -106,12 +103,9 @@ public class AccountServiceImpl extends GenericServiceImpl<Account,User> impleme
 		return mailingListBusinessService.findAccountContactListByAccount(account);
 	}
 
-	@NotNull
 	@Override
-	public Optional<AccountContactLists> findAccountContactListByAccountAndContactList(@NotNull Account account, @NotNull ContactList contactList) {
-		if(account == null || contactList == null){
-			return Optional.empty();
-		}
+	public @Nonnull Optional<AccountContactLists> findAccountContactListByAccountAndContactList(@Nonnull Account account,
+			@Nonnull ContactList contactList) {
 		return accountContactListRepository.findByAccountAndContactList(account, contactList);
 	}
 }

@@ -16,8 +16,12 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
@@ -25,9 +29,10 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
@@ -47,7 +52,6 @@ import org.linagora.linshare.utils.Version;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 public class ShareFacadeImpl extends UserGenericFacadeImp
@@ -186,21 +190,28 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public Set<ShareDto> create(ShareCreationDto createDto) {
-		User authUser = checkAuthentication();
+	public @Nonnull Set<ShareDto> create(@Nonnull final ShareCreationDto createDto){
+		final User authUser = this.checkAuthentication();
 		if ((authUser.isGuest() && !authUser.isCanUpload()))
-			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		ShareContainer sc = new ShareContainer();
-		if (createDto.getMailingListUuid() != null && !createDto.getMailingListUuid().isEmpty()) {
-			for (String uuid : createDto.getMailingListUuid()) {
-				ContactList list = listService.findByUuid(authUser.getLsUuid(), uuid);
-				List<ContactListContact> contacts = mailingListContactRepository.findAllContacts(list);
-				for (ContactListContact c : contacts) {
-					sc.addContact(c);
+		final ShareContainer sc = new ShareContainer();
+		sc.addGenericUserDto(createDto.getRecipients());
+		if (createDto.getMailingListUuid() != null) {
+			createDto.getMailingListUuid().forEach(uuid -> {
+				final ContactList list = this.listService.findByUuid(authUser.getLsUuid(), uuid);
+				final Optional<AccountContactLists> accountContactLists = this.accountService.findAccountContactListByAccountAndContactList(
+						authUser, list);
+				if(accountContactLists.isEmpty()) {
+					throw new BusinessException(
+							BusinessErrorCode.ACCOUNT_CONTACT_LIST_NOT_FOUND,
+								"No account contact list found for user and contact list with UUID: " + uuid
+					);
 				}
-			}
+				sc.addAccountContactLists(List.of(accountContactLists.get()));
+				final List<ContactListContact> contacts = this.mailingListContactRepository.findAllContacts(list);
+				contacts.forEach(sc::addContact);
+			});
 		}
 		sc.addDocumentUuid(createDto.getDocuments());
 		sc.setSubject(createDto.getSubject());
@@ -209,20 +220,15 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.setAcknowledgement(createDto.isCreationAcknowledgement());
 		sc.setForceAnonymousSharing(createDto.getForceAnonymousSharing());
 		sc.setExpiryDate(createDto.getExpirationDate());
-		sc.addGenericUserDto(createDto.getRecipients());
 		sc.setEnableUSDA(createDto.isEnableUSDA());
 		sc.setNotificationDateForUSDA(createDto.getNotificationDateForUSDA());
 		sc.setSharingNote(createDto.getSharingNote());
 		sc.setInReplyTo(createDto.getInReplyTo());
 		sc.setReferences(createDto.getReferences());
 		sc.setExternalMailLocale(createDto.getExternalMailLocale());
-		Set<Entry> shares = shareService.create(authUser, authUser, sc);
-		Set<ShareDto> sharesDto = Sets.newHashSet();
-		List<String> uuids = Lists.newArrayList();
-		for (Entry entry : shares) {
-			sharesDto.add(ShareDto.getSentShare(Version.V2, entry));
-			uuids.add(entry.getUuid());
-		}
+		final Set<Entry> shares = this.shareService.create(authUser, authUser, sc);
+		final Set<ShareDto> sharesDto = new HashSet<>();
+		shares.forEach(entry -> sharesDto.add(ShareDto.getSentShare(Version.V2, entry)));
 		return sharesDto;
 	}
 

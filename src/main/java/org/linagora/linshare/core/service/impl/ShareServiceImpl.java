@@ -30,7 +30,6 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -269,12 +268,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		// Initialize the shareContainer for guest if needed.
 		if (owner.isGuest()) {
 			List<AllowedContact> allowedContacts = guestService.load(actor, owner);
-			List<AccountContactLists> accountContactLists = accountService.findAccountContactListsByAccount(actor);
 			if (allowedContacts != null) {
 				shareContainer.addAllowedRecipients(allowedContacts);
-			}
-			if (accountContactLists != null) {
-				shareContainer.addAccountContactLists(accountContactLists);
 			}
 		}
 		BooleanValueFunctionality aufas = funcService.getAnonymousUrlForceAnonymousSharing(owner.getDomain());

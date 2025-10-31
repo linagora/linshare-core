@@ -18,6 +18,8 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
@@ -52,7 +54,7 @@ public interface ShareFacade extends GenericFacade {
 
 	public ByteSource getThumbnailByteSource(String shareEntryUuid, ThumbnailType kind) throws BusinessException;
 
-	Set<ShareDto> create(ShareCreationDto createDto);
+	public @Nonnull Set<ShareDto> create(@Nonnull final ShareCreationDto createDto);
 
 	ShareDto delete(String shareUuid, Boolean received) throws BusinessException;
 

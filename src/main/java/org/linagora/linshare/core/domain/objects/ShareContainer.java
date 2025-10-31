@@ -15,18 +15,21 @@
  */
 package org.linagora.linshare.core.domain.objects;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.HashSet;
+
+import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -43,8 +46,6 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import javax.annotation.Nonnull;
 
 public class ShareContainer {
 
@@ -116,6 +117,28 @@ public class ShareContainer {
 	private Optional<Language> externalMailLocale;
 
 	protected Set<ContactList> contactLists = new HashSet<>();
+	private final @Nonnull List<AccountContactLists> accountContactLists = new ArrayList<>();
+
+	/**
+	 * Collection of email addresses that were explicitly shared as individual contacts.
+	 *
+	 * <p>This set tracks emails that were explicitly selected by the user through
+	 * individual contact selection (as opposed to being included via contact list membership).
+	 *
+	 * <p><b>Business Significance:</b>
+	 * For guest users sharing with invisible contact lists, this collection ensures that
+	 * contacts that were both in an invisible list AND explicitly selected individually
+	 * remain visible in the acknowledgement email, overriding the default invisibility
+	 * rule for contact list members.
+	 *
+	 * <p><b>Example:</b>
+	 * If a guest shares with an invisible contact list containing [user1@domain.com, user2@domain.com]
+	 * and also explicitly shares with user1@domain.com as an individual contact, then
+	 * user1@domain.com will appear in the acknowledgement email despite being in an invisible list.
+	 *
+	 * @see #getRecipientsWithVisibility()
+	 */
+	private final @Nonnull Set<String> explicitRecipientEmails = new HashSet<>();
 
 	public ShareContainer(String subject, String message, Boolean secured, Boolean creationAcknowledgement) {
 		this();
@@ -320,6 +343,7 @@ public class ShareContainer {
 	public void addMail(String mail) {
 		Validate.notEmpty(mail, "mail must not be null.");
 		this.recipients.add(new Recipient(mail));
+		this.explicitRecipientEmails.add(mail.toLowerCase());
 	}
 
 	public void addMail(List<String> mails) {
@@ -331,11 +355,17 @@ public class ShareContainer {
 	public void addUserDto(UserDto userDto) {
 		Validate.notNull(userDto, "user must not be null.");
 		this.recipients.add(new Recipient(userDto));
+		if (userDto.getMail() != null && !userDto.getMail().isEmpty()) {
+			this.explicitRecipientEmails.add(userDto.getMail().toLowerCase());
+		}
 	}
 
 	public void addUserDto(GenericUserDto userDto) {
 		Validate.notNull(userDto, "user must not be null.");
 		this.recipients.add(new Recipient(userDto));
+		if (userDto.getMail() != null && !userDto.getMail().isEmpty()) {
+			this.explicitRecipientEmails.add(userDto.getMail().toLowerCase());
+		}
 	}
 
 
@@ -441,6 +471,7 @@ public class ShareContainer {
 	 */
 	public void addAccountContactLists(@Nonnull final List<AccountContactLists> accountContactLists) {
 		Validate.notNull(accountContactLists, "accountContactLists must not be null.");
+		this.accountContactLists.addAll(accountContactLists);
 		if (this.allowedRecipients == null) {
 			this.allowedRecipients = Maps.newHashMap();
 		}
@@ -515,5 +546,13 @@ public class ShareContainer {
 
 	public void setExternalMailLocale(Language externalMailLocale) {
 		this.externalMailLocale = Optional.ofNullable(externalMailLocale);
+	}
+
+	public @Nonnull List<AccountContactLists> getAccountContactLists() {
+		return this.accountContactLists;
+	}
+
+	public @Nonnull Set<String> getExplicitRecipientEmails() {
+		return this.explicitRecipientEmails;
 	}
 }

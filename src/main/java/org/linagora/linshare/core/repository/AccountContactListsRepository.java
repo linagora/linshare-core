@@ -1,13 +1,13 @@
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
-
-import javax.annotation.Nonnull;
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Repository interface for managing {@link AccountContactLists} entities. This interface provides methods for
@@ -23,7 +23,7 @@ public interface AccountContactListsRepository extends AbstractRepository<Accoun
 	 * @param account The {@link Account} whose allowed contact lists are to be retrieved. Must not be {@code null}.
 	 * @return A {@link List} of {@link AccountContactLists} associated with the given account.
 	 */
-	public @Nonnull List<AccountContactLists> findByAccount(@NotNull final Account account);
+	public @Nonnull List<AccountContactLists> findByAccount(@Nonnull final Account account);
 
 	/**
 	 * Finds all {@link AccountContactLists} associated with the given account and optional contact list name filter.
@@ -33,8 +33,8 @@ public interface AccountContactListsRepository extends AbstractRepository<Accoun
 	 *                              return. Cannot be {@code null}. If empty, no filtering is applied. If blank, filtering is applied.
 	 * @return a list of AccountContactLists that belong to the given account and match the contact list name filter.
 	 */
-	public @Nonnull List<AccountContactLists> findByAccountAndContactListName(@NotNull final Account account,
-			@NotNull final String contactListNameFilter);
+	public @Nonnull List<AccountContactLists> findByAccountAndContactListName(@Nonnull final Account account,
+			@Nonnull final String contactListNameFilter);
 
 	/**
 	 * Finds the AccountContactLists entry for the given account and contact list.
@@ -43,8 +43,8 @@ public interface AccountContactListsRepository extends AbstractRepository<Accoun
 	 * @param contactList the contact list to search for, must not be {@code null}.
 	 * @return an {@link Optional} {@link AccountContactLists} matching the given criteria. Not {@code null}.
 	 */
-	public @Nonnull Optional<AccountContactLists> findByAccountAndContactList(@NotNull final Account account,
-			@NotNull final ContactList contactList);
+	public @Nonnull Optional<AccountContactLists> findByAccountAndContactList(@Nonnull final Account account,
+			@Nonnull final ContactList contactList);
 
 	public @Nonnull List<AccountContactLists> findByContactList(final @Nonnull ContactList contactList);
 

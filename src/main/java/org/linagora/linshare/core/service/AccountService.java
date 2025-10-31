@@ -18,12 +18,12 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.Nonnull;
+
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.exception.BusinessException;
-
-import javax.annotation.Nonnull;
 
 public interface AccountService {
 
@@ -65,5 +65,13 @@ public interface AccountService {
 	 */
 	public @Nonnull List<AccountContactLists> findAccountContactListsByAccount(@Nonnull final String accountUuid);
 
+	/**
+	 * Retrieves a specific {@link AccountContactLists} relationship between the given account and contact list.
+	 * Commonly used for permission checks or visibility validations.
+	 *
+	 * @param account the account to search for (must not be {@code null})
+	 * @param contactList the contact list to search for (must not be {@code null})
+	 * @return an {@link Optional} containing the matching {@link AccountContactLists}, or empty if none is found
+	 */
 	public @Nonnull Optional<AccountContactLists> findAccountContactListByAccountAndContactList(@Nonnull Account account, @Nonnull final ContactList contactList);
 }

@@ -53,7 +53,16 @@ UPDATE mail_content SET subject='[# th:if="${documentsCount} > 1"]
   </section> <!--/* End upper of main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoRecipientListingArea(#{common.recipients},${recipients})"/>
+    <h3 th:text="#{common.recipients}">Recipients </h3>
+       <div class="recipient-info">
+       <div th:each="recipient : ${recipients}">
+        <span th:if="${recipient.contactListName}" th:text="${recipient.contactListName}"/>
+        <span th:unless="${recipient.contactListName}">
+            <span th:text="${recipient.firstName}"/>
+            <span th:text="${recipient.lastName}"/>
+        </span>
+    </div>
+</div>
     <th:block data-th-replace="layout :: infoFileLinksListingArea(#{common.filesInShare},${documents},false)"/>
     <th:block data-th-replace="layout :: infoDateArea(#{common.titleSharedThe},${creationDate})"/>
     <th:block data-th-replace="layout :: infoDateArea(#{common.availableUntil},${expirationDate})"/>

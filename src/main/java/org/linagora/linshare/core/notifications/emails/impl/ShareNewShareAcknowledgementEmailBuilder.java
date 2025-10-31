@@ -64,7 +64,7 @@ public class ShareNewShareAcknowledgementEmailBuilder extends EmailBuilder {
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
 
-		List<MailContact> recipients = shareContainer.getMailContactRecipients();
+		final List<MailContact> recipients = emailCtx.getRecipientsWithVisibility();
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 

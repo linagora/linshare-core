@@ -15,14 +15,23 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
+import org.linagora.linshare.core.notifications.dto.MailContact;
 
 public class ShareNewShareAcknowledgementEmailContext extends EmailContext {
 
@@ -82,6 +91,81 @@ public class ShareNewShareAcknowledgementEmailContext extends EmailContext {
 	@Override
 	public String getMailReplyTo() {
 		return null;
+	}
+
+	/**
+	 * Builds the recipient list while applying contact list visibility rules.
+	 *
+	 * <p>For guest users, invisible contact lists are shown as single entries while
+	 * their members remain hidden unless explicitly shared as individual contacts.</p>
+	 *
+	 * <p><b>Visibility Rules:</b>
+	 * <ul>
+	 *   <li><b>Non-guest users:</b> All recipients are always visible</li>
+	 *   <li><b>Guest users with visible contact lists:</b> All list members are shown individually</li>
+	 *   <li><b>Guest users with invisible contact lists:</b>
+	 *     <ul>
+	 *       <li>List name is shown as a single entry</li>
+	 *       <li>List members are hidden by default</li>
+	 *       <li><b>Exception:</b> Members that are also in {@code explicitRecipientEmails} remain visible</li>
+	 *     </ul>
+	 *   </li>
+	 * </ul>
+	 *
+	 * <p><b>Key Business Rule:</b>
+	 * Contacts explicitly shared individually override contact list visibility restrictions.
+	 * This allows guests to share with specific members of invisible lists while keeping
+	 * the overall list membership confidential.</p>
+	 *
+	 * <p><b>Example:</b>
+	 * If sharing with an invisible contact list "Team A" containing
+	 * {@code [user1@linshare.org, user2@linshare.org]} and an explicit contact
+	 * {@code user3@linshare.org}, and {@code user1@linshare.org} is also explicitly shared:
+	 * <ul>
+	 *   <li>{@code explicitRecipientEmails} = {@code ["user1@linshare.org", "user3@linshare.org"]}</li>
+	 *   <li><b>Result:</b> {@code ["Team A", "user1@linshare.org", "user3@linshare.org"]}</li>
+	 *   <li><b>Hidden:</b> {@code "user2@linshare.org"} (only in invisible list, not explicit)</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @return an unmodifiable list of mail contacts with visibility rules applied, never {@code null};
+	 *         contains either all original recipients (if no filtering is needed) or a filtered list
+	 *         with contact list entries and visible individual contacts
+	 * @see #explicitRecipientEmails
+	 */
+	public @Nonnull List<MailContact> getRecipientsWithVisibility() {
+		final List<AccountContactLists> accountContactLists = this.shareContainer.getAccountContactLists();
+		final List<MailContact> allRecipients = this.shareContainer.getMailContactRecipients();
+
+		if (!this.shareOwner.isGuest() || accountContactLists == null || accountContactLists.isEmpty()) {
+			return allRecipients;
+		}
+
+		final List<MailContact> finalRecipients = new ArrayList<>();
+		final Set<String> restrictedContactEmails = new HashSet<>();
+		final Set<String> explicitEmails = this.shareContainer.getExplicitRecipientEmails();
+		for (final AccountContactLists accountContactList : accountContactLists) {
+			final ContactList contactList = accountContactList.getContactList();
+			if (Boolean.FALSE.equals(accountContactList.getCanViewContactListMembers())) {
+				final MailContact contactListContact = new MailContact();
+				contactListContact.setContactListName(contactList.getIdentifier());
+				finalRecipients.add(contactListContact);
+
+				for (final ContactListContact contact : contactList.getContactListContacts()) {
+					final String email = contact.getMail().toLowerCase();
+					if (!explicitEmails.contains(email)) {
+						restrictedContactEmails.add(email);
+					}
+				}
+			}
+		}
+		allRecipients.forEach(recipient -> {
+			final String email = recipient.getMail();
+			if (email == null || !restrictedContactEmails.contains(email.toLowerCase())) {
+				finalRecipients.add(recipient);
+			}
+		});
+		return finalRecipients;
 	}
 
 	@Override
