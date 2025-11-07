@@ -125,8 +125,10 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		logEntryService.insert(createLog);
 		if (!actor.hasSuperAdminRole()) {
 			EmailContext context = new JwtPermanentCreatedEmailContext(authUser, actor, jwtLongTime);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		}
 		jwtLongTime.setToken(token);
 		return jwtLongTime;
@@ -153,8 +155,10 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		jwtLongTimeBusinessService.delete(jwtLongTime);
 		if (!actor.hasSuperAdminRole()) {
 			EmailContext context = new JwtPermanentDeletedEmailContext(authUser, actor, permanentToken);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		}
 		logEntryService.insert(createLog);
 		return permanentToken;

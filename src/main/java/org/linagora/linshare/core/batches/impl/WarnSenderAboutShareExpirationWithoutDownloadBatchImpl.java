@@ -75,8 +75,10 @@ public class WarnSenderAboutShareExpirationWithoutDownloadBatchImpl extends Gene
 		ResultContext context = new AccountBatchResultContext(owner);
 		try {
 			EmailContext ctx = new ShareWarnSenderAboutShareExpirationEmailContext(shareEntry, daysLeftExpiration);
-			MailContainerWithRecipient mail = mailBuildingService.build(ctx);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(ctx);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		} catch (BusinessException businessException) {
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to send a notification about fileshare expiration");

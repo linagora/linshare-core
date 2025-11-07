@@ -126,8 +126,10 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 		logEntryService.insert(userAuditLogEntry);
 		logger.info("Reset password");
 		GuestWarnGuestAboutHisPasswordResetEmailContext context = new GuestWarnGuestAboutHisPasswordResetEmailContext(guest);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 		return reset;
 	}
 }

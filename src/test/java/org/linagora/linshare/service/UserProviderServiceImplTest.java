@@ -250,7 +250,7 @@ public class UserProviderServiceImplTest {
 	@Test
 	public void testCompleteWithPatternUserLdap() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		User user = userRepository.findByMail(LinShareTestConstants.AMY_WOLSH_ACCOUNT);
+		User user = userRepository.findByMail(LinShareTestConstants.DAWSON_WATERFIELD_ACCOUNT);
 		AbstractDomain domain = user.getDomain();
 		UserProvider userProvider = domain.getUserProvider();
 		String pattern = "Dude";
@@ -298,7 +298,7 @@ public class UserProviderServiceImplTest {
 	@Test
 	public void testCompleteWithNameUserLdap() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		User user = userRepository.findByMail(LinShareTestConstants.AMY_WOLSH_ACCOUNT);
+		User user = userRepository.findByMail(LinShareTestConstants.DAWSON_WATERFIELD_ACCOUNT);
 		AbstractDomain domain = user.getDomain();
 		UserProvider userProvider = domain.getUserProvider();
 		String firstName = "a";
@@ -348,7 +348,7 @@ public class UserProviderServiceImplTest {
 	@Test
 	public void testSearchWithNameUserLdap() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		User user = userRepository.findByMail(LinShareTestConstants.AMY_WOLSH_ACCOUNT);
+		User user = userRepository.findByMail(LinShareTestConstants.DAWSON_WATERFIELD_ACCOUNT);
 		AbstractDomain domain = user.getDomain();
 		UserProvider userProvider = domain.getUserProvider();
 		String mail = "a";

@@ -210,8 +210,10 @@ public class AnonymousShareEntryServiceImpl extends
 		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, shareEntry.getAnonymousUrl().getContact(),
 				shareEntry, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
 		logEntryService.insert(log);
-		notifierService.sendNotification(mail);
-		return documentEntryBusinessService.getByteSource(shareEntry
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
+		return this.documentEntryBusinessService.getByteSource(shareEntry
 				.getDocumentEntry());
 	}
 

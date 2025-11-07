@@ -131,8 +131,10 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 		if (requestUrl.getUploadRequest().getEnableNotification()) {
 			EmailContext context = new UploadRequestDeleteFileEmailContext(owner, requestUrl.getUploadRequest(), requestUrl,
 					entry);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		}
 		return entry;
 	}
@@ -152,8 +154,10 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 			EmailContext context = new UploadRequestUploadedFileEmailContext(
 					(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
 					requestUrl.getUploadRequest(), requestUrl, upReqdoc);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		}
 		return upReqdoc;
 	}

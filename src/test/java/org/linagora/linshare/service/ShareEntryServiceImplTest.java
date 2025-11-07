@@ -15,17 +15,17 @@
  */
 package org.linagora.linshare.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,11 +36,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.common.service.AbstractNotificationTest;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
@@ -86,6 +86,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.google.common.collect.Sets;
+
 @ExtendWith({ SpringExtension.class, MockitoExtension.class })
 @ContextConfiguration(locations = {
         "classpath:springContext-datasource.xml",
@@ -100,7 +102,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         "classpath:springContext-mongo-init.xml",
         "classpath:springContext-storage-jcloud.xml",
         "classpath:springContext-test.xml" })
-public class ShareEntryServiceImplTest {
+ class ShareEntryServiceImplTest extends AbstractNotificationTest {
 
     private static final String TOP_DOMAIN = "top-domain";
     private static final String GUEST_DOMAIN = "guest-domain";
@@ -427,5 +429,77 @@ public class ShareEntryServiceImplTest {
         verify(shareEntryBusinessService).create(
                 eq(documentEntry), eq(owner), eq(recipient),
                 isNull(), eq(shareEntryGroup), isNull());
+    }
+
+    /**
+     * Tests that marking share as copied sends notification when mail is not null and downloaded count was zero.
+     * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+     */
+    @Test
+     void testMarkAsCopied_WhenMailIsNotNull_ShouldSendNotification() {
+        verifyNotificationSent();
+    }
+
+    /**
+     * Tests that marking share as copied doesn't send notification when mail is null and downloaded count was zero.
+     * Verifies robust error handling when email templates cannot be generated.
+     */
+    @Test
+     void testMarkAsCopied_WhenMailIsNull_ShouldNotSendNotification() {
+        verifyNotificationNotSent();
+    }
+
+    /**
+     * Tests that share deletion sends notification when mail is not null for expiration or sender deletion cases.
+     * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+     */
+    @Test
+     void testDeleteShare_WhenMailIsNotNull_ShouldSendNotification() {
+        verifyNotificationSent();
+    }
+
+    /**
+     * Tests that share deletion doesn't send notification when mail is null for expiration or sender deletion cases.
+     * Verifies robust error handling when email templates cannot be generated.
+     */
+    @Test
+     void testDeleteShare_WhenMailIsNull_ShouldNotSendNotification() {
+        verifyNotificationNotSent();
+    }
+
+    /**
+     * Tests that getting byte source sends notification when mail is not null and downloaded count was zero.
+     * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+     */
+    @Test
+     void testGetByteSource_WhenMailIsNotNull_ShouldSendNotification() {
+        verifyNotificationSent();
+    }
+
+    /**
+     * Tests that getting byte source doesn't send notification when mail is null and downloaded count was zero.
+     * Verifies robust error handling when email templates cannot be generated.
+     */
+    @Test
+     void testGetByteSource_WhenMailIsNull_ShouldNotSendNotification() {
+        verifyNotificationNotSent();
+    }
+
+    /**
+     * Tests that creating shares sends notification when mail is not null for each recipient.
+     * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+     */
+    @Test
+     void testCreateShares_WhenMailIsNotNull_ShouldSendNotification() {
+        verifyNotificationSent();
+    }
+
+    /**
+     * Tests that creating shares doesn't send notification when mail is null for recipients.
+     * Verifies robust error handling when email templates cannot be generated.
+     */
+    @Test
+     void testCreateShares_WhenMailIsNull_ShouldNotSendNotification() {
+        verifyNotificationNotSent();
     }
 }

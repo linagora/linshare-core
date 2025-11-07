@@ -268,8 +268,10 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		UploadRequest update = updateRequest(actor, actor, req);
 		checkAndUpdateCollectiveUploadRequest(req.getUploadRequestGroup(), update.getStatus());
 		EmailContext ctx = new UploadRequestClosedByRecipientEmailContext((User)req.getUploadRequestGroup().getOwner(), req, url);
-		MailContainerWithRecipient mail = mailBuildingService.build(ctx);
-		notifierService.sendNotification(mail);
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(ctx);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 		log.setResourceUpdated(new UploadRequestMto(update, true));
 		logEntryService.insert(log);
 		return update;

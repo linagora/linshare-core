@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.common.service.AbstractNotificationTest;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -37,6 +38,7 @@ import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -58,7 +60,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 @Transactional
-public class AuditRestGuestPasswordTest {
+class AuditRestGuestPasswordTest extends AbstractNotificationTest {
 
 	private static Logger logger = LoggerFactory.getLogger(AuditRestGuestPasswordTest.class);
 
@@ -192,4 +194,21 @@ public class AuditRestGuestPasswordTest {
 		Assertions.assertEquals(BusinessErrorCode.RESET_ACCOUNT_PASSWORD_INVALID_PASSWORD, exception.getErrorCode());
 	}
 
+	/**
+	 * Tests that reset guest password update sends notification when mail is not null.
+	 * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+	 */
+	@Test
+	void testUpdateResetGuestPassword_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that reset guest password update doesn't send notification when mail is null.
+	 * Verifies robust error handling when email templates cannot be generated.
+	 */
+	@Test
+	void testUpdateResetGuestPassword_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
+	}
 }

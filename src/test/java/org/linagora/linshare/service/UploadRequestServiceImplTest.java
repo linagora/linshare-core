@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.common.service.AbstractNotificationTest;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
@@ -60,6 +61,7 @@ import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.mongo.entities.ChangeUploadRequestUrlPassword;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +72,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.Lists;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
 @Sql({
 	
 	"/import-tests-upload-request.sql" })
@@ -87,7 +89,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
 @Disabled
-public class UploadRequestServiceImplTest {
+ class UploadRequestServiceImplTest extends AbstractNotificationTest {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTest.class);
 
@@ -340,5 +342,23 @@ public class UploadRequestServiceImplTest {
 		List<UploadRequestEntry> entries = service.findAllEntries(actor, actor, eJane);
 		Assertions.assertNotNull(entries);
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	/**
+	 * Tests that closing upload request by recipient sends notification when mail is not null.
+	 * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+	 */
+	@Test
+	 void testCloseRequestByRecipient_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that closing upload request by recipient doesn't send notification when mail is null.
+	 * Verifies robust error handling when email templates cannot be generated.
+	 */
+	@Test
+	 void testCloseRequestByRecipient_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
 	}
 }

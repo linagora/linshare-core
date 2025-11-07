@@ -52,6 +52,14 @@ VALUES
      'Wolsh', true, '', false,
      true, false, 0),
 
+    -- Dawson Waterfield(UUID unique)
+    (57, 'dawson.waterfield@linshare.org', 2, 'aebe1b64-0000-11e5-9fa8-080027b82yyy',
+     now(), now(), 0,
+     'en', 'en', 'en', true, null,
+     0, 5 , 'IN_USE', 'Dawson',
+     'Waterfield', true, '', false,
+     true, false, 0),
+
 	-- standard dude topDomain2
 	(53, 'standard.dude@linshare.org', 2, 'aebe1b64-0000-11e5-9fa8-080027b8254j',
 	now(), now(), 0,

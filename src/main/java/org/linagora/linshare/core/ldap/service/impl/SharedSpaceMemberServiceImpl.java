@@ -73,8 +73,10 @@ public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.ser
 		SharedSpaceLDAPGroupMember created = businessService.create(member);
 		User newMember = userRepository.findByLsUuid(created.getAccount().getUuid());
 		EmailContext context = new WorkGroupWarnNewMemberEmailContext(member, actor, newMember);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(actor, actor, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, created);
 		businessService.addMembersToRelatedAccountsAndRelatedDomains(created.getNode().getUuid(), log);
@@ -95,8 +97,10 @@ public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.ser
 		SharedSpaceLDAPGroupMember updated = businessService.update(member);
 		User newMember = userRepository.findByLsUuid(updated.getAccount().getUuid());
 		EmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(member, newMember, actor);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(actor, actor, LogAction.UPDATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
 		log.setResourceUpdated(updated);

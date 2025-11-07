@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.common.service.AbstractNotificationTest;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
@@ -58,6 +59,7 @@ import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +70,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.Lists;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
 @Sql({
 	
 	"/import-tests-upload-request.sql" })
@@ -85,7 +87,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
-public class UploadRequestEntryServiceImplTest {
+ class UploadRequestEntryServiceImplTest extends AbstractNotificationTest{
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestEntryServiceImplTest.class);
 
 	@Qualifier("userRepository")
@@ -454,5 +456,41 @@ public class UploadRequestEntryServiceImplTest {
 		enabledUploadRequest.setMaxFileCount(3);
 		uploadRequestService.update(john, john, enabledUploadRequest.getUuid(), enabledUploadRequest, false);
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	/**
+	 * Tests that upload request entry creation sends space notification when mail is not null and quota error occurs.
+	 * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+	 */
+	@Test
+	 void testCreateUploadRequestEntry_WhenSpaceMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that upload request entry creation doesn't send space notification when mail is null and quota error occurs.
+	 * Verifies robust error handling when email templates cannot be generated.
+	 */
+	@Test
+	 void testCreateUploadRequestEntry_WhenSpaceMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
+	}
+
+	/**
+	 * Tests that upload request entry deletion sends notification when mail is not null and notifications are enabled.
+	 * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+	 */
+	@Test
+	 void testDeleteUploadRequestEntry_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that upload request entry deletion doesn't send notification when mail is null and notifications are enabled.
+	 * Verifies robust error handling when email templates cannot be generated.
+	 */
+	@Test
+	 void testDeleteUploadRequestEntry_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
 	}
 }

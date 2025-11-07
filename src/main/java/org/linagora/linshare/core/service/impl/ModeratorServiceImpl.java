@@ -16,10 +16,12 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
@@ -52,8 +54,6 @@ import org.linagora.linshare.mongo.entities.logs.ModeratorAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.ModeratorMto;
 
 import com.google.common.collect.Lists;
-
-import javax.annotation.Nonnull;
 
 public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator> implements ModeratorService {
 
@@ -109,8 +109,10 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		this.guestBusinessService.update(actor, guest, guest,null,contactLists, contactListViewPermissions);
 		if (!actor.equals(moderator.getAccount())) {
 			GuestModeratorCreationEmailContext mailContext = new GuestModeratorCreationEmailContext(actor, moderator);
-			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(mailContext);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		}
 		ModeratorAuditLogEntry log = new ModeratorAuditLogEntry(authUser, actor, LogAction.CREATE, AuditLogEntryType.GUEST_MODERATOR, moderator, moderator.getGuest().getLsUuid());
 		log.addRelatedAccounts(moderatorBusinessService.findAllModeratorUuidsByGuest(moderator.getGuest()));
@@ -152,8 +154,10 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		if (!actor.equals(moderator.getAccount())) {
 			GuestModeratorUpdateEmailContext mailContext = new GuestModeratorUpdateEmailContext(actor, moderator,
 					oldRole);
-			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(mailContext);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		}
 		log.setResourceUpdated(new ModeratorMto(moderator));
 		log.addRelatedAccounts(moderatorBusinessService.findAllModeratorUuidsByGuest(moderator.getGuest()));
@@ -175,8 +179,10 @@ public class ModeratorServiceImpl extends GenericServiceImpl<Account, Moderator>
 		if (!actor.equals(moderator.getAccount())) {
 			GuestModeratorDeletionEmailContext mailContext = new GuestModeratorDeletionEmailContext(actor,
 					moderator);
-			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(mailContext);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		}
 		ModeratorAuditLogEntry log = new ModeratorAuditLogEntry(authUser, actor, LogAction.DELETE, AuditLogEntryType.GUEST_MODERATOR, moderator, moderator.getGuest().getLsUuid());
 		log.addRelatedAccounts(moderatorBusinessService.findAllModeratorUuidsByGuest(moderator.getGuest()));

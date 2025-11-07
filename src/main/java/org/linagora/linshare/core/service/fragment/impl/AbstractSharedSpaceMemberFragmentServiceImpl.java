@@ -17,6 +17,8 @@ package org.linagora.linshare.core.service.fragment.impl;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
@@ -104,9 +106,11 @@ public abstract class AbstractSharedSpaceMemberFragmentServiceImpl extends Gener
 		return businessService.findByAccountAndNode(accountUuid, nodeUuid) != null;
 	}
 
-	protected void notify(EmailContext context) {
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+	protected void notify(@Nonnull final EmailContext context) {
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 	}
 	/**
 	 * Save audit log for create and delete actions.

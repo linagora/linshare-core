@@ -296,6 +296,11 @@
 
 	</bean>
 	
+	<bean name="userResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UserResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService"/>
+		<constructor-arg ref="domainPermissionBusinessService"/>
+	</bean>
+	
 	<bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
 	</bean>
 	

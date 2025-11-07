@@ -103,8 +103,10 @@ public class NotifyAllAnonymousWithNewPasswordUpgradeTaskImpl extends GenericUpg
 		sc.addDocumentUuid(documents);
 		sc.addAnonymousShareRecipient(new Recipient(contact));
 		EmailContext emailContext = new ShareAnonymousResetPasswordEmailContext((User)anonymousUrl.getOwner(), anonymousUrl, sc);
-		MailContainerWithRecipient mail = mailBuildingService.build(emailContext);
-		notifierService.sendNotification(mail);
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(emailContext);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 		batchResultContext.setProcessed(true);
 		return batchResultContext;
 	}

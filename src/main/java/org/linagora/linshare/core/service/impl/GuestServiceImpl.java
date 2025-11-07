@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
@@ -38,7 +40,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -70,8 +71,6 @@ import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-
-import javax.annotation.Nonnull;
 
 public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> implements GuestService {
 
@@ -241,8 +240,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 		resetGuestPassword.setExpirationDate(instance.getTime());
 		resetGuestPasswordMongoRepository.insert(resetGuestPassword);
 		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)actor, create, resetGuestPassword.getUuid());
-		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
-		notifierService.sendNotification(mail);
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(mailContext);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 		// we need a boolean onguestCreation to be passed into the moderator rac
 		Boolean onGuestCreation = true;
 		Moderator moderator = new Moderator(ModeratorRole.ADMIN, actor, create);
@@ -398,8 +399,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 		logEntryService.insert(userAuditLogEntry);
 		GuestAccountResetPasswordEmailContext context = new GuestAccountResetPasswordEmailContext(guest,
 				resetGuestPassword.getUuid());
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 	}
 
 	@Override
@@ -432,8 +435,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest> impleme
 		logEntryService.insert(userAuditLogEntry);
 		GuestAccountResetPasswordEmailContext context = new GuestAccountResetPasswordEmailContext(guest,
 				resetGuestPassword.getUuid());
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 	}
 
 	/**

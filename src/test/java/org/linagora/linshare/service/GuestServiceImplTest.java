@@ -14,12 +14,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.linagora.linshare.service;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,24 +38,41 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.impl.PasswordServiceImpl;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.ModeratorRole;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.LinShareConstants;
-import org.linagora.linshare.core.domain.entities.*;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactListId;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.AllowedContact;
+import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.Moderator;
+import org.linagora.linshare.core.domain.entities.PasswordHistory;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AccountContactListsRepository;
+import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.repository.MailingListRepository;
 import org.linagora.linshare.core.repository.ModeratorRepository;
 import org.linagora.linshare.core.repository.PasswordHistoryRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.core.repository.MailingListRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -63,8 +81,8 @@ import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.ModeratorService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.ResetGuestPasswordService;
-import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 import org.linagora.linshare.server.embedded.ldap.LdapServerRule;
@@ -84,7 +102,7 @@ import com.google.common.collect.Lists;
 @ExtendWith(LdapServerRule.class)
 @Sql({ "/import-tests-fake-domains.sql" })
 @Transactional
-@ContextConfiguration(locations = { 
+@ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -104,7 +122,7 @@ public class GuestServiceImplTest {
 	private static final Logger logger = LoggerFactory.getLogger(GuestServiceImplTest.class);
 
 	private static final String guestDomainName1 = "guestDomainName1";
-	
+
 	private static final String DOMAIN_GUEST_IDENTIFIER = LinShareConstants.guestDomainIdentifier;
 
 	@Autowired
@@ -124,7 +142,7 @@ public class GuestServiceImplTest {
 
 	@Autowired
 	private InconsistentUserService inconsistentUserService;
-	
+
 	@Autowired
 	private PasswordService passwordService;
 
@@ -181,7 +199,7 @@ public class GuestServiceImplTest {
 	private User owner1;
 
 	private User owner2;
-	
+
 	private User owner3;
 
 	private SystemAccount systemAccount;
@@ -229,7 +247,7 @@ public class GuestServiceImplTest {
 		owner2.setCanCreateGuest(true);
 		owner2.setRole(Role.SIMPLE);
 		owner2 = userService.saveOrUpdateUser(owner2, Optional.empty());
-		
+
 		owner3 = new Internal("Jane", "Smith", "user4@linshare.org", null);
 		owner3.setDomain(subDomain);
 		owner3.setCanCreateGuest(true);
@@ -352,7 +370,7 @@ public class GuestServiceImplTest {
 		guest = guestService.create(owner1, owner1, guest, null, null, null);
 		AbstractDomain domain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlSubDomain);
-	
+
 
 		guest.setDomain(domain);
 		guest.setFirstName("First");
@@ -493,7 +511,7 @@ public class GuestServiceImplTest {
 
 	@Test
 	public void testUpdateInconsistentDomain() {
-		
+
 		// create guest
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setCmisLocale("en");
@@ -503,7 +521,7 @@ public class GuestServiceImplTest {
 		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
 		assertNotNull(find);
 		assertEquals(Role.SIMPLE, find.getRole());
-		
+
 		// updateGuestDomain
 		AbstractDomain domain = abstractDomainRepository.findById(guestDomainName1);
 		inconsistentUserService.updateDomain(root, guest.getLsUuid(), domain.getUuid());
@@ -629,7 +647,7 @@ public class GuestServiceImplTest {
 		assertEquals(2, ac.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testUpdateGuestWithContactRestriction()
 			throws IllegalArgumentException, BusinessException,
@@ -737,7 +755,7 @@ public class GuestServiceImplTest {
 		assertThat(moderators.size()).isEqualTo(0);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testConvertGuestToInternalUser() throws BusinessException {
 		guest_converted = new Guest("Guest", "Doe", "guest1@linshare.org");

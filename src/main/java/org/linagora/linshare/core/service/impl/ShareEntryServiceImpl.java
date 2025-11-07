@@ -30,6 +30,8 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
@@ -37,8 +39,6 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.ShareRecipientStatistic;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.ContactList;
-import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -151,7 +151,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		log.setCopiedTo(copiedTo);
 		logEntryService.insert(log);
 		if (mail != null) {
-			notifierService.sendNotification(mail);
+			this.notifierService.sendNotification(mail);
 		}
 		return share;
 	}
@@ -201,7 +201,9 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				documentEntryBusinessService.update(documentEntry);
 			}
 		}
-		notifierService.sendNotification(mail);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 		return share;
 	}
 
@@ -247,8 +249,10 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		if (share.getDownloaded() <= 0) {
 			ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		}
 		share = shareEntryBusinessService.updateDownloadCounter(share.getUuid());
 		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DOWNLOAD, share,

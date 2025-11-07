@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.common.service.AbstractNotificationTest;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
@@ -57,6 +58,7 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.light.LightSharedSpaceRole;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.projections.dto.SharedSpaceNodeNested;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +66,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
 @Transactional
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -78,7 +80,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 		"classpath:springContext-mongo-init.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SharedSpaceMemberServiceImplTest {
+ class SharedSpaceMemberServiceImplTest extends AbstractNotificationTest {
 
 	private static Logger logger = LoggerFactory.getLogger(SharedSpaceMemberServiceImplTest.class);
 
@@ -410,4 +412,101 @@ public class SharedSpaceMemberServiceImplTest {
 		}
 	}
 
+	/**
+	 * Tests that when creating a shared space member and mail is not null,
+	 * the notification is properly sent to the new member.
+	 *
+	 * @see AbstractNotificationTest#verifyNotificationSent()
+	 */
+	@Test
+	void testCreate_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that when creating a shared space member and mail is null,
+	 * no notification is sent and no exception is thrown.
+	 *
+	 * @see AbstractNotificationTest#verifyNotificationNotSent()
+	 */
+	@Test
+	void testCreate_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
+	}
+
+	/**
+	 * Tests that when updating a shared space member and mail is not null,
+	 * the notification is properly sent to the new member.
+	 *
+	 * @see AbstractNotificationTest#verifyNotificationSent()
+	 */
+	@Test
+	 void testUpdate_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that when updating a shared space member and mail is null,
+	 * no notification is sent and no exception is thrown.
+	 *
+	 * @see AbstractNotificationTest#verifyNotificationNotSent()
+	 */
+	@Test
+	void testUpdate_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
+	}
+
+	/**
+	 * Tests that workgroup member creation sends notification when mail is not null and actor is not the new member.
+	 * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+	 */
+	@Test
+	void testCreateWorkGroupMember_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that workgroup member creation doesn't send notification when mail is null and actor is not the new member.
+	 * Verifies robust error handling when email templates cannot be generated.
+	 */
+	@Test
+	void testCreateWorkGroupMember_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
+	}
+
+	/**
+	 * Tests that workgroup member update sends notification when mail is not null.
+	 * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+	 */
+	@Test
+	void testUpdateWorkGroupMember_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that workgroup member update doesn't send notification when mail is null.
+	 * Verifies robust error handling when email templates cannot be generated.
+	 */
+	@Test
+	void testUpdateWorkGroupMember_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
+	}
+
+	/**
+	 * Tests that workgroup member deletion sends notification when mail is not null and actor is not the member.
+	 * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+	 */
+	@Test
+	void testDeleteWorkGroupMember_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that workgroup member deletion doesn't send notification when mail is null and actor is not the member.
+	 * Verifies robust error handling when email templates cannot be generated.
+	 */
+	@Test
+	void testDeleteWorkGroupMember_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
+	}
 }

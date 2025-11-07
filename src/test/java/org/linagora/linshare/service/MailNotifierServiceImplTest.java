@@ -157,43 +157,43 @@ public class MailNotifierServiceImplTest {
 						"Empty list of recipients",
 						EMPTY_LIST,
 						EMPTY_LIST,
-						0
+						EMPTY_LIST
 				),
 				Arguments.of(
 						"List with valid recipient and null elements",
 						LIST_WITH_NULL_ELEMENTS,
 						EMPTY_LIST,
-						1
+						SINGLE_VALID_RECIPIENT_LIST
 				),
 				Arguments.of(
 						"Single invalid recipient",
 						createMailContainers(SINGLE_INVALID_RECIPIENT_LIST),
 						SINGLE_INVALID_RECIPIENT_LIST,
-						0
+						EMPTY_LIST
 				),
 				Arguments.of(
 						"Single valid recipient",
 						createMailContainers(SINGLE_VALID_RECIPIENT_LIST),
 						EMPTY_LIST,
-						1
+						SINGLE_VALID_RECIPIENT_LIST
 				),
 				Arguments.of(
 						"Mixed valid and invalid recipients",
 						createMailContainers(MIXED_RECIPIENTS_LIST),
 						SINGLE_INVALID_RECIPIENT_LIST,
-						2
+						Arrays.asList(VALID_RECIPIENT_1, VALID_RECIPIENT_2)
 				),
 				Arguments.of(
 						"Multiple invalid recipients",
 						createMailContainers(MULTIPLE_INVALID_WITH_VALID_LIST),
 						SINGLE_INVALID_RECIPIENT_LIST,
-						1
+						SINGLE_VALID_RECIPIENT_LIST
 				),
 				Arguments.of(
 						"All valid recipients",
 						createMailContainers(MULTIPLE_VALID_RECIPIENTS_LIST),
 						EMPTY_LIST,
-						2
+						Arrays.asList(VALID_RECIPIENT_1, VALID_RECIPIENT_2)
 				)
 		);
 	}

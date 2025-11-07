@@ -111,7 +111,9 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 		}
 		// Once every thing is ok, transaction is about to be committed, we can
 		// send the notification.
-		notifierService.sendNotification(mail);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 		logEntryService.insert(logs);
 		return context;
 	}

@@ -96,8 +96,10 @@ public class NotifyAllGuestsToResetPasswordsWithOldEncodingUpgradeTaskImpl exten
 		resetGuestPasswordMongoRepository.insert(resetGuestPassword);
 		EmailContext mailContext = new GuestAccountResetPasswordFor4_0_EmailContext(guest, resetGuestPassword.getUuid(),
 				resetGuestPassword.getExpirationDate());
-		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
-		notifierService.sendNotification(mail);
+		final MailContainerWithRecipient mail = this.mailBuildingService.build(mailContext);
+		if (mail != null) {
+			this.notifierService.sendNotification(mail);
+		}
 		batchResultContext.setProcessed(true);
 		return batchResultContext;
 	}

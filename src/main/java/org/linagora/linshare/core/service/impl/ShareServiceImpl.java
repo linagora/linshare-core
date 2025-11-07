@@ -200,8 +200,10 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 				.getAcknowledgement(actor.getDomain());
 		if (acknowledgementFunc.getFinalValue(shareContainer.isAcknowledgement())) {
 			ShareNewShareAcknowledgementEmailContext context = new ShareNewShareAcknowledgementEmailContext(owner, shareContainer, entries);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
+			final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+			if (mail != null) {
+				this.notifierService.sendNotification(mail);
+			}
 		}
 		// Notification
 		notifierService.sendNotification(shareContainer.getMailContainers());

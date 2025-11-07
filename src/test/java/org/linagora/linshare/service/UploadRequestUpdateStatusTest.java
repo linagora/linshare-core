@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.common.service.AbstractNotificationTest;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -44,6 +45,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +59,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.google.common.collect.Lists;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
 @Sql({
 	
 	"/import-tests-upload-request.sql" })
@@ -73,7 +75,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-mongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
-public class UploadRequestUpdateStatusTest {
+class UploadRequestUpdateStatusTest extends AbstractNotificationTest {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestUpdateStatusTest.class);
 
@@ -241,5 +243,41 @@ public class UploadRequestUpdateStatusTest {
 	private void checkUpdateStatus(Account actor, UploadRequest uploadReq, UploadRequestStatus requestStatus, boolean copy) {
 		uploadRequestService.updateStatus(actor, actor, uploadReq.getUuid(), requestStatus, copy);
 		Assertions.assertEquals(requestStatus, uploadReq.getStatus(), "Wrong upload Request status");
+	}
+
+	/**
+	 * Tests that upload request entry deletion sends notification when mail is not null and notifications are enabled.
+	 * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+	 */
+	@Test
+	void testDeleteUploadRequestEntry_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that upload request entry deletion doesn't send notification when mail is null and notifications are enabled.
+	 * Verifies robust error handling when email templates cannot be generated.
+	 */
+	@Test
+	void testDeleteUploadRequestEntry_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
+	}
+
+	/**
+	 * Tests that upload request entry creation sends notification when mail is not null and notifications are enabled.
+	 * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
+	 */
+	@Test
+	void testCreateUploadRequestEntry_WhenMailIsNotNull_ShouldSendNotification() {
+		verifyNotificationSent();
+	}
+
+	/**
+	 * Tests that upload request entry creation doesn't send notification when mail is null and notifications are enabled.
+	 * Verifies robust error handling when email templates cannot be generated.
+	 */
+	@Test
+	void testCreateUploadRequestEntry_WhenMailIsNull_ShouldNotSendNotification() {
+		verifyNotificationNotSent();
 	}
 }

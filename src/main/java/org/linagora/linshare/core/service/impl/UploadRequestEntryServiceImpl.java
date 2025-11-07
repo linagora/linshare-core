@@ -191,7 +191,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 					UploadRequestUnavailableSpaceEmailContext context = new UploadRequestUnavailableSpaceEmailContext(
 							(User) uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
 							uploadRequestUrl.getUploadRequest(), uploadRequestUrl);
-					notifierService.sendNotification(mailBuildingService.build(context));
+					final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+					if(mail !=null) {
+						this.notifierService.sendNotification(mail);
+					}
 				}
 				throw e;
 			}
@@ -401,8 +404,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 				EmailContext context = new UploadRequestDeleteFileByOwnerEmailContext(
 						(User) urUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
 						urUrl.getUploadRequest(),	urUrl, uploadRequestEntry);
-				MailContainerWithRecipient mail = mailBuildingService.build(context);
-				notifierService.sendNotification(mail); 
+				final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+				if (mail != null) {
+					this.notifierService.sendNotification(mail);
+				}
 			}
 		}
 		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(authUser),
