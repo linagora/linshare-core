@@ -163,7 +163,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	}
 
 	private boolean isValidPassword(UploadRequestUrl data, String password) {
-		if (data.isProtectedByPassword()) {
+		if (data.getUploadRequest().isProtectedByPassword()) {
 			if (password == null)
 				return false;
 			return passwordService.matches(password, data.getPassword());
@@ -174,7 +174,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 	private void accessBusinessCheck(UploadRequestUrl requestUrl,
 			String password) throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();
-		if (requestUrl.isProtectedByPassword() && requestUrl.isDefaultPassword()) {
+		if (requestUrl.getUploadRequest().isProtectedByPassword() && requestUrl.isDefaultPassword()) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_URL_FORBIDDEN_DEFAULT_PASSWORD_NOT_UPDATED,
 					"The password of the upload request url has not been changed yet. You need to reset your password to be able to access to this url.");
 		}

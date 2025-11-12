@@ -103,7 +103,7 @@ public class UploadRequestDto {
 		}
 		this.uuid = requestUrl.getUuid();
 		this.recipient = new ContactDto(requestUrl.getContact());
-		this.protectedByPassword = requestUrl.isProtectedByPassword();
+		this.protectedByPassword = requestUrl.getUploadRequest().isProtectedByPassword();
 		this.locale = requestUrl.getUploadRequest().getLocale();
 		this.collective = requestUrl.getUploadRequest().getUploadRequestGroup().isCollective();
 	}

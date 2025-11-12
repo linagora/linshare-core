@@ -18,6 +18,8 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.linagora.linshare.core.business.service.PasswordService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -74,14 +76,17 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadRequest updateStatus(UploadRequest req, UploadRequestStatus status) throws BusinessException {
+	public @Nonnull UploadRequest updateStatus(@Nonnull UploadRequest req, @Nonnull final UploadRequestStatus status)
+			throws BusinessException {
 		if (UploadRequestStatus.CREATED.equals(req.getStatus()) && UploadRequestStatus.ENABLED.equals(status)) {
 			for (final UploadRequestUrl url : req.getUploadRequestURLs()) {
-				final String password = passwordService.generatePassword();
-				// We store it temporary in this object for mail notification.
-				url.setTemporaryPlainTextPassword(password);
-				url.setPassword(passwordService.encode((password)));
-				uploadRequestUrlRepository.update(url);
+				if (url.getUploadRequest().isProtectedByPassword()) {
+					final String password = passwordService.generatePassword();
+					// We store it temporary in this object for mail notification.
+					url.setTemporaryPlainTextPassword(password);
+					url.setPassword(passwordService.encode((password)));
+					uploadRequestUrlRepository.update(url);
+				}
 			}
 		}
 		req.updateStatus(status);

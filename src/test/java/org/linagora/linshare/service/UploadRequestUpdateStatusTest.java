@@ -15,20 +15,31 @@
  */
 package org.linagora.linshare.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
 import javax.transaction.Transactional;
 
+import com.google.common.collect.Lists;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.linagora.linshare.common.service.AbstractNotificationTest;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -39,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestUrlRepository;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -55,8 +67,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import com.google.common.collect.Lists;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
@@ -280,4 +290,102 @@ class UploadRequestUpdateStatusTest extends AbstractNotificationTest {
 	void testCreateUploadRequestEntry_WhenMailIsNull_ShouldNotSendNotification() {
 		verifyNotificationNotSent();
 	}
+
+	/**
+	 * <p>
+	 * Update the status of an {@link UploadRequest} from different initial {@code status}es to different new
+	 * {@code status}es.
+	 * </p>
+	 * <p>
+	 * The transition from the {@code original status} to the {@code target status} should be allowed, otherwise an
+	 * exception is thrown.
+	 * </p>
+	 * Expected results:
+	 * <ul>
+	 * <li>if the transition is <b>allowed:</b>
+	 * <ul>
+	 * <li>no error occurs,</li>
+	 * <li>the status is correctly updated to the target one.</li>
+	 * </ul>
+	 * </li>
+	 * <li>otherwise, if the transition is <b>not allowed:</b>
+	 * <ul>
+	 * <li>exception thrown indicating that the transition is not allowed,</li>
+	 * <li>the status of the upload requests is not updated.</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 *
+	 * @param initialStatus     the initial status of the upload request from which to transition. Not {@code null}.
+	 * @param targetStatus      the {@link UploadRequestStatus} to which to update the status. Not {@code null}.
+	 * @param allowedTransition if set to {@code true}, the transition is expected as <strong>allowed</strong>.
+	 */
+	@ParameterizedTest
+	@MethodSource("provideUpdateStatusArguments")
+	void updateStatus(@Nonnull final UploadRequestStatus initialStatus, @Nonnull final UploadRequestStatus targetStatus,
+			final boolean allowedTransition) {
+
+		final UploadRequest uploadRequest = new UploadRequest();
+		uploadRequest.setStatus(initialStatus);
+
+		if (allowedTransition) {
+			assertDoesNotThrow(() -> uploadRequest.updateStatus(targetStatus));
+			assertEquals(targetStatus, uploadRequest.getStatus());
+		} else {
+			final BusinessException thrown = assertThrows(BusinessException.class,
+					() -> uploadRequest.updateStatus(targetStatus));
+			assertEquals(BusinessErrorCode.UPLOAD_REQUEST_STATUS_BAD_TRANSITON, thrown.getErrorCode());
+			assertEquals(String.format("Cannot transition from %s to %s.", initialStatus.name(), targetStatus.name()),
+					thrown.getMessage());
+			assertNotEquals(targetStatus, uploadRequest.getStatus());
+		}
+	}
+
+	/**
+	 * <p>
+	 * Generate a stream of arguments, containing 3 elements each:
+	 * </p>
+	 * <ul>
+	 * <li>Initial status of type {@link UploadRequestStatus}</li>
+	 * <li>Target status of type {@link UploadRequestStatus}</li>
+	 * <li>{@code Boolean} representing whether the transition is allowed or not.</li>
+	 * </ul>
+	 *
+	 * @return the stream of arguments.
+	 */
+	private static @Nonnull Stream<Arguments> provideUpdateStatusArguments() {
+		return Stream.of(
+				// Allowed status transitions
+				Arguments.of(UploadRequestStatus.CREATED, UploadRequestStatus.CANCELED, true),
+				Arguments.of(UploadRequestStatus.CREATED, UploadRequestStatus.ENABLED, true),
+				Arguments.of(UploadRequestStatus.PURGED, UploadRequestStatus.DELETED, true),
+				Arguments.of(UploadRequestStatus.ARCHIVED, UploadRequestStatus.DELETED, true),
+				Arguments.of(UploadRequestStatus.ARCHIVED, UploadRequestStatus.PURGED, true),
+				Arguments.of(UploadRequestStatus.CLOSED, UploadRequestStatus.ARCHIVED, true),
+				Arguments.of(UploadRequestStatus.CLOSED, UploadRequestStatus.PURGED, true),
+				Arguments.of(UploadRequestStatus.ENABLED, UploadRequestStatus.CLOSED, true),
+
+				// Not allowed status transitions
+				Arguments.of(UploadRequestStatus.CREATED, UploadRequestStatus.CLOSED, false),
+				Arguments.of(UploadRequestStatus.CREATED, UploadRequestStatus.PURGED, false),
+				Arguments.of(UploadRequestStatus.CREATED, UploadRequestStatus.ARCHIVED, false),
+				Arguments.of(UploadRequestStatus.CREATED, UploadRequestStatus.DELETED, false),
+				Arguments.of(UploadRequestStatus.PURGED, UploadRequestStatus.CLOSED, false),
+				Arguments.of(UploadRequestStatus.PURGED, UploadRequestStatus.ARCHIVED, false),
+				Arguments.of(UploadRequestStatus.PURGED, UploadRequestStatus.CREATED, false),
+				Arguments.of(UploadRequestStatus.PURGED, UploadRequestStatus.ENABLED, false),
+				Arguments.of(UploadRequestStatus.ARCHIVED, UploadRequestStatus.CLOSED, false),
+				Arguments.of(UploadRequestStatus.ARCHIVED, UploadRequestStatus.ENABLED, false),
+				Arguments.of(UploadRequestStatus.ARCHIVED, UploadRequestStatus.CREATED, false),
+				Arguments.of(UploadRequestStatus.ARCHIVED, UploadRequestStatus.CANCELED, false),
+				Arguments.of(UploadRequestStatus.CLOSED, UploadRequestStatus.ENABLED, false),
+				Arguments.of(UploadRequestStatus.CLOSED, UploadRequestStatus.CANCELED, false),
+				Arguments.of(UploadRequestStatus.CLOSED, UploadRequestStatus.CREATED, false),
+				Arguments.of(UploadRequestStatus.ENABLED, UploadRequestStatus.CANCELED, false),
+				Arguments.of(UploadRequestStatus.ENABLED, UploadRequestStatus.CREATED, false),
+				Arguments.of(UploadRequestStatus.ENABLED, UploadRequestStatus.DELETED, false),
+				Arguments.of(UploadRequestStatus.ENABLED, UploadRequestStatus.PURGED, false),
+				Arguments.of(UploadRequestStatus.ENABLED, UploadRequestStatus.ARCHIVED, false));
+	}
+
 }

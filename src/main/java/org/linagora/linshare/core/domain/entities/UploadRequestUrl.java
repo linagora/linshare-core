@@ -38,6 +38,18 @@ public class UploadRequestUrl {
 
 	private String path;
 
+	/**
+	 * TODO: ISSUE-1616
+	 *  The password field must be coherent with the protection status of the associated upload request.
+	 *  Related issue: <a href="https://ci.linagora.com/linagora/lgs/linshare/products/linshare-core/-/issues/1616">#1616</a>
+	 * <p>
+	 * Based on the value of {@code this.uploadRequest.isPasswordProtected()}, if it's:
+	 * </p>
+	 * <ul>
+	 * <li>{@code == true}: then the {@code password} <b>CANNOT</b> be {@code null} or empty (blank),</li>
+	 * <li>{@code == false}: then the {@code password} <b>MUST</b> be {@code null}.</li>
+	 * </ul>
+	 */
 	private String password;
 
 	private String temporaryPlainTextPassword;
@@ -128,10 +140,6 @@ public class UploadRequestUrl {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
-	}
-
-	public boolean isProtectedByPassword() {
-		return password != null;
 	}
 
 	public String getTemporaryPlainTextPassword() {

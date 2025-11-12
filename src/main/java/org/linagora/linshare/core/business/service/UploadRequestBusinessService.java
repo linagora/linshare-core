@@ -18,10 +18,13 @@ package org.linagora.linshare.core.business.service;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestBusinessService {
@@ -47,7 +50,29 @@ public interface UploadRequestBusinessService {
 
 	List<String> findAllRequestsToBeNotified() throws BusinessException;
 
-	UploadRequest updateStatus(UploadRequest req, UploadRequestStatus status) throws BusinessException;
+	/**
+	 * <p>
+	 * Update the status of the provided {@link UploadRequest} to the provided {@link UploadRequestStatus}.
+	 * </p>
+	 *
+	 * <p>
+	 * In addition, if the {@code status} is being changed from {@link UploadRequestStatus#CREATED} into
+	 * {@link UploadRequestStatus#ENABLED} and the upload request is protected by password, then for each
+	 * {@link UploadRequestUrl} of the provided {@code uploadRequest}, generate a password, set it as the temporary
+	 * password, which will be sent in mail notification, and persist it in the {@code password} column of that url.
+	 * </p>
+	 *
+	 * @param req
+	 *               the {@link UploadRequest} to be updated. Not {@code null}.
+	 * @param status
+	 *               the {@link UploadRequestStatus} value to which to change the request's status. Not {@code null}.
+	 *
+	 * @return the {@link UploadRequest} with the status changed.
+	 * @throws BusinessException
+	 *                           when an error happens in the process.
+	 */
+	public @Nonnull UploadRequest updateStatus(@Nonnull UploadRequest req, @Nonnull final UploadRequestStatus status)
+			throws BusinessException;
 
 	Long computeEntriesSize(UploadRequest request);
 

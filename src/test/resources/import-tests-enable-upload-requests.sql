@@ -1,0 +1,13 @@
+-- Upload request created, protected by password
+
+INSERT INTO upload_request_group (id, domain_abstract_id, account_id, subject, body, uuid, creation_date, modification_date, max_file, max_deposit_size, max_file_size, activation_date, notification_date, expiry_date, can_delete, can_close, can_edit_expiry_date, locale, protected_by_password, mail_message_id, enable_notification, collective, status)
+VALUES (1, 2, 10, 'subject of upload request 4', 'body of upload request 4', 'f4f31b58-ef45-11e5-b506-c348d7a7b65a', DATEADD(month, -2, now()), DATEADD(month, -2, now()), 3, 31457280, 10485760, DATEADD(month, -2, now()), DATEADD(month, -2, now()),DATEADD(month, 1, now()), true, true, true, 'fr', true, null,true,false, 'CREATED');
+INSERT INTO upload_request (id, upload_request_group_id, uuid, max_file, max_deposit_size, max_file_size, status, activation_date, creation_date, modification_date, notification_date, expiry_date, upload_proposition_request_uuid, can_delete, can_close, can_edit_expiry_date, locale, protected_by_password, mail_message_id, pristine, enable_notification)
+VALUES (1, 1, 'f548ac1c-ef45-11e5-a73f-4b811b25f11b', 3, 31457280, 10485760, 'CREATED', DATEADD(day, -1, now()), DATEADD(month, -2, now()), now(), DATEADD(month, 3, now()), DATEADD(month, 3, now()), null, true, true, true, 'fr', true, null, true, true);
+
+
+-- Upload request created, not protected by password
+INSERT INTO upload_request_group (id, domain_abstract_id, account_id, subject, body, uuid, creation_date, modification_date, max_file, max_deposit_size, max_file_size, activation_date, notification_date, expiry_date, can_delete, can_close, can_edit_expiry_date, locale, protected_by_password, mail_message_id, enable_notification, collective, status)
+VALUES (2, 2, 10, 'subject of upload request 6', 'body of upload request 6', '584b8e98-ef46-11e5-800e-7f734472e0a3', DATEADD(month, -2, now()), DATEADD(month, -2, now()), 3, 31457280, 10485760, DATEADD(month, -2, now()), DATEADD(month, -2, now()),DATEADD(month, 1, now()), true, true, true, 'fr', false, null,true,false, 'CREATED');
+INSERT INTO upload_request (id, upload_request_group_id, uuid, max_file, max_deposit_size, max_file_size, status, activation_date, creation_date, modification_date, notification_date, expiry_date, upload_proposition_request_uuid, can_delete, can_close, can_edit_expiry_date, locale, protected_by_password, mail_message_id, pristine, enable_notification)
+VALUES (2, 2, '42a4a7e4-ef46-11e5-b1d1-e3c21cdc7a0b', 3, 31457280, 10485760, 'CREATED', DATEADD(day, -3, now()), now(), DATEADD(month, 3, now()), DATEADD(month, 3, now()), '2014-09-10 00:00:00', null, true, true, true, 'fr', false, null, true, true);
