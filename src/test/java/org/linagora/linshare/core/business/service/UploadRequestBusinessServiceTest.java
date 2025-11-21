@@ -65,40 +65,37 @@ class UploadRequestBusinessServiceTest {
 
 	/**
 	 * <p>
-	 * Verify the status update of an upload request from status {@link UploadRequestStatus#CREATED} to
-	 * {@link UploadRequestStatus#ENABLED}.
+	 * Verify the status update of an upload request from different initial statuses to different target statuses.
 	 * </p>
 	 * <p>
 	 * The upload request can be either protected by password or not.
 	 * </p>
 	 * Expected results:
 	 * <ul>
-	 * <li>If the upload request <b>is protected</b> by password:
-	 * <ul>
 	 * <li>no error occurs,</li>
-	 * <li>the status is correctly updated from {@link UploadRequestStatus#CREATED} to {@link UploadRequestStatus#ENABLED},</li>
-	 * <li>a password is created for each url, associated with the upload request</li>
-	 * </ul>
-	 * </li>
-	 * <li>Else, if the upload request <b>is NOT protected</b> by password:
+	 * <li>the status is correctly updated from {@code initialStatus} to {@code targetStatus},</li>
+	 * <li>and, if the initial status is {@code CREATED} and the target status is {@code ENABLED}, additional processing
+	 * is done:
 	 * <ul>
-	 * <li>no error occurs,</li>
-	 * <li>the status is correctly updated from {@link UploadRequestStatus#CREATED} to {@link UploadRequestStatus#ENABLED},</li>
-	 * <li>no password is created for the urls that are associated with the upload request.</li>
+	 * <li>if the upload request <b>is protected</b> by password: a password is created for each URL, associated with the
+	 * upload request</li>
+	 * <li>otherwise: no password is created for the URLs that are associated with the upload request.</li>
 	 * </ul>
 	 * </li>
 	 * </ul>
 	 *
-	 * @param initialStatus         the initial status of the upload request, from which to update the status. Not
+	 * @param initialStatus
+	 *                              The initial status of the upload request, from which to update the status. Not
 	 *                              {@code null}.
-	 * @param targetStatus          the target status of the upload request, to which to update the status. Not
+	 * @param targetStatus
+	 *                              The target status of the upload request, to which to update the status. Not
 	 *                              {@code null}.
-	 * @param isProtectedByPassword A {@code boolean} that indicates whether the upload request is protected by password
-	 *                              or not.
+	 * @param isProtectedByPassword
+	 *                              A flag that indicates whether the upload request is protected by password or not.
 	 */
 	@ParameterizedTest
 	@MethodSource("generateUploadRequestInitialAndTargetStatusWithPasswordProtectionStatus")
-	void updateStatusFromCreatedToEnabled(@Nonnull final UploadRequestStatus initialStatus,
+	void updateStatus(@Nonnull final UploadRequestStatus initialStatus,
 			@Nonnull final UploadRequestStatus targetStatus, final boolean isProtectedByPassword) {
 		// Prepare
 		final UploadRequest uploadRequest = new UploadRequest();
