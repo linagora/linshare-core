@@ -18,6 +18,9 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -53,7 +56,28 @@ public interface ShareEntryService {
 
 	ByteSource getThumbnailByteSource(Account actor, Account owner, String shareEntryUuid, ThumbnailType kind) throws BusinessException;
 
-	ByteSource getByteSource(Account actor, Account owner, String shareEntryUuid) throws BusinessException;
+	/**
+	 * <p>
+	 * Get the {@link ByteSource} of the share entry that has the provided UUID.
+	 * </p>
+	 * <p>
+	 * This event is logged as a {@link LogAction#DOWNLOAD} event.
+	 * </p>
+	 *
+	 * @param actor
+	 *                       Actor of the operation. Not {@code null}.
+	 * @param owner
+	 *                       Owner of the resource. Not {@code null}.
+	 * @param shareEntryUuid
+	 *                       UUID of the {@link ShareEntry} of which the {@link ByteSource} will be returned. Not
+	 *                       {@code null}.
+	 * @return the {@link ByteSource} of the {@link ShareEntry}. Not {@code null}.
+	 * @throws BusinessException
+	 *                           When a business error happens.
+	 */
+
+	public @Nonnull ByteSource getByteSource(@Nonnull final Account actor, @Nonnull final Account owner,
+			@Nonnull final String shareEntryUuid) throws BusinessException;
 
 	List<ShareEntry> findAllMyRecievedShareEntries(Account actor, Account owner);
 

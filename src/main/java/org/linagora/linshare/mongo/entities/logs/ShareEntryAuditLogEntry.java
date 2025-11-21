@@ -32,7 +32,6 @@ import org.linagora.linshare.mongo.entities.mto.ShareEntryGroupMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 @XmlRootElement
 public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
@@ -49,7 +48,6 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected String contactListName;
 
-	@Field("contactListUuid")
 	protected String contactListUuid;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)

@@ -51,4 +51,23 @@ public interface ShareEntryBusinessService {
 	List<ShareRecipientStatistic> getTopSharesByFileCount(List<String> domainUuids, String beginDate, String endDate, boolean addAnonymousShares);
 
 	void transferShareEntryFromGuestToInternal(@Nonnull final Guest guestAccount, @Nonnull final User owner);
+
+	/**
+	 * Check whether the provided document entry is, already, explicitly (outside the scope of a contact list) shared by
+	 * the provided sender with the provided recipient.
+	 *
+	 * <p>
+	 * This means there's already a persisted share entry with the provided details that has {@code contactListUuid} set
+	 * to null.
+	 * </p>
+	 *
+	 * @param documentEntry document entry of which to check the share. Not {@code null}.
+	 * @param sender        the sender of the share. Not {@code null}.
+	 * @param recipient     recipient of the share. Not {@code null}.
+	 * @return {@code true} if the share already exists but as an explicit share and not as part of a contact list.
+	 * {@code false} otherwise.
+	 */
+	public boolean isShareEntryAlreadyExistsWithoutContactList(@Nonnull final DocumentEntry documentEntry,
+			@Nonnull final User sender, @Nonnull final User recipient);
+
 }

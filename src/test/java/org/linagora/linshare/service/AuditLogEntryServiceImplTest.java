@@ -16,6 +16,7 @@
 package org.linagora.linshare.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -26,17 +27,28 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Sets;
+import org.assertj.core.groups.Tuple;
 import org.bson.Document;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
@@ -44,8 +56,11 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.impl.AuditLogEntryServiceImpl;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
@@ -55,13 +70,22 @@ import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
 
+/**
+ * Unit tests for {@link AuditLogEntryService}.
+ */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AuditLogEntryServiceImplTest {
 
     private static final String TOP_DOMAIN = "top-domain";
     private static final String GUEST_DOMAIN = "guest-domain";
+	private static Account regularUser;
+	private static Account guest;
+	private static TopDomain topDomain;
 
     @Mock
     private AuditUserMongoRepository userMongoRepository;
@@ -72,39 +96,42 @@ class AuditLogEntryServiceImplTest {
     @Mock
     private AccountService accountService;
 
+	@Mock
+	private AuditLogEntryResourceAccessControl rac;
+
     @InjectMocks
     private AuditLogEntryServiceImpl auditLogEntryService;
 
-    private Account regularUser;
-    private Account guest;
+
     private Account owner;
     private String entryUuid;
     private String contactListUuid;
-    private TopDomain topDomain;
-    private GuestDomain domainGuest;
+
+	@BeforeAll
+	static void init() {
+		topDomain = new TopDomain(TOP_DOMAIN);
+		topDomain.setUuid(TOP_DOMAIN);
+		final GuestDomain domainGuest = new GuestDomain(GUEST_DOMAIN);
+		domainGuest.setUuid(GUEST_DOMAIN);
+
+		guest = new Guest("guest", "Guest", "guest@linshare.org");
+		guest.setLsUuid("guest-uuid");
+		guest.setDomain(domainGuest);
+
+		regularUser = new Internal("Recipient", "User", "recipient@linshare.org", "recipient-uid");
+		regularUser.setLsUuid("recipient-uuid");
+		regularUser.setDomain(topDomain);
+	}
 
     @BeforeEach
-    public void setUp() {
-        this.topDomain = new TopDomain(TOP_DOMAIN);
-        this.topDomain.setUuid(TOP_DOMAIN);
-
-        this.domainGuest = new GuestDomain(GUEST_DOMAIN);
-        this.domainGuest.setUuid(GUEST_DOMAIN);
-
+    void setUp() {
         owner = new Internal("Owner", "User", "owner@linshare.org", "owner-uid");
         owner.setLsUuid("owner-uuid");
-        owner.setDomain(this.topDomain);
-
-        this.guest = new Guest("guest", "Guest", "guest@linshare.org");
-        this.guest.setLsUuid("guest-uuid");
-        this.guest.setDomain(this.domainGuest);
-
-        this.regularUser = new Internal("Recipient", "User", "recipient@linshare.org", "recipient-uid");
-        this.regularUser.setLsUuid("recipient-uuid");
-        this.regularUser.setDomain(this.topDomain);
+        owner.setDomain(topDomain);
 
         entryUuid = "document-entry-uuid";
         contactListUuid = "contact-list-uuid";
+
     }
 
     /**
@@ -187,6 +214,510 @@ class AuditLogEntryServiceImplTest {
         verify(mailingListBusinessService).findByUuid(contactListUuid);
         verify(accountService).findAccountContactListByAccountAndContactList(guest, contactList);
     }
+
+	/**
+	 * <p>
+	 * Verify the finding of all {@link ShareEntryAuditLogEntry}ies for a given user.
+	 * </p>
+	 * Expected results:
+	 * <ul>
+	 * <li>No errors occur,</li>
+	 * <li>if the {@code authUser} is a <b>guest</b>:
+	 * <ul>
+	 * <li>if the share log has a contact list:
+	 * <ul>
+	 * <li>if the guest can view the contact list members:
+	 * <ul>
+	 * <li>The logs are kept unchanged. (Nothing is hidden)</li>
+	 * </ul>
+	 * </li>
+	 * <li>Else
+	 * <ul>
+	 * <li>The {@code authUser}, {@code actor} and {@code recipient} information are hidden in the log.</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * </li>
+	 * <li>Else,
+	 * <ul>
+	 * <li>The logs are kept unchanged. (Nothing is hidden)</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * </li>
+	 * <li>
+	 * Else
+	 * <ul>
+	 * <li>The logs are kept unchanged. (Nothing is hidden)</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 *
+	 * @param authUser
+	 *                                              The authenticated user that is requesting the audit logs. Not
+	 *                                              {@code null}.
+	 * @param actor
+	 *                                              The actor that is requesting the logs. Not {@code null}.
+	 * @param shareEntryAuditLog
+	 *                                              A share entry log created by a previous action on a share entry. Not
+	 *                                              {@code null}.
+	 * @param shareEntryCreatedForContactListMember
+	 *                                              If {@code true}, the provided share entry log was created for a user
+	 *                                              associated to a contact list member.
+	 * @param canViewContactListMembers
+	 *                                              If {@code true}, the authenticated user acting as guest can view the
+	 *                                              members of the potential contact list associated to the share entry,
+	 *                                              otherwise he can't.
+	 */
+	@ParameterizedTest
+	@MethodSource("generateSampleShareEntryAuditLog")
+	void findAllForUsers_shareLogEntries(@Nonnull final Account authUser, @Nonnull final Account actor,
+			@Nonnull final ShareEntryAuditLogEntry shareEntryAuditLog,
+			final boolean shareEntryCreatedForContactListMember, final boolean canViewContactListMembers) {
+		// Prepare
+		final ContactList contactList = new ContactList();
+		final AccountContactLists accountContactLists = new AccountContactLists();
+		accountContactLists.setCanViewContactListMembers(canViewContactListMembers);
+		contactList.setUuid(shareEntryAuditLog.getContactListUuid());
+		contactList.setOwner((User) regularUser);
+
+		// Mock
+		when(this.userMongoRepository.findForUser(eq(actor.getLsUuid()), anyList(), anyList())).thenReturn(
+				Set.of(shareEntryAuditLog));
+		if (shareEntryCreatedForContactListMember && shareEntryAuditLog.getContactListUuid() != null) {
+			when(this.mailingListBusinessService.findByUuid(shareEntryAuditLog.getContactListUuid())).thenReturn(
+					contactList);
+			when(this.accountService.findAccountContactListByAccountAndContactList(authUser, contactList)).thenReturn(
+					Optional.of(accountContactLists));
+		}
+
+		// Execute
+		final Set<AuditLogEntryUser> auditLogs = this.auditLogEntryService.findAllForUsers(authUser, actor, null,
+				null, true, null, null);
+
+		// Assert
+		if (authUser.isGuest() && shareEntryAuditLog.getContactListUuid() != null) {
+			verify(this.mailingListBusinessService).findByUuid(shareEntryAuditLog.getContactListUuid());
+		}
+		auditLogs.forEach(log -> assertInstanceOf(ShareEntryAuditLogEntry.class, log));
+		if (authUser.isGuest() &&
+				shareEntryCreatedForContactListMember &&
+				!canViewContactListMembers &&
+				!Objects.equals(shareEntryAuditLog.getActor().getUuid(), authUser.getLsUuid())) {
+			// Audit log entries are requested by a guest having not the right to view contact list member, and the
+			// current audit log entry is relative to share for a contact list member and was not generated by the guest
+			// (so by the contact list member) --> contact list member data are hidden
+			assertThat(auditLogs)
+					.extracting(
+							AuditLogEntryUser::getAuthUser,
+							AuditLogEntryUser::getActor,
+							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientMail(),
+							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientUuid(),
+							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getContactListUuid(),
+							auditLog -> ((ShareEntryMto) ((ShareEntryAuditLogEntry) auditLog).getResource()).getRecipient(),
+							AuditLogEntryUser::getAction,
+							AuditLogEntryUser::getCause)
+					.containsOnly(
+							Tuple.tuple(
+									null,
+									null,
+									null,
+									null,
+									shareEntryAuditLog.getContactListUuid(),
+									null,
+									shareEntryAuditLog.getAction(),
+									shareEntryAuditLog.getCause()));
+		} else if (authUser.isGuest() &&
+				shareEntryCreatedForContactListMember &&
+				!canViewContactListMembers &&
+				Objects.equals(shareEntryAuditLog.getActor().getUuid(), authUser.getLsUuid()) &&
+				shareEntryAuditLog.getAction().equals(LogAction.CREATE) &&
+				!shareEntryAuditLog.getRecipientUuid().equals(contactList.getOwner().getLsUuid())) {
+			// Audit log entries are requested by a guest having not the right to view contact list member, and the
+			// current audit log entry is relative to share for a contact list member and was generated by the guest based
+			// on a CREATE action --> recipient data are hidden (because the recipient is a member of contact list for
+			// which members are hidden)
+			assertThat(auditLogs)
+					.extracting(
+							AuditLogEntryUser::getAuthUser,
+							AuditLogEntryUser::getActor,
+							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientMail(),
+							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientUuid(),
+							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getContactListUuid(),
+							auditLog -> ((ShareEntryMto) ((ShareEntryAuditLogEntry) auditLog).getResource()).getRecipient(),
+							AuditLogEntryUser::getAction,
+							AuditLogEntryUser::getCause)
+					.containsOnly(
+							Tuple.tuple(
+									shareEntryAuditLog.getAuthUser(),
+									shareEntryAuditLog.getActor(),
+									null,
+									null,
+									shareEntryAuditLog.getContactListUuid(),
+									null,
+									shareEntryAuditLog.getAction(),
+									shareEntryAuditLog.getCause()));
+		} else {
+			// Otherwise --> No data is hidden
+			assertThat(auditLogs)
+					.extracting(
+							AuditLogEntryUser::getAuthUser,
+							AuditLogEntryUser::getActor,
+							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientMail(),
+							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientUuid(),
+							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getContactListUuid(),
+							auditLog -> ((ShareEntryMto) ((ShareEntryAuditLogEntry) auditLog).getResource()).getRecipient(),
+							AuditLogEntryUser::getAction,
+							AuditLogEntryUser::getCause)
+					.containsOnly(
+							Tuple.tuple(
+									shareEntryAuditLog.getAuthUser(),
+									shareEntryAuditLog.getActor(),
+									shareEntryAuditLog.getRecipientMail(),
+									shareEntryAuditLog.getRecipientUuid(),
+									shareEntryAuditLog.getContactListUuid(),
+									((ShareEntryMto) shareEntryAuditLog.getResource()).getRecipient(),
+									shareEntryAuditLog.getAction(),
+									shareEntryAuditLog.getCause()));
+		}
+	}
+
+	/**
+	 * Generate a stream of arguments with 5 elements each:
+	 * <ul>
+	 * <li>{@code authUser}: the authenticated user requesting the logs.</li>
+	 * <li>{@code actor}: the actor requesting the logs.</li>
+	 * <li>A {@link ShareEntryAuditLogEntry} with different combination of
+	 * <ul>
+	 * <li>Has {@code contactList} or not</li>
+	 * <li>{@code authUser}: the authenticated user when the log was saved.</li>
+	 * <li>{@code actor}: of the action when the log was saved.</li>
+	 * <li>{@code Log action}, eg: DOWNLOAD, UPDATE, etc...</li>
+	 * <li>{@code Log action cause}, eg: COPY, UNDEFINED, etc...</li>
+	 * </ul>
+	 * </li>
+	 * <li>A {@code boolean} representing whether the share log has a contact list or not</li>
+	 * <li>A {@code boolean} representing whether the guest member associated with that contact list can view the
+	 * member's info of that contact list.</li>
+	 * </ul>
+	 *
+	 * @return the generated stream of arguments. Not {@code null}.
+	 */
+	private static @Nonnull Stream<Arguments> generateSampleShareEntryAuditLog() {
+		final ContactListInfo contactListInfo = new ContactListInfo("contact-list-uuid", "my-contact-list");
+
+		return Stream.of(
+				//--> authUser/actor (requesting the log): guest
+				//----> withContactList:yes
+				//------> canViewContactListMembers:true
+				//--------> authUser/actor (in the log):guest
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, LogActionCause.COPY),
+						true, true),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						true, true),
+				//----------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DELETE, LogActionCause.UNDEFINED),
+						true, true),
+				//----------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.CREATE, null),
+						true, true),
+				//------> authUser/actor (in the log):regularUser
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.DOWNLOAD,
+								LogActionCause.COPY), true, true),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						true, true),
+				//----------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.DELETE,
+								LogActionCause.UNDEFINED), true, true),
+				//----------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.CREATE,
+								null), true, true),
+				//------> canViewContactListMembers:false
+				//--------> authUser/actor (in the log):guest
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, LogActionCause.COPY),
+						true, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						true, false),
+				//----------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DELETE, LogActionCause.UNDEFINED),
+						true, false),
+				//----------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.CREATE, null),
+						true, false),
+				//--------> authUser/actor (in the log):regularUser
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.DOWNLOAD,
+								LogActionCause.COPY), true, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						true, false),
+				//----------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.DELETE,
+								LogActionCause.UNDEFINED), true, false),
+				//----------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.CREATE,
+								null), true, false),
+
+				//----> withContactList:no
+				//------> authUser/actor (in the log):guest
+				//--------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.DOWNLOAD, LogActionCause.COPY), false, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						false, false),
+				//--------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.DELETE, LogActionCause.UNDEFINED), false, false),
+				//--------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.CREATE, null), false, false),
+				//------> authUser/actor (in the log):regularUser
+				//--------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.DOWNLOAD, LogActionCause.COPY),
+						false, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						false, false),
+				//--------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.DELETE, LogActionCause.UNDEFINED),
+						false, false),
+				//--------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.CREATE, null),
+						false, false),
+				//--------> authUser/actor (in the log):guest
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.DOWNLOAD, LogActionCause.COPY), false, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						false, false),
+				//--------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.DELETE, LogActionCause.UNDEFINED), false, false),
+				//--------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.CREATE, null), false, false),
+				//------> authUser/actor (in the log):regularUser
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.DOWNLOAD, LogActionCause.COPY),
+						false, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						false, false),
+				//--------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.DELETE, LogActionCause.UNDEFINED),
+						false, false),
+				//--------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.CREATE, null),
+						false, false),
+
+				//--> authUser/actor (requesting the log): regularUser
+				//----> withContactList:yes
+				//------> canViewContactListMembers:true
+				//--------> authUser/actor (in the log):guest
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, LogActionCause.COPY),
+						true, true),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						true, true),
+				//----------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DELETE, LogActionCause.UNDEFINED),
+						true, true),
+				//----------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.CREATE, null),
+						true, true),
+				//------> authUser/actor (in the log):regularUser
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.DOWNLOAD,
+								LogActionCause.COPY), true, true),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						true, true),
+				//----------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.DELETE,
+								LogActionCause.UNDEFINED), true, true),
+				//----------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.CREATE,
+								null), true, true),
+				//------> canViewContactListMembers:false
+				//--------> authUser/actor (in the log):guest
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, LogActionCause.COPY),
+						true, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						true, true),
+				//----------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DELETE, LogActionCause.UNDEFINED),
+						true, false),
+				//----------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.CREATE, null),
+						true, false),
+				//--------> authUser/actor (in the log):regularUser
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.DOWNLOAD,
+								LogActionCause.COPY), true, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						true, false),
+				//----------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.DELETE,
+								LogActionCause.UNDEFINED), true, false),
+				//----------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(regularUser, regularUser,
+						createShareEntryLog(contactListInfo, regularUser, regularUser, LogAction.CREATE,
+								null), true, false),
+
+				//----> withContactList:no
+				//------> authUser/actor (in the log):guest
+				//--------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.DOWNLOAD, LogActionCause.COPY), false, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.DOWNLOAD, null),
+						false, false),
+				//--------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.DELETE, LogActionCause.UNDEFINED), false, false),
+				//--------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.CREATE, null), false, false),
+				//------> authUser/actor (in the log):regularUser
+				//--------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.DOWNLOAD, LogActionCause.COPY),
+						false, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						false, false),
+				//--------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.DELETE, LogActionCause.UNDEFINED),
+						false, false),
+				//--------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.CREATE, null),
+						false, false),
+				//--------> authUser/actor (in the log):guest
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.DOWNLOAD, LogActionCause.COPY), false, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						false, false),
+				//--------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.DELETE, LogActionCause.UNDEFINED), false, false),
+				//--------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, guest, guest, LogAction.CREATE, null), false, false),
+				//------> authUser/actor (in the log):regularUser
+				//----------> action:DOWNLOAD, cause:COPY, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.DOWNLOAD, LogActionCause.COPY),
+						false, false),
+				//----------> action:DOWNLOAD, cause:null, authUser:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(contactListInfo, guest, guest, LogAction.DOWNLOAD, null),
+						false, false),
+				//--------> action:DELETE, cause:UNDEFINED, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.DELETE, LogActionCause.UNDEFINED),
+						false, false),
+				//--------> action:CREATE, cause:null, authUser:guest, actor:guest
+				Arguments.of(guest, guest,
+						createShareEntryLog(null, regularUser, regularUser, LogAction.CREATE, null),
+						false, false));
+	}
+
+	private static class ContactListInfo {
+		String contactListUuid;
+		String contactListName;
+
+		ContactListInfo(@Nonnull String contactListUuid, @Nonnull String contactListName) {
+			this.contactListUuid = contactListUuid;
+			this.contactListName = contactListName;
+		}
+	}
+
+	/**
+	 * Create a {@link ShareEntryAuditLogEntry} with the provided combination.
+	 */
+	private static @Nonnull ShareEntryAuditLogEntry createShareEntryLog(@Nullable final ContactListInfo contactListInfo,
+			@Nonnull final Account authUser, @Nonnull final Account actor, @Nonnull final LogAction action,
+			@Nullable final LogActionCause cause) {
+		final ShareEntryAuditLogEntry shareEntry = new ShareEntryAuditLogEntry();
+		final AccountMto recipientMto = new AccountMto(regularUser);
+		if (contactListInfo != null) {
+			final ContactList contactList = new ContactList();
+			contactList.setUuid(contactListInfo.contactListUuid);
+			shareEntry.setContactListUuid(contactListInfo.contactListUuid);
+			shareEntry.setContactListName(contactListInfo.contactListName);
+		}
+		shareEntry.setAuthUser(new AccountMto(authUser));
+		shareEntry.setActor(new AccountMto(actor));
+		shareEntry.setAction(action);
+		shareEntry.setCause(cause);
+		shareEntry.setRecipientUuid("some-random-uuid-1");
+		shareEntry.setRecipientMail("random1@linshare.org");
+		ShareEntryMto shareEntryMto = new ShareEntryMto();
+		shareEntryMto.setRecipient(recipientMto);
+		shareEntry.setResource(shareEntryMto);
+
+		return shareEntry;
+	}
 
     /**
      * Tests that the last deleted contact list name is correctly retrieved

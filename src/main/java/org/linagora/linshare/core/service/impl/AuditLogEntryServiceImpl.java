@@ -22,10 +22,13 @@ import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.math3.util.Pair;
@@ -37,9 +40,11 @@ import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.AuditEntryField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
@@ -49,6 +54,7 @@ import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.TimeService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
@@ -96,6 +102,8 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 
 	protected final MailingListBusinessService mailingListBusinessService;
 
+	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
+
 	public AuditLogEntryServiceImpl(
 			AuditAdminMongoRepository auditMongoRepository,
 			AuditUserMongoRepository userMongoRepository,
@@ -106,7 +114,8 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			AuditLogEntryResourceAccessControl rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			AccountService accountService,
-			MailingListBusinessService mailingListBusinessService) {
+			MailingListBusinessService mailingListBusinessService,
+			@Nonnull final FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.adminMongoRepository = auditMongoRepository;
 		this.userMongoRepository = userMongoRepository;
@@ -116,6 +125,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		this.domainService = domainService;
 		this.accountService = accountService;
 		this.mailingListBusinessService = mailingListBusinessService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	/**
@@ -137,7 +147,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, begin, end);
 		}
 		if (authUser.isGuest()) {
-			res = processAuditLogsForGuest(res, authUser);
+			res = processAuditLogsForGuest(res, (Guest) authUser);
 		}
 		if (!res.isEmpty()) {
 			checkListPermission(authUser, actor, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
@@ -146,36 +156,74 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return res;
 	}
 
-	private Set<AuditLogEntryUser> processAuditLogsForGuest(Set<AuditLogEntryUser> rawLogs, Account actor) {
-		Set<AuditLogEntryUser> processedLogs = Sets.newHashSet();
-		for (AuditLogEntryUser log : rawLogs) {
+	/**
+	 * <p>
+	 * Transform audit logs for guest users.
+	 * </p>
+	 * <p>
+	 * Check if each audit log is associated with a contact list (restricted), and whether the provided guest has the
+	 * right to see the members of that contact list, in order to decide whether to remove/hide the member's (actor)
+	 * information from that log.
+	 * </p>
+	 *
+	 * @param rawLogs the logs to be processed.
+	 * @param guest   the guest on which to check the contact list's member visibility permission.
+	 * @return the processed logs.
+	 */
+	private @Nonnull Set<AuditLogEntryUser> processAuditLogsForGuest(@Nonnull final Set<AuditLogEntryUser> rawLogs,
+			@Nonnull final Guest guest) {
+		final Set<AuditLogEntryUser> processedLogs = new HashSet<>();
+		for (final AuditLogEntryUser log : rawLogs) {
 			if (log instanceof ShareEntryAuditLogEntry) {
-				ShareEntryAuditLogEntry shareLog = (ShareEntryAuditLogEntry) log;
-				String contactListUuid = shareLog.getContactListUuid();
-
+				final ShareEntryAuditLogEntry shareLog = (ShareEntryAuditLogEntry) log;
+				final String contactListUuid = shareLog.getContactListUuid();
 				if (contactListUuid != null) {
 					try {
-						ContactList contactList = mailingListBusinessService.findByUuid(contactListUuid);
-
-						Optional<AccountContactLists> accountContactLists =
-								accountService.findAccountContactListByAccountAndContactList(actor, contactList);
-
-						if (accountContactLists.isPresent() && !accountContactLists.get().getCanViewContactListMembers()) {
-							processedLogs.add(createHiddenContactListAuditLog(shareLog, contactList));
-							continue;
+						final ContactList contactList = this.mailingListBusinessService.findByUuid(contactListUuid);
+						final Optional<AccountContactLists> accountContactLists =
+								this.accountService.findAccountContactListByAccountAndContactList(guest, contactList);
+						if (accountContactLists.isPresent()) {
+							final ShareEntryAuditLogEntry entry = this.sanitizeContactListMemberDetailsForGuest(guest,
+									shareLog, contactList, accountContactLists.get());
+							processedLogs.add(entry);
+						} else {
+							processedLogs.add(shareLog);
 						}
-					} catch (BusinessException e) {
+					} catch (final BusinessException e) {
 						if (e.getErrorCode() == BusinessErrorCode.LIST_DO_NOT_EXIST) {
 							logger.debug("Processing audit for deleted contact list: {}", contactListUuid);
 						} else {
 							logger.error("Error processing audit log: {}", e.getMessage());
 						}
 					}
+				} else {
+					processedLogs.add(shareLog);
 				}
+			} else {
+				processedLogs.add(log);
 			}
-			processedLogs.add(log);
 		}
 		return processedLogs;
+	}
+
+	/**
+	 * Check whether the members of the provided contact list can be viewed by guests.
+	 *
+	 * @param accountContactLists accountContactList object to which belongs the contact list being checked. Not
+	 *                            {@code null}.
+	 * @return {@code true} if the members of the contact list are visible for guests, {@code false} otherwise.
+	 */
+	private boolean canViewContactListMembers(@Nonnull final AccountContactLists accountContactLists) {
+		if (accountContactLists.getCanViewContactListMembers() != null) {
+			return accountContactLists.getCanViewContactListMembers();
+		} else {
+			final BooleanValueFunctionality functionality = this.functionalityReadOnlyService.getGuestHideMembers(
+					accountContactLists.getAccount().getDomain());
+			if (functionality.getValue()) {
+				return functionality.getValue();
+			}
+			return false;
+		}
 	}
 
 	/**
@@ -329,8 +377,8 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 				ContactList contactList = mailingListBusinessService.findByUuid(contactListUuid);
 				if (contactList != null) {
 					Optional<AccountContactLists> acl = accountService.findAccountContactListByAccountAndContactList(actor, contactList);
-					if (acl.isPresent() && !acl.get().getCanViewContactListMembers()) {
-						return createHiddenContactListAuditLog(shareLog, contactList);
+					if (actor.isGuest() && acl.isPresent() && !acl.get().getCanViewContactListMembers()) {
+						return this.sanitizeContactListMemberDetailsForGuest((Guest) actor, shareLog, contactList, acl.get());
 					}
 				}
 			} catch (Exception e) {
@@ -341,30 +389,62 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	/**
-	 * Creates a sanitized version of a {@link ShareEntryAuditLogEntry} where recipient details
-	 * are hidden and only basic contact list info is retained.
+	 * <p>
+	 * Creates a sanitized version of the provided share entry audit log entry where information about a share by
+	 * contact list member are hidden for guest that can't view the contact list members.
+	 * </p>
 	 *
-	 * @param originalLog  the original audit log entry
-	 * @param contactList  the contact list associated with the entry
-	 * @return a new {@link ShareEntryAuditLogEntry} with hidden recipient information
+	 * @param guest
+	 *                    The guest requesting the log. Not {@code null}.
+	 * @param originalLog
+	 *                    The original audit log entry. Not {@code null}.
+	 * @param contactList
+	 *                    The contact list associated with the entry. Not {@code null}.
+	 * @return The sanitized version of the provided share entry audit log entry with potentially hidden data. Not
+	 *         {@code null}.
 	 */
-	private ShareEntryAuditLogEntry createHiddenContactListAuditLog(
-			ShareEntryAuditLogEntry originalLog, ContactList contactList) {
+	private @Nonnull ShareEntryAuditLogEntry sanitizeContactListMemberDetailsForGuest(@Nonnull final Guest guest,
+			@Nonnull final ShareEntryAuditLogEntry originalLog, @Nonnull final ContactList contactList,
+			@Nonnull final AccountContactLists accountContactLists) {
 
-		ShareEntryAuditLogEntry hiddenLog = new ShareEntryAuditLogEntry();
+		final ShareEntryAuditLogEntry hiddenLog = new ShareEntryAuditLogEntry();
+		final ShareEntryMto resource = (ShareEntryMto)originalLog.getResource();
+
+		if (!Objects.equals(originalLog.getActor().getUuid(), guest.getLsUuid()) &&
+				!this.canViewContactListMembers(accountContactLists)) {
+			// the guest is not the actor in the log, so he can't see the contact list members
+			hiddenLog.setRecipientMail(null);
+			hiddenLog.setRecipientUuid(null);
+			hiddenLog.setActor(null);
+			hiddenLog.setAuthUser(null);
+			resource.setRecipient(null);
+		} else if (Objects.equals(originalLog.getActor().getUuid(), guest.getLsUuid()) &&
+				!this.canViewContactListMembers(accountContactLists) &&
+				originalLog.getAction().equals(LogAction.CREATE) &&
+				!originalLog.getRecipientUuid().equals(contactList.getOwner().getLsUuid())) {
+			// the guest is the actor in the log, he created a new share, and he is not the recipient.
+			hiddenLog.setActor(originalLog.getActor());
+			hiddenLog.setAuthUser(originalLog.getAuthUser());
+			hiddenLog.setRecipientMail(null);
+			hiddenLog.setRecipientUuid(null);
+			resource.setRecipient(null);
+		} else {
+			// the guest can see contact list members
+			hiddenLog.setRecipientMail(originalLog.getRecipientMail());
+			hiddenLog.setRecipientUuid(originalLog.getRecipientUuid());
+			hiddenLog.setActor(originalLog.getActor());
+			hiddenLog.setAuthUser(originalLog.getAuthUser());
+			resource.setRecipient(((ShareEntryMto) originalLog.getResource()).getRecipient());
+		}
 		hiddenLog.setUuid(originalLog.getUuid());
 		hiddenLog.setCreationDate(originalLog.getCreationDate());
-		hiddenLog.setActor(originalLog.getActor());
-		ShareEntryMto ressource = (ShareEntryMto)originalLog.getResource();
-		ressource.setRecipient(null);
-		hiddenLog.setResource(ressource);
+		hiddenLog.setResource(resource);
 		hiddenLog.setResourceUpdated(originalLog.getResourceUpdated());
 		hiddenLog.setType(originalLog.getType());
 		hiddenLog.setAction(originalLog.getAction());
 		hiddenLog.setContactListUuid(contactList.getUuid());
 		hiddenLog.setContactListName(contactList.getIdentifier());
 		hiddenLog.setAction(originalLog.getAction());
-		hiddenLog.setAuthUser(originalLog.getAuthUser());
 		hiddenLog.setCause(originalLog.getCause());
 		hiddenLog.setFromResourceUuid(originalLog.getFromResourceUuid());
 		hiddenLog.setResourceUuid(originalLog.getResourceUuid());

@@ -16,11 +16,15 @@
 package org.linagora.linshare.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -33,18 +37,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.linagora.linshare.common.service.AbstractNotificationTest;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -66,6 +80,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
@@ -78,17 +93,24 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.impl.ShareEntryServiceImpl;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.google.common.collect.Sets;
 
+/**
+ * Unit tests of the {@link ShareEntryServiceImpl}.
+ */
 @ExtendWith({ SpringExtension.class, MockitoExtension.class })
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ContextConfiguration(locations = {
         "classpath:springContext-datasource.xml",
         "classpath:springContext-repository.xml",
@@ -140,6 +162,9 @@ import com.google.common.collect.Sets;
     @Mock
     private SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
+	@Mock
+	private MailingListBusinessService mailingListBusinessService;
+
     @InjectMocks
     private ShareEntryServiceImpl shareEntryService;
 
@@ -179,7 +204,9 @@ import com.google.common.collect.Sets;
 
         this.contactListContact = new ContactListContact();
         this.contactListContact.setMail("recipient@linshare.org");
-        this.contactList.setContactListContacts(Collections.singleton(contactListContact));
+		final Set<ContactListContact> contactListContacts = new HashSet<>();
+		contactListContacts.add(contactListContact);
+        this.contactList.setContactListContacts(contactListContacts);
         setupCommonMocks();
     }
 
@@ -404,6 +431,111 @@ import com.google.common.collect.Sets;
         verify(logEntryService, times(1)).insert(anyList());
     }
 
+	/**
+	 * Test the creation of a share entry following this scenario:
+	 * <ol>
+	 * <li>Share a document with a contact list, containing member X.</li>
+	 * <li>Share the same document, explicitly, with member X of that contact list</li>
+	 * <li>Share the same document, again, with the same contact list.</li>
+	 * </ol>
+	 * Expected results
+	 * <ul>
+	 * <li>No errors occurs,</li>
+	 * <li>The first share entry has a valid {@code contactListUuid}</li>
+	 * <li>The second share entry has the {@code contactListUuid} set to null</li>
+	 * <li>Since the document is now explicitly shared with member X, it will not be affected through the contact list member</li>
+	 * </ul>
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	void createShareWithAndWithoutContactList() {
+		// Prepare
+		final ShareContainer shareContainer = new ShareContainer();
+		final ShareEntry addedEntry1 = createShareEntry(this.recipient, this.shareEntryGroup, this.owner,
+				this.documentEntry);
+		final ShareEntry addedEntry2 = createShareEntry(this.recipient, this.shareEntryGroup, this.owner,
+				this.documentEntry);
+		final ShareEntry addedEntry3 = createShareEntry(this.recipient, this.shareEntryGroup, this.owner,
+				this.documentEntry);
+		final ArgumentCaptor<List<AuditLogEntryUser>> logCaptor = ArgumentCaptor.forClass(List.class);
+		final ShareEntryAuditLogEntry auditLog = new ShareEntryAuditLogEntry();
+		final List<AuditLogEntryUser> addedAuditLog = Collections.singletonList(auditLog);
+		final ContactListContact contact = new ContactListContact();
+		long now = System.currentTimeMillis();
+		final Date expiryDate1 = new Date(now);
+		final Date expiryDate2 = new Date(now + 1000);
+		final Date expiryDate3 = new Date(now + 2000);
+		final Calendar calendar1 = Calendar.getInstance();
+		final Calendar calendar2 = Calendar.getInstance();
+		final Calendar calendar3 = Calendar.getInstance();
+
+		shareContainer.addDocumentEntry(this.documentEntry);
+		shareContainer.addShareRecipient(this.recipient);
+		contact.setMail(this.recipient.getMail());
+		this.contactList.addMailingListContact(contact);
+		calendar1.setTime(expiryDate1);
+		calendar2.setTime(expiryDate2);
+		calendar3.setTime(expiryDate3);
+
+		// Mock
+		when(this.shareEntryBusinessService.create(eq(this.documentEntry), eq(this.owner), eq(this.recipient),
+				eq(calendar1), eq(this.shareEntryGroup), isNull())).thenReturn(addedEntry1);
+		when(this.shareEntryBusinessService.create(eq(this.documentEntry), eq(this.owner), eq(this.recipient),
+				eq(calendar2), eq(this.shareEntryGroup), isNull())).thenReturn(addedEntry2);
+		when(this.shareEntryBusinessService.create(eq(this.documentEntry), eq(this.owner), eq(this.recipient),
+				eq(calendar3), eq(this.shareEntryGroup), isNull())).thenReturn(addedEntry3);
+		when(this.logEntryService.insert(logCaptor.capture())).thenReturn(addedAuditLog);
+
+		// Execute
+		// 1. First, add the share for all contact list members
+		when(this.shareEntryBusinessService.isShareEntryAlreadyExistsWithoutContactList(this.documentEntry, this.owner,
+				this.recipient)).thenReturn(false);
+		shareContainer.setContactLists(Set.of(this.contactList));
+		shareContainer.setExpiryDate(expiryDate1);
+		final Set<ShareEntry> addedShareForContactList = this.shareEntryService.create(this.owner, this.owner,
+				shareContainer, this.shareEntryGroup);
+		// 2. Second, add the share explicitly for a member of that contact list member
+		when(this.shareEntryBusinessService.isShareEntryAlreadyExistsWithoutContactList(this.documentEntry, this.owner,
+				this.recipient)).thenReturn(true);
+		shareContainer.setContactLists(Set.of());
+		shareContainer.setExpiryDate(expiryDate2);
+		final Set<ShareEntry> addedShareForExplicitMember = this.shareEntryService.create(this.owner, this.owner,
+				shareContainer, this.shareEntryGroup);
+		// 3. Finally, add the share for all contact list members again (The previous share for explicit member still
+		// exists!)
+		when(this.shareEntryBusinessService.isShareEntryAlreadyExistsWithoutContactList(this.documentEntry, this.owner,
+				this.recipient)).thenReturn(true);
+		shareContainer.setContactLists(Set.of(this.contactList));
+		shareContainer.setExpiryDate(expiryDate3);
+		final Set<ShareEntry> addedShareForContactListSecond = this.shareEntryService.create(this.owner, this.owner,
+				shareContainer, this.shareEntryGroup);
+
+		// Assert
+		assertThat(addedShareForContactList)
+				.extracting(ShareEntry::getContactListUuid)
+				.containsExactly(this.contactList.getUuid());
+		assertThat(addedShareForExplicitMember)
+				.extracting(ShareEntry::getContactListUuid)
+				.containsNull();
+		assertThat(addedShareForContactListSecond)
+				.extracting(ShareEntry::getContactListUuid)
+				.isEmpty();
+	}
+
+	private @Nonnull ShareEntry createShareEntry(@Nonnull final User recipient,
+			@Nonnull final ShareEntryGroup shareEntryGroup, @Nonnull final Account entryOwner,
+			@Nonnull final DocumentEntry documentEntry) {
+		final ShareEntry shareEntry = new ShareEntry();
+		shareEntry.setRecipient(recipient);
+		shareEntry.setShareEntryGroup(shareEntryGroup);
+		shareEntry.setEntryOwner(entryOwner);
+		shareEntry.setDocumentEntry(documentEntry);
+		shareEntry.setCreationDate(Calendar.getInstance());
+		shareEntry.setModificationDate(Calendar.getInstance());
+
+		return shareEntry;
+	}
+
     /**
      * Similar to the previous test, this validates diagnostic flow for contact list-based sharing.
      * Ensures the contact list UUID is assigned and persisted correctly with full logging.
@@ -502,4 +634,359 @@ import com.google.common.collect.Sets;
      void testCreateShares_WhenMailIsNull_ShouldNotSendNotification() {
         verifyNotificationNotSent();
     }
+
+	/**
+	 * <p>
+	 * Verify the download of a share entry document according to how the share entry was created, using a contact list
+	 * or not.
+	 * </p>
+	 * <p>
+	 * When the download is done by a contact list member, the audit log associated to the download must be set with the
+	 * contact list information: UUID and name. Otherwise, the contact list information are empty.
+	 * </p>
+	 * Expected results when downloading the share entry:
+	 * <ul>
+	 * <li>No errors occurs,</li>
+	 * <li>if the share entry was created from a contact list: a {@link ShareEntryAuditLogEntry} is inserted with
+	 * valid {@code contactListUuid} and {@code contactListName}.</li>
+	 * <li>else, a {@link ShareEntryAuditLogEntry} is inserted with the fields {@code contactListUuid} and
+	 * {@code contactListName} set to {@code null}.</li>
+	 * </ul>
+	 *
+	 * @param shareEntryToCreateForContactListMember
+	 * 												 {@code true} if the share entry is created for a contact list
+	 *                                               member, {@code false otherwise}.
+	 * @param hasDownloadPermission
+	 * 												 {@code true} if the authUser-actor combination has download
+	 * 												 permission, {@code false} otherwise.
+	 */
+	@ParameterizedTest
+	@CsvSource({
+			"true, true",
+			"true, false",
+			"false, true",
+			"false, false",
+	})
+	void getByteSource(final boolean shareEntryToCreateForContactListMember, final boolean hasDownloadPermission) {
+		// Prepare
+		final String shareEntryUuid = "fake-share-entry-uuid";
+		final String contactListUuid = "fake-contact-list-uuid";
+		final String contactListName = "my-contact-list";
+		final ContactList contactList1 = new ContactList();
+		final ShareEntry shareEntry = new ShareEntry();
+
+		contactList1.setUuid(contactListUuid);
+		contactList1.setIdentifier(contactListName);
+		shareEntry.setUuid(shareEntryUuid);
+		shareEntry.setDownloaded(1L);
+		shareEntry.setEntryOwner(this.owner);
+		shareEntry.setRecipient(this.recipient);
+		shareEntry.setDocumentEntry(this.documentEntry);
+		shareEntry.setCreationDate(Calendar.getInstance());
+		shareEntry.setModificationDate(Calendar.getInstance());
+		shareEntry.setExpirationDate(Calendar.getInstance());
+
+		// Mock
+		if (!hasDownloadPermission) {
+			doThrow(new BusinessException(BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, ""))
+					.when(this.rac)
+					.checkDownloadPermission(this.recipient, this.owner, ShareEntry.class,
+							BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, shareEntry);
+		}
+		when(this.shareEntryBusinessService.find(shareEntryUuid)).thenReturn(shareEntry);
+		when(this.shareEntryBusinessService.updateDownloadCounter(shareEntry.getUuid())).thenReturn(shareEntry);
+		if (shareEntryToCreateForContactListMember) {
+			shareEntry.setContactListUuid(contactListUuid);
+			when(this.mailingListBusinessService.findByUuid(contactListUuid)).thenReturn(contactList1);
+		}
+
+		// Execute
+		BusinessException thrownException = null;
+		try {
+			this.shareEntryService.getByteSource(this.recipient, this.owner, shareEntryUuid);
+		} catch (final BusinessException e) {
+			thrownException = e;
+		}
+
+		// Assert
+		if (!hasDownloadPermission) {
+			assertNotNull(thrownException);
+			assertEquals(BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, thrownException.getErrorCode());
+		} else {
+			final ArgumentCaptor<ShareEntryAuditLogEntry> captor = ArgumentCaptor.forClass(ShareEntryAuditLogEntry.class);
+			verify(this.logEntryService).insert(captor.capture());
+			final ShareEntryAuditLogEntry log = captor.getValue();
+
+			assertNull(thrownException);
+			assertEquals(LogAction.DOWNLOAD, log.getAction());
+			assertEquals(AuditLogEntryType.SHARE_ENTRY, log.getType());
+			assertEquals(log.getAuthUser().getUuid(), this.recipient.getLsUuid());
+			assertEquals(log.getActor().getUuid(), this.owner.getLsUuid());
+			assertEquals(this.recipient.getLsUuid(), ((ShareEntryMto) log.getResource()).getRecipient().getUuid());
+			if (shareEntryToCreateForContactListMember) {
+				assertEquals(contactListUuid, log.getContactListUuid());
+				assertEquals(contactListName, log.getContactListName());
+			} else {
+				assertNull(log.getContactListUuid());
+				assertNull(log.getContactListName());
+			}
+		}
+	}
+
+	/**
+	 * <p>
+	 * Verify the addition of the correct {@code audit log} when <strong>updating</strong> a {@link ShareEntry}.
+	 * </p>
+	 * <p>
+	 * The {@link LogAction#UPDATE} action can be triggered by a member of a {@code restricted} contact list. In this
+	 * case, the {@link ShareEntry} has a contact list associated with it: {@code contactListUuid} and
+	 * {@code contactListName}.
+	 * </p>
+	 * Expected results:
+	 * <ul>
+	 * <li>No errors occurs,</li>
+	 * <li>
+	 * If the {@link ShareEntry} has a contact list associated with it:
+	 * <ul>
+	 * <li>A {@link ShareEntryAuditLogEntry} is inserted by the {@link LogEntryService}, which has valid
+	 * {@code contactListUuid} and {@code contactListName}.</li>
+	 * </ul>
+	 * </li>
+	 * <li>
+	 * Else, if the {@link ShareEntry} <strong>doesn't</strong> have a contact list associated with it:
+	 * <ul>
+	 * <li>A {@link ShareEntryAuditLogEntry} is inserted by the {@link LogEntryService}, which has the fields
+	 * {@code contactListUuid} and {@code contactListName} set to {@code null}.</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 *
+	 * @param shareEntryToCreateForContactListMember {@code true} if the share entry is created for a contact list
+	 *                                               member, {@code false otherwise}.
+	 */
+	@ParameterizedTest
+	@CsvSource({ "true", "false" })
+	void update(final boolean shareEntryToCreateForContactListMember) {
+		// Prepare
+		final String shareEntryUuid = "fake-share-entry-uuid";
+		final String contactListUuid = "fake-contact-list-uuid";
+		final String contactListName = "my-contact-list";
+		final ContactList contactList1 = new ContactList();
+		final ShareEntry shareEntry = new ShareEntry();
+
+		contactList1.setUuid(contactListUuid);
+		contactList1.setIdentifier(contactListName);
+		shareEntry.setUuid(shareEntryUuid);
+		shareEntry.setDownloaded(1L);
+		shareEntry.setEntryOwner(this.owner);
+		shareEntry.setRecipient(this.recipient);
+		shareEntry.setDocumentEntry(this.documentEntry);
+		shareEntry.setCreationDate(Calendar.getInstance());
+		shareEntry.setModificationDate(Calendar.getInstance());
+		shareEntry.setExpirationDate(Calendar.getInstance());
+
+		// Mock
+		when(this.shareEntryBusinessService.find(shareEntryUuid)).thenReturn(shareEntry);
+		when(this.shareEntryBusinessService.update(shareEntry)).thenReturn(shareEntry);
+		if (shareEntryToCreateForContactListMember) {
+			shareEntry.setContactListUuid(contactListUuid);
+			when(this.mailingListBusinessService.findByUuid(contactListUuid)).thenReturn(contactList1);
+		}
+
+		// Execute
+		this.shareEntryService.update(this.owner, this.owner, shareEntry);
+
+		// Assert
+		final ArgumentCaptor<ShareEntryAuditLogEntry> captor = ArgumentCaptor.forClass(ShareEntryAuditLogEntry.class);
+		verify(this.logEntryService).insert(captor.capture());
+		final ShareEntryAuditLogEntry log = captor.getValue();
+
+		assertEquals(LogAction.UPDATE, log.getAction());
+		assertEquals(AuditLogEntryType.SHARE_ENTRY, log.getType());
+		if (shareEntryToCreateForContactListMember) {
+			assertEquals(contactListUuid, log.getContactListUuid());
+			assertEquals(contactListName, log.getContactListName());
+		} else {
+			assertNull(log.getContactListUuid());
+			assertNull(log.getContactListName());
+		}
+	}
+
+	/**
+	 * <p>
+	 * Verify the addition of the correct {@code audit log} when <strong>deleting</strong> a {@link ShareEntry}.
+	 * </p>
+	 * <p>
+	 * The {@link LogAction#DELETE} action can be triggered by a member of a {@code restricted} contact list. In this
+	 * case, the {@link ShareEntry} has a contact list associated with it: {@code contactListUuid} and
+	 * {@code contactListName}.
+	 * </p>
+	 * Expected results:
+	 * <ul>
+	 * <li>No errors occurs,</li>
+	 * <li>
+	 * If the {@link ShareEntry} has a contact list associated with it:
+	 * <ul>
+	 * <li>A {@link ShareEntryAuditLogEntry} is inserted by the {@link LogEntryService}, which has valid
+	 * {@code contactListUuid} and {@code contactListName}.</li>
+	 * </ul>
+	 * </li>
+	 * <li>
+	 * Else, if the {@link ShareEntry} <strong>doesn't</strong> have a contact list associated with it:
+	 * <ul>
+	 * <li>A {@link ShareEntryAuditLogEntry} is inserted by the {@link LogEntryService}, which has the fields
+	 * {@code contactListUuid} and {@code contactListName} set to {@code null}.</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 *
+	 * @param shareEntryToCreateForContactListMember {@code true} if the share entry is created for a contact list
+	 *                                               member, {@code false otherwise}.
+	 */
+	@ParameterizedTest
+	@CsvSource({ "true", "false" })
+	void delete(final boolean shareEntryToCreateForContactListMember) {
+		// Prepare
+		final String shareEntryUuid = "fake-share-entry-uuid";
+		final String contactListUuid = "fake-contact-list-uuid";
+		final String contactListName = "my-contact-list";
+		final ContactList contactList1 = new ContactList();
+		final ShareEntry shareEntry = new ShareEntry();
+		final UnitValueFunctionality unitValueFunctionality = new UnitValueFunctionality();
+		final Policy acticationPolicy = new Policy();
+		unitValueFunctionality.setValueUsed(false);
+		unitValueFunctionality.setMaxValueUsed(false);
+		final TimeUnitValueFunctionality fileExpirationFunc = new TimeUnitValueFunctionality(unitValueFunctionality);
+
+		contactList1.setUuid(contactListUuid);
+		contactList1.setIdentifier(contactListName);
+		shareEntry.setUuid(shareEntryUuid);
+		shareEntry.setDownloaded(1L);
+		shareEntry.setEntryOwner(this.owner);
+		shareEntry.setRecipient(this.recipient);
+		shareEntry.setDocumentEntry(this.documentEntry);
+		shareEntry.setCreationDate(Calendar.getInstance());
+		shareEntry.setModificationDate(Calendar.getInstance());
+		shareEntry.setExpirationDate(Calendar.getInstance());
+		acticationPolicy.setStatus(false);
+		fileExpirationFunc.setActivationPolicy(acticationPolicy);
+
+		// Mock
+		when(this.shareEntryBusinessService.find(shareEntryUuid)).thenReturn(shareEntry);
+		when(this.functionalityService.getDefaultFileExpiryTimeFunctionality(this.owner.getDomain())).thenReturn(
+				fileExpirationFunc);
+		if (shareEntryToCreateForContactListMember) {
+			shareEntry.setContactListUuid(contactListUuid);
+			when(this.mailingListBusinessService.findByUuid(contactListUuid)).thenReturn(contactList1);
+		}
+
+		// Execute
+		this.shareEntryService.delete(this.owner, this.owner, shareEntryUuid, null);
+
+		// Assert
+		final ArgumentCaptor<ShareEntryAuditLogEntry> captor = ArgumentCaptor.forClass(ShareEntryAuditLogEntry.class);
+		verify(this.logEntryService).insert(captor.capture());
+		final ShareEntryAuditLogEntry log = captor.getValue();
+
+		assertEquals(LogAction.DELETE, log.getAction());
+		assertEquals(AuditLogEntryType.SHARE_ENTRY, log.getType());
+		if (shareEntryToCreateForContactListMember) {
+			assertEquals(contactListUuid, log.getContactListUuid());
+			assertEquals(contactListName, log.getContactListName());
+		} else {
+			assertNull(log.getContactListUuid());
+			assertNull(log.getContactListName());
+		}
+	}
+
+	/**
+	 * <p>
+	 * Verify the addition of the correct {@code audit log} when <strong>copying</strong> a {@link ShareEntry}.
+	 * </p>
+	 * <p>
+	 * The <strong>action</strong> of the <strong>copy</strong> is {@link LogAction#DOWNLOAD}, and the cause is
+	 * {@link LogActionCause#COPY}.
+	 * </p>
+	 * <p>
+	 * The {@link LogAction#DOWNLOAD} (copy) action can be triggered by a member of a {@code restricted} contact list.
+	 * In this case, the {@link ShareEntry} has a contact list associated with it: {@code contactListUuid} and
+	 * {@code contactListName}.
+	 * </p>
+	 * Expected results:
+	 * <ul>
+	 * <li>No errors occurs,</li>
+	 * <li>
+	 * If the {@link ShareEntry} has a contact list associated with it:
+	 * <ul>
+	 * <li>A {@link ShareEntryAuditLogEntry} is inserted by the {@link LogEntryService}, which has valid
+	 * {@code contactListUuid} and {@code contactListName}.</li>
+	 * </ul>
+	 * </li>
+	 * <li>
+	 * Else, if the {@link ShareEntry} <strong>doesn't</strong> have a contact list associated with it:
+	 * <ul>
+	 * <li>A {@link ShareEntryAuditLogEntry} is inserted by the {@link LogEntryService}, which has the fields
+	 * {@code contactListUuid} and {@code contactListName} set to {@code null}.</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 *
+	 * @param shareEntryToCreateForContactListMember {@code true} if the share entry is created for a contact list
+	 *                                               member, {@code false otherwise}.
+	 */
+	@ParameterizedTest
+	@CsvSource({ "true", "false" })
+	void markAsCopied(final boolean shareEntryToCreateForContactListMember) {
+		// Prepare
+		final String shareEntryUuid = "fake-share-entry-uuid";
+		final String contactListUuid = "fake-contact-list-uuid";
+		final String contactListName = "my-contact-list";
+		final ContactList contactList1 = new ContactList();
+		final ShareEntry shareEntry = new ShareEntry();
+		final UnitValueFunctionality unitValueFunctionality = new UnitValueFunctionality();
+		final Policy acticationPolicy = new Policy();
+		unitValueFunctionality.setValueUsed(false);
+		unitValueFunctionality.setMaxValueUsed(false);
+		final TimeUnitValueFunctionality fileExpirationFunc = new TimeUnitValueFunctionality(unitValueFunctionality);
+
+		contactList1.setUuid(contactListUuid);
+		contactList1.setIdentifier(contactListName);
+		shareEntry.setUuid(shareEntryUuid);
+		shareEntry.setDownloaded(1L);
+		shareEntry.setEntryOwner(this.owner);
+		shareEntry.setRecipient(this.recipient);
+		shareEntry.setDocumentEntry(this.documentEntry);
+		shareEntry.setCreationDate(Calendar.getInstance());
+		shareEntry.setModificationDate(Calendar.getInstance());
+		shareEntry.setExpirationDate(Calendar.getInstance());
+		acticationPolicy.setStatus(false);
+		fileExpirationFunc.setActivationPolicy(acticationPolicy);
+
+		// Mock
+		when(this.shareEntryBusinessService.find(shareEntryUuid)).thenReturn(shareEntry);
+		when(this.shareEntryBusinessService.updateDownloadCounter(shareEntry.getUuid())).thenReturn(shareEntry);
+		if (shareEntryToCreateForContactListMember) {
+			shareEntry.setContactListUuid(contactListUuid);
+			when(this.mailingListBusinessService.findByUuid(contactListUuid)).thenReturn(contactList1);
+		}
+
+		// Execute
+		this.shareEntryService.markAsCopied(this.owner, this.owner, shareEntryUuid, null);
+
+		// Assert
+		final ArgumentCaptor<ShareEntryAuditLogEntry> captor = ArgumentCaptor.forClass(ShareEntryAuditLogEntry.class);
+		verify(this.logEntryService).insert(captor.capture());
+		final ShareEntryAuditLogEntry log = captor.getValue();
+
+		assertEquals(LogAction.DOWNLOAD, log.getAction());
+		assertEquals(LogActionCause.COPY, log.getCause());
+		assertEquals(AuditLogEntryType.SHARE_ENTRY, log.getType());
+		if (shareEntryToCreateForContactListMember) {
+			assertEquals(contactListUuid, log.getContactListUuid());
+			assertEquals(contactListName, log.getContactListName());
+		} else {
+			assertNull(log.getContactListUuid());
+			assertNull(log.getContactListName());
+		}
+	}
 }

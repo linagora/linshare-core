@@ -20,8 +20,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -83,6 +87,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
+	private final MailingListBusinessService mailingListBusinessService;
+
 	public ShareEntryServiceImpl(
 			GuestRepository guestRepository,
 			FunctionalityReadOnlyService functionalityService,
@@ -93,7 +99,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			MailBuildingService mailBuildingService,
 			FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository,
 			ShareEntryResourceAccessControl rac,
-			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
+			@Nonnull final MailingListBusinessService mailingListBusinessService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.guestRepository = guestRepository;
 		this.functionalityService = functionalityService;
@@ -103,6 +110,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
+		this.mailingListBusinessService = mailingListBusinessService;
 	}
 
 	@Override
@@ -149,6 +157,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				AuditLogEntryType.SHARE_ENTRY);
 		log.setCause(LogActionCause.COPY);
 		log.setCopiedTo(copiedTo);
+		this.addContactListInfo(share.getContactListUuid(), log);
 		logEntryService.insert(log);
 		if (mail != null) {
 			this.notifierService.sendNotification(mail);
@@ -169,6 +178,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DELETE, share,
 				AuditLogEntryType.SHARE_ENTRY);
 		log.setCause(cause);
+		this.addContactListInfo(share.getContactListUuid(), log);
 		if (share.getRecipient().equals(owner)) {
 			// If the modified account (aka owner parameter) is the recipient of this share.
 			// We does not need to send him a notification.
@@ -225,6 +235,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		share.setComment(dto.getComment());
 		share = shareEntryBusinessService.update(share);
 		log.setResourceUpdated(new ShareEntryMto(share));
+		this.addContactListInfo(share.getContactListUuid(), log);
 		logEntryService.insert(log);
 		return share;
 	}
@@ -241,8 +252,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	}
 
 	@Override
-	public ByteSource getByteSource(Account actor, Account owner, String uuid)
-			throws BusinessException {
+	public @Nonnull ByteSource getByteSource(@Nonnull final Account actor, @Nonnull final Account owner,
+			@Nonnull final String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, ShareEntry.class,
@@ -255,10 +266,11 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			}
 		}
 		share = shareEntryBusinessService.updateDownloadCounter(share.getUuid());
-		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DOWNLOAD, share,
+		final ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DOWNLOAD, share,
 				AuditLogEntryType.SHARE_ENTRY);
-		String senderUuid = share.getEntryOwner().getLsUuid();
+		final String senderUuid = share.getEntryOwner().getLsUuid();
 		log.addRelatedAccounts(senderUuid);
+		this.addContactListInfo(share.getContactListUuid(), log);
 		logEntryService.insert(log);
 		return documentEntryBusinessService.getByteSource(share
 				.getDocumentEntry());
@@ -296,13 +308,28 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 					logger.warn("No contact list found for recipient: {}", recipient.getMail());
 				}
 			}
+			final boolean isContactListMember = contactListUuid != null;
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
-				ShareEntry createShare = shareEntryBusinessService.create(
-						documentEntry, owner, recipient, sc.getExpiryCalendar(), shareEntryGroup, sc.getSharingNote());
+				// Defines weather the entry is, already, explicitly shared with the recipient
+				final boolean isExplicitlySharedWithRecipient = shareEntryBusinessService.isShareEntryAlreadyExistsWithoutContactList(
+						documentEntry, owner, recipient);
+				ShareEntry createShare = null;
 				updateGuestExpiryDate(recipient);
-				if (contactListUuid != null) {
+				if (isContactListMember && !isExplicitlySharedWithRecipient) {
+					// Create or update of share entry of contact list member
+					createShare = this.shareEntryBusinessService.create(documentEntry, owner, recipient,
+							sc.getExpiryCalendar(), shareEntryGroup, sc.getSharingNote());
 					createShare.setContactListUuid(contactListUuid);
 					logger.debug("Contact list UUID associated with share: {}", contactListUuid);
+				} else if (isContactListMember) {
+					logger.debug("document entry {} is, already, explicitly shared with recipient {}. No changes...",
+							documentEntry, recipient);
+					continue;
+				} else {
+					// Create/update entry for explicit user (not a contact list member).
+					createShare = this.shareEntryBusinessService.create(documentEntry, owner, recipient,
+							sc.getExpiryCalendar(), shareEntryGroup, sc.getSharingNote());
+					createShare.setContactListUuid(null);
 				}
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
@@ -319,9 +346,11 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				sc.addLog(log);
 			}
 			entries.addAll(shares);
-			ShareNewShareEmailContext context = new ShareNewShareEmailContext(owner, recipient, shares, sc);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			sc.addMailContainer(mail);
+			if (!shares.isEmpty()) {
+				final ShareNewShareEmailContext context = new ShareNewShareEmailContext(owner, recipient, shares, sc);
+				final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
+				sc.addMailContainer(mail);
+			}
 		}
 		// if there is no shares, ie anonymous shares only, there is no logs neither events.
 		if (!sc.getLogs().isEmpty()) {
@@ -330,6 +359,31 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			sc.getLogs().clear();
 		}
 		return entries;
+	}
+
+	/**
+	 * Add the contact list info (UUID and name), if exists, to the provided log.
+	 *
+	 * @param contactListUuid
+	 *                        UUID of the contact list of which to add the information in the log. Can be {@code null}.
+	 * @param log
+	 *                        The share entry audit log to complete with information of the provided contact list. Not
+	 *                        {@code null}.
+	 */
+	private void addContactListInfo(@Nullable final String contactListUuid, @Nonnull final ShareEntryAuditLogEntry log) {
+		if (contactListUuid != null) {
+			try {
+				final ContactList contactList = this.mailingListBusinessService.findByUuid(contactListUuid);
+				log.setContactListUuid(contactList.getUuid());
+				log.setContactListName(contactList.getIdentifier());
+			} catch (final BusinessException e) {
+				this.logger.warn("Could not find contact list for uuid: {}", contactListUuid);
+				if (e.getErrorCode().equals(BusinessErrorCode.LIST_DO_NOT_EXIST)) {
+					log.setContactListUuid(contactListUuid);
+					log.setContactListName(contactListUuid);
+				}
+			}
+		}
 	}
 
 	private ContactList findContactListForRecipient(Set<ContactList> contactLists, User recipient) {

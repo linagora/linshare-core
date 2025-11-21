@@ -83,6 +83,7 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="shareEntryResourceAccessControl" />
+        <constructor-arg ref="mailingListBusinessService" />
 	</bean>
 
 	<bean id="anonymousShareEntryService" class="org.linagora.linshare.core.service.impl.AnonymousShareEntryServiceImpl">
@@ -293,6 +294,7 @@
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="auditLogEntryResourceAccessControl" />
 		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
+        <constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 	<bean id="statisticService" class="org.linagora.linshare.core.service.impl.StatisticServiceImpl">
 		<constructor-arg ref="statisticBusinessService" />
