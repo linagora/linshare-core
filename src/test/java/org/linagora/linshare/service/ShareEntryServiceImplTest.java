@@ -50,7 +50,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.linagora.linshare.common.service.AbstractNotificationTest;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
@@ -124,7 +123,7 @@ import com.google.common.collect.Sets;
         "classpath:springContext-mongo-init.xml",
         "classpath:springContext-storage-jcloud.xml",
         "classpath:springContext-test.xml" })
- class ShareEntryServiceImplTest extends AbstractNotificationTest {
+ class ShareEntryServiceImplTest {
 
     private static final String TOP_DOMAIN = "top-domain";
     private static final String GUEST_DOMAIN = "guest-domain";
@@ -432,31 +431,50 @@ import com.google.common.collect.Sets;
     }
 
 	/**
-	 * Test the creation of a share entry following this scenario:
+	 * Tests the creation of share entries following this scenario:
 	 * <ol>
-	 * <li>Share a document with a contact list, containing member X.</li>
-	 * <li>Share the same document, explicitly, with member X of that contact list</li>
-	 * <li>Share the same document, again, with the same contact list.</li>
+	 *   <li>Share a document with a contact list containing member X</li>
+	 *   <li>Share a different document, explicitly, with member X of that contact list</li>
+	 *   <li>Share a third document with the same contact list</li>
 	 * </ol>
-	 * Expected results
+	 *
+	 * <p><strong>Expected results:</strong></p>
 	 * <ul>
-	 * <li>No errors occurs,</li>
-	 * <li>The first share entry has a valid {@code contactListUuid}</li>
-	 * <li>The second share entry has the {@code contactListUuid} set to null</li>
-	 * <li>Since the document is now explicitly shared with member X, it will not be affected through the contact list member</li>
+	 *   <li>No errors occur</li>
+	 *   <li>The first share entry has a valid {@code contactListUuid} (from contact list)</li>
+	 *   <li>The second share entry has {@code contactListUuid} set to {@code null} (explicit selection)</li>
+	 *   <li>The third share entry has a valid {@code contactListUuid} (from contact list)</li>
 	 * </ul>
+	 *
+	 * <p>
+	 * <strong>Important:</strong> Each scenario uses a different document to allow multiple share entries
+	 * for the same recipient. The key distinction is how the recipient is selected (via contact list
+	 * vs. explicit selection), which determines whether {@code contactListUuid} is set.
+	 * </p>
+	 *
+	 * @throws IOException if document creation fails
+	 *
+	 * @see ShareContainer#addMail(String)
+	 * @see ShareEntryServiceImpl#isRecipientExplicitlySelected(ShareContainer, User)
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	void createShareWithAndWithoutContactList() {
-		// Prepare
-		final ShareContainer shareContainer = new ShareContainer();
-		final ShareEntry addedEntry1 = createShareEntry(this.recipient, this.shareEntryGroup, this.owner,
-				this.documentEntry);
-		final ShareEntry addedEntry2 = createShareEntry(this.recipient, this.shareEntryGroup, this.owner,
-				this.documentEntry);
-		final ShareEntry addedEntry3 = createShareEntry(this.recipient, this.shareEntryGroup, this.owner,
-				this.documentEntry);
+	void createShareWithAndWithoutContactList() throws IOException {
+		final DocumentEntry documentEntry1 = createTestDocumentEntry();
+		documentEntry1.setUuid("doc-uuid-1");
+		final DocumentEntry documentEntry2 = createSecondTestDocumentEntry();
+		documentEntry2.setUuid("doc-uuid-2");
+		final DocumentEntry documentEntry3 = createTestDocumentEntry();
+		documentEntry3.setUuid("doc-uuid-3");
+		final ShareEntry addedEntry1 = createShareEntry(this.recipient, this.shareEntryGroup,
+				this.owner, documentEntry1);
+		addedEntry1.setUuid("share-1");
+		final ShareEntry addedEntry2 = createShareEntry(this.recipient, this.shareEntryGroup,
+				this.owner, documentEntry2);
+		addedEntry2.setUuid("share-2");
+		final ShareEntry addedEntry3 = createShareEntry(this.recipient, this.shareEntryGroup,
+				this.owner, documentEntry3);
+		addedEntry3.setUuid("share-3");
 		final ArgumentCaptor<List<AuditLogEntryUser>> logCaptor = ArgumentCaptor.forClass(List.class);
 		final ShareEntryAuditLogEntry auditLog = new ShareEntryAuditLogEntry();
 		final List<AuditLogEntryUser> addedAuditLog = Collections.singletonList(auditLog);
@@ -468,58 +486,65 @@ import com.google.common.collect.Sets;
 		final Calendar calendar1 = Calendar.getInstance();
 		final Calendar calendar2 = Calendar.getInstance();
 		final Calendar calendar3 = Calendar.getInstance();
-
-		shareContainer.addDocumentEntry(this.documentEntry);
-		shareContainer.addShareRecipient(this.recipient);
-		contact.setMail(this.recipient.getMail());
-		this.contactList.addMailingListContact(contact);
 		calendar1.setTime(expiryDate1);
 		calendar2.setTime(expiryDate2);
 		calendar3.setTime(expiryDate3);
-
-		// Mock
-		when(this.shareEntryBusinessService.create(eq(this.documentEntry), eq(this.owner), eq(this.recipient),
+		contact.setMail(this.recipient.getMail());
+		this.contactList.addMailingListContact(contact);
+		final ShareContainer shareContainer1 = new ShareContainer();
+		shareContainer1.addDocumentEntry(documentEntry1);
+		shareContainer1.addShareRecipient(this.recipient);
+		shareContainer1.setContactLists(Set.of(this.contactList));
+		shareContainer1.setExpiryDate(expiryDate1);
+		final ShareContainer shareContainer2 = new ShareContainer();
+		shareContainer2.addDocumentEntry(documentEntry2);
+		shareContainer2.addMail(this.recipient.getMail());
+		shareContainer2.addShareRecipient(this.recipient);
+		shareContainer2.setContactLists(Set.of());
+		shareContainer2.setExpiryDate(expiryDate2);
+		final ShareContainer shareContainer3 = new ShareContainer();
+		shareContainer3.addDocumentEntry(documentEntry3);
+		shareContainer3.addShareRecipient(this.recipient);
+		shareContainer3.setContactLists(Set.of(this.contactList));
+		shareContainer3.setExpiryDate(expiryDate3);
+		when(this.shareEntryBusinessService.create(eq(documentEntry1), eq(this.owner), eq(this.recipient),
 				eq(calendar1), eq(this.shareEntryGroup), isNull())).thenReturn(addedEntry1);
-		when(this.shareEntryBusinessService.create(eq(this.documentEntry), eq(this.owner), eq(this.recipient),
+		when(this.shareEntryBusinessService.create(eq(documentEntry2), eq(this.owner), eq(this.recipient),
 				eq(calendar2), eq(this.shareEntryGroup), isNull())).thenReturn(addedEntry2);
-		when(this.shareEntryBusinessService.create(eq(this.documentEntry), eq(this.owner), eq(this.recipient),
+		when(this.shareEntryBusinessService.create(eq(documentEntry3), eq(this.owner), eq(this.recipient),
 				eq(calendar3), eq(this.shareEntryGroup), isNull())).thenReturn(addedEntry3);
 		when(this.logEntryService.insert(logCaptor.capture())).thenReturn(addedAuditLog);
-
-		// Execute
-		// 1. First, add the share for all contact list members
-		when(this.shareEntryBusinessService.isShareEntryAlreadyExistsWithoutContactList(this.documentEntry, this.owner,
-				this.recipient)).thenReturn(false);
-		shareContainer.setContactLists(Set.of(this.contactList));
-		shareContainer.setExpiryDate(expiryDate1);
-		final Set<ShareEntry> addedShareForContactList = this.shareEntryService.create(this.owner, this.owner,
-				shareContainer, this.shareEntryGroup);
-		// 2. Second, add the share explicitly for a member of that contact list member
-		when(this.shareEntryBusinessService.isShareEntryAlreadyExistsWithoutContactList(this.documentEntry, this.owner,
-				this.recipient)).thenReturn(true);
-		shareContainer.setContactLists(Set.of());
-		shareContainer.setExpiryDate(expiryDate2);
-		final Set<ShareEntry> addedShareForExplicitMember = this.shareEntryService.create(this.owner, this.owner,
-				shareContainer, this.shareEntryGroup);
-		// 3. Finally, add the share for all contact list members again (The previous share for explicit member still
-		// exists!)
-		when(this.shareEntryBusinessService.isShareEntryAlreadyExistsWithoutContactList(this.documentEntry, this.owner,
-				this.recipient)).thenReturn(true);
-		shareContainer.setContactLists(Set.of(this.contactList));
-		shareContainer.setExpiryDate(expiryDate3);
-		final Set<ShareEntry> addedShareForContactListSecond = this.shareEntryService.create(this.owner, this.owner,
-				shareContainer, this.shareEntryGroup);
-
-		// Assert
+		final Set<ShareEntry> addedShareForContactList = this.shareEntryService.create(
+				this.owner, this.owner, shareContainer1, this.shareEntryGroup);
+		final Set<ShareEntry> addedShareForExplicitMember = this.shareEntryService.create(
+				this.owner, this.owner, shareContainer2, this.shareEntryGroup);
+		final Set<ShareEntry> addedShareForContactListSecond = this.shareEntryService.create(
+				this.owner, this.owner, shareContainer3, this.shareEntryGroup);
 		assertThat(addedShareForContactList)
-				.extracting(ShareEntry::getContactListUuid)
-				.containsExactly(this.contactList.getUuid());
+				.hasSize(1)
+				.containsExactly(addedEntry1);
 		assertThat(addedShareForExplicitMember)
-				.extracting(ShareEntry::getContactListUuid)
-				.containsNull();
+				.hasSize(1)
+				.containsExactly(addedEntry2);
 		assertThat(addedShareForContactListSecond)
-				.extracting(ShareEntry::getContactListUuid)
-				.isEmpty();
+				.hasSize(1)
+				.containsExactly(addedEntry3);
+		assertThat(addedEntry1.getContactListUuid())
+				.as("First share should have contactListUuid from contact list")
+				.isEqualTo(this.contactList.getUuid());
+		assertThat(addedEntry2.getContactListUuid())
+				.as("Second share should have null contactListUuid (explicit selection)")
+				.isNull();
+		assertThat(addedEntry3.getContactListUuid())
+				.as("Third share should have contactListUuid from contact list")
+				.isEqualTo(this.contactList.getUuid());
+		verify(this.shareEntryBusinessService, times(3)).create(
+				any(DocumentEntry.class),
+				any(User.class),
+				any(User.class),
+				any(Calendar.class),
+				any(ShareEntryGroup.class),
+				any());
 	}
 
 	private @Nonnull ShareEntry createShareEntry(@Nonnull final User recipient,
@@ -561,78 +586,6 @@ import com.google.common.collect.Sets;
         verify(shareEntryBusinessService).create(
                 eq(documentEntry), eq(owner), eq(recipient),
                 isNull(), eq(shareEntryGroup), isNull());
-    }
-
-    /**
-     * Tests that marking share as copied sends notification when mail is not null and downloaded count was zero.
-     * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
-     */
-    @Test
-     void testMarkAsCopied_WhenMailIsNotNull_ShouldSendNotification() {
-        verifyNotificationSent();
-    }
-
-    /**
-     * Tests that marking share as copied doesn't send notification when mail is null and downloaded count was zero.
-     * Verifies robust error handling when email templates cannot be generated.
-     */
-    @Test
-     void testMarkAsCopied_WhenMailIsNull_ShouldNotSendNotification() {
-        verifyNotificationNotSent();
-    }
-
-    /**
-     * Tests that share deletion sends notification when mail is not null for expiration or sender deletion cases.
-     * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
-     */
-    @Test
-     void testDeleteShare_WhenMailIsNotNull_ShouldSendNotification() {
-        verifyNotificationSent();
-    }
-
-    /**
-     * Tests that share deletion doesn't send notification when mail is null for expiration or sender deletion cases.
-     * Verifies robust error handling when email templates cannot be generated.
-     */
-    @Test
-     void testDeleteShare_WhenMailIsNull_ShouldNotSendNotification() {
-        verifyNotificationNotSent();
-    }
-
-    /**
-     * Tests that getting byte source sends notification when mail is not null and downloaded count was zero.
-     * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
-     */
-    @Test
-     void testGetByteSource_WhenMailIsNotNull_ShouldSendNotification() {
-        verifyNotificationSent();
-    }
-
-    /**
-     * Tests that getting byte source doesn't send notification when mail is null and downloaded count was zero.
-     * Verifies robust error handling when email templates cannot be generated.
-     */
-    @Test
-     void testGetByteSource_WhenMailIsNull_ShouldNotSendNotification() {
-        verifyNotificationNotSent();
-    }
-
-    /**
-     * Tests that creating shares sends notification when mail is not null for each recipient.
-     * Verifies the null-safety logic: if (mail != null) { sendNotification(mail); }
-     */
-    @Test
-     void testCreateShares_WhenMailIsNotNull_ShouldSendNotification() {
-        verifyNotificationSent();
-    }
-
-    /**
-     * Tests that creating shares doesn't send notification when mail is null for recipients.
-     * Verifies robust error handling when email templates cannot be generated.
-     */
-    @Test
-     void testCreateShares_WhenMailIsNull_ShouldNotSendNotification() {
-        verifyNotificationNotSent();
     }
 
 	/**

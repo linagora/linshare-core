@@ -200,15 +200,15 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		if (createDto.getMailingListUuid() != null) {
 			createDto.getMailingListUuid().forEach(uuid -> {
 				final ContactList list = this.listService.findByUuid(authUser.getLsUuid(), uuid);
-				final Optional<AccountContactLists> accountContactLists = this.accountService.findAccountContactListByAccountAndContactList(
-						authUser, list);
-				if(accountContactLists.isEmpty()) {
-					throw new BusinessException(
-							BusinessErrorCode.ACCOUNT_CONTACT_LIST_NOT_FOUND,
-								"No account contact list found for user and contact list with UUID: " + uuid
-					);
+				if (authUser.isGuest()) {
+					final Optional<AccountContactLists> accountContactLists = this.accountService.findAccountContactListByAccountAndContactList(
+							authUser, list);
+					if (accountContactLists.isEmpty()) {
+						throw new BusinessException(BusinessErrorCode.ACCOUNT_CONTACT_LIST_NOT_FOUND,
+								"No account contact list found for user and contact list with UUID: " + uuid);
+					}
+					sc.addAccountContactLists(List.of(accountContactLists.get()));
 				}
-				sc.addAccountContactLists(List.of(accountContactLists.get()));
 				final List<ContactListContact> contacts = this.mailingListContactRepository.findAllContacts(list);
 				contacts.forEach(sc::addContact);
 			});

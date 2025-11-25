@@ -41,15 +41,19 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.ContactListService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class UndownloadedSharedDocumentsBatchImplUnitTest {
 
+	@InjectMocks
 	private UndownloadedSharedDocumentsBatchImpl undownloadedSharedDocumentsBatch;
 
 	@Mock
@@ -67,6 +71,10 @@ class UndownloadedSharedDocumentsBatchImplUnitTest {
 	@Mock
 	private AccountRepository<Account> accountRepository;
 
+	@Mock
+	private ContactListService contactListService;
+	@Mock
+	private  AccountService accountService;
 	private BatchRunContext batchRunContext;
 	private SystemAccount systemAccount;
 
@@ -75,15 +83,6 @@ class UndownloadedSharedDocumentsBatchImplUnitTest {
 		this.batchRunContext = new BatchRunContext();
 		this.systemAccount = mock(SystemAccount.class);
 		when(this.accountRepository.getBatchSystemAccount()).thenReturn(this.systemAccount);
-		// Instantiate the batch with mocked dependencies
-		// This way, when getSystemAccount() is called, it will use the mocked accountRepository
-		this.undownloadedSharedDocumentsBatch = new UndownloadedSharedDocumentsBatchImpl(
-				this.shareEntryGroupService,
-				this.mailBuildingService,
-				this.notifierService,
-				this.logEntryService,
-				this.accountRepository
-		);
 	}
 
 	/**

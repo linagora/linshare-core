@@ -30,6 +30,10 @@ import org.linagora.linshare.core.notifications.context.ShareWarnSenderAboutShar
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
+import org.linagora.linshare.core.service.ContactListService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.NotifierService;
 
 public class WarnSenderAboutShareExpirationWithoutDownloadBatchImpl extends GenericBatchImpl {
@@ -42,15 +46,31 @@ public class WarnSenderAboutShareExpirationWithoutDownloadBatchImpl extends Gene
 
 	protected int daysLeftExpiration;
 
+	private ContactListService contactListService;
+
+	private AccountService accountService;
+
+	private FunctionalityReadOnlyService functionalityReadOnlyService;
+
+	private AuditLogEntryService auditLogEntryService;
+
 	public WarnSenderAboutShareExpirationWithoutDownloadBatchImpl(AccountRepository<Account> accountRepository,
 			ShareEntryRepository shareEntryRepository,
 			MailBuildingService mailBuildingService,
 			NotifierService notifierService,
+			final ContactListService contactListService,
+			final AccountService accountService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
+			final AuditLogEntryService auditLogEntryService,
 			int daysLeftExpiration) {
 		super(accountRepository);
 		this.shareEntryRepository = shareEntryRepository;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.contactListService = contactListService;
+		this.accountService = accountService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.auditLogEntryService = auditLogEntryService;
 		this.daysLeftExpiration = daysLeftExpiration;
 	}
 
@@ -74,7 +94,7 @@ public class WarnSenderAboutShareExpirationWithoutDownloadBatchImpl extends Gene
 		console.logInfo(batchRunContext, total, position, "processing owner account : " + owner.getAccountRepresentation());
 		ResultContext context = new AccountBatchResultContext(owner);
 		try {
-			EmailContext ctx = new ShareWarnSenderAboutShareExpirationEmailContext(shareEntry, daysLeftExpiration);
+			final EmailContext ctx = new ShareWarnSenderAboutShareExpirationEmailContext(shareEntry, this.contactListService, this.accountService, this.functionalityReadOnlyService, this.auditLogEntryService, this.daysLeftExpiration);
 			final MailContainerWithRecipient mail = this.mailBuildingService.build(ctx);
 			if (mail != null) {
 				this.notifierService.sendNotification(mail);

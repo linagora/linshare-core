@@ -36,6 +36,10 @@ import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
+import org.linagora.linshare.core.service.ContactListService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -54,6 +58,12 @@ class WarnSenderAboutShareExpirationWithoutDownloadBatchImplTest {
 	private NotifierService notifierService;
 
 	@Mock
+	private AccountService accountService;
+
+	@Mock
+	private ContactListService contactListService;
+
+	@Mock
 	private MailBuildingService mailBuildingService;
 	@Mock
 	private AccountRepository<Account> accountRepository;
@@ -64,6 +74,11 @@ class WarnSenderAboutShareExpirationWithoutDownloadBatchImplTest {
 
 	@Mock
 	private MailContainerWithRecipient mail;
+
+	@Mock
+	private FunctionalityReadOnlyService functionalityReadOnlyService;
+	@Mock
+	private AuditLogEntryService auditLogEntryService;
 
 	/**
 	 * Initializes the test environment before each test method execution.
@@ -78,7 +93,7 @@ class WarnSenderAboutShareExpirationWithoutDownloadBatchImplTest {
 		//  WarnSenderAboutShareExpirationWithoutDownloadBatchImpl at field with
 		//  '@Value("${linshare.warn.owner.about.share.expiration.days.before}")'. And so, you can use '@InjectMocks' in this unit test.
 		this.batch = new WarnSenderAboutShareExpirationWithoutDownloadBatchImpl(this.accountRepository, this.shareEntryRepository,
-				this.mailBuildingService, this.notifierService, 9);
+				this.mailBuildingService, this.notifierService, this.contactListService, this.accountService, this.functionalityReadOnlyService, this.auditLogEntryService, 9);
 	}
 
 	/**

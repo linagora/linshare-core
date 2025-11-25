@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,10 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
-import org.linagora.linshare.core.domain.entities.ContactList;
-import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.notifications.context.ShareNewShareAcknowledgementEmailContext;
@@ -48,31 +44,6 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 	private static final String INVISIBLE_TEAM_2_NAME = "HR Team";
 
 	/**
-	 * Creates a mock {@link AccountContactLists} with specified visibility and member emails.
-	 *
-	 * @param listName the name of the contact list
-	 * @param canViewMembers whether the guest can view individual list members
-	 * @param memberEmails list of email addresses for the contact list members
-	 * @return a mocked {@link AccountContactLists} instance with the specified configuration
-	 */
-	private static AccountContactLists createContactList(@Nonnull final String listName, boolean canViewMembers, @Nonnull final List<String> memberEmails) {
-		final AccountContactLists acl = mock(AccountContactLists.class);
-		final ContactList contactList = mock(ContactList.class);
-		when(acl.getContactList()).thenReturn(contactList);
-		when(acl.getCanViewContactListMembers()).thenReturn(canViewMembers);
-		when(contactList.getIdentifier()).thenReturn(listName);
-		final Set<ContactListContact> contacts = memberEmails.stream()
-				.map(email -> {
-					ContactListContact contact = mock(ContactListContact.class);
-					when(contact.getMail()).thenReturn(email);
-					return contact;
-				})
-				.collect(Collectors.toSet());
-		when(contactList.getContactListContacts()).thenReturn(contacts);
-		return acl;
-	}
-
-	/**
 	 * Provides test scenarios for parameterized testing of recipient visibility logic.
 	 */
 	 private static Stream<Arguments> guestSharingScenarios() {
@@ -80,7 +51,7 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 				arguments(
 						"Guest shares with visible contact list - show all members",
 						true,
-						Arrays.asList(createContactList(VISIBLE_TEAM_NAME, true,
+						Arrays.asList(EmailTestUtils.createAccountContactListsWithEmbeddedList(VISIBLE_TEAM_NAME, true,
 								Arrays.asList(USER1_EMAIL, USER2_EMAIL))),
 						Arrays.asList(USER1_EMAIL, USER2_EMAIL),
 						Collections.emptySet(),
@@ -91,7 +62,7 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 				arguments(
 						"Guest shares with invisible contact list - show only list name",
 						true,
-						Arrays.asList(createContactList(INVISIBLE_TEAM_NAME, false,
+						Arrays.asList(EmailTestUtils.createAccountContactListsWithEmbeddedList(INVISIBLE_TEAM_NAME, false,
 								Arrays.asList(USER1_EMAIL, USER2_EMAIL))),
 						Arrays.asList(USER1_EMAIL, USER2_EMAIL),
 						Collections.emptySet(),
@@ -103,8 +74,8 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 						"Guest shares with mixed visible and invisible lists",
 						true,
 						Arrays.asList(
-								createContactList(VISIBLE_TEAM_NAME, true, Arrays.asList(USER1_EMAIL)),
-								createContactList(INVISIBLE_TEAM_NAME, false, Arrays.asList(USER2_EMAIL, USER3_EMAIL))
+								EmailTestUtils.createAccountContactListsWithEmbeddedList(VISIBLE_TEAM_NAME, true, Arrays.asList(USER1_EMAIL)),
+								EmailTestUtils.createAccountContactListsWithEmbeddedList(INVISIBLE_TEAM_NAME, false, Arrays.asList(USER2_EMAIL, USER3_EMAIL))
 						),
 						Arrays.asList(USER1_EMAIL, USER2_EMAIL, USER3_EMAIL),
 						Collections.emptySet(),
@@ -115,7 +86,7 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 				arguments(
 						"Guest shares with invisible list + explicit individual contact from same list",
 						true,
-						Arrays.asList(createContactList(INVISIBLE_TEAM_NAME, false,
+						Arrays.asList(EmailTestUtils.createAccountContactListsWithEmbeddedList(INVISIBLE_TEAM_NAME, false,
 								Arrays.asList(USER1_EMAIL, USER2_EMAIL))),
 						Arrays.asList(USER1_EMAIL),
 						new HashSet<>(Arrays.asList(USER1_EMAIL)),
@@ -127,8 +98,8 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 						"Guest shares with multiple invisible lists",
 						true,
 						Arrays.asList(
-								createContactList(INVISIBLE_TEAM_NAME, false, Arrays.asList(USER1_EMAIL)),
-								createContactList(INVISIBLE_TEAM_2_NAME, false, Arrays.asList(USER2_EMAIL))
+								EmailTestUtils.createAccountContactListsWithEmbeddedList(INVISIBLE_TEAM_NAME, false, Arrays.asList(USER1_EMAIL)),
+								EmailTestUtils.createAccountContactListsWithEmbeddedList(INVISIBLE_TEAM_2_NAME, false, Arrays.asList(USER2_EMAIL))
 						),
 						Arrays.asList(USER1_EMAIL, USER2_EMAIL),
 						Collections.emptySet(),
@@ -139,7 +110,7 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 				arguments(
 						"Guest shares with invisible list + external contact",
 						true,
-						Arrays.asList(createContactList(INVISIBLE_TEAM_NAME, false,
+						Arrays.asList(EmailTestUtils.createAccountContactListsWithEmbeddedList(INVISIBLE_TEAM_NAME, false,
 								Arrays.asList(USER1_EMAIL, USER2_EMAIL))),
 						Arrays.asList(USER1_EMAIL, USER2_EMAIL, EXTERNAL_USER_EMAIL),
 						Collections.emptySet(),
@@ -150,7 +121,7 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 				arguments(
 						"Non-guest with visible contact list - show all members",
 						false,
-						Arrays.asList(createContactList(VISIBLE_TEAM_NAME, true,
+						Arrays.asList(EmailTestUtils.createAccountContactListsWithEmbeddedList(VISIBLE_TEAM_NAME, true,
 								Arrays.asList(USER1_EMAIL, USER2_EMAIL))),
 						Arrays.asList(USER1_EMAIL, USER2_EMAIL),
 						Collections.emptySet(),
@@ -160,7 +131,7 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 				), arguments(
 						"Non-guest with invisible contact list - show all members",
 						false,
-						Arrays.asList(createContactList(INVISIBLE_TEAM_NAME, false,
+						Arrays.asList(EmailTestUtils.createAccountContactListsWithEmbeddedList(INVISIBLE_TEAM_NAME, false,
 								Arrays.asList(USER1_EMAIL, USER2_EMAIL))),
 						Arrays.asList(USER1_EMAIL, USER2_EMAIL),
 						Collections.emptySet(),
@@ -172,8 +143,8 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 						"Non-guest with mixed contact lists - show all members",
 						false,
 						Arrays.asList(
-								createContactList(VISIBLE_TEAM_NAME, true, Arrays.asList(USER1_EMAIL)),
-								createContactList(INVISIBLE_TEAM_NAME, false, Arrays.asList(USER2_EMAIL))
+								EmailTestUtils.createAccountContactListsWithEmbeddedList(VISIBLE_TEAM_NAME, true, Arrays.asList(USER1_EMAIL)),
+								EmailTestUtils.createAccountContactListsWithEmbeddedList(INVISIBLE_TEAM_NAME, false, Arrays.asList(USER2_EMAIL))
 						),
 						Arrays.asList(USER1_EMAIL, USER2_EMAIL),
 						Collections.emptySet(),
@@ -230,36 +201,22 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 			@Nonnull final List<String> expectedVisibleEmails,
 			@Nonnull final List<String> expectedHiddenEmails,
 			@Nonnull final List<String> expectedContactListNames) {
-		final User user = createMockUser(isGuest);
+		final User user = EmailTestUtils.createMockUser(isGuest);
 		final ShareContainer shareContainer = this.createMockShareContainer(accountContactLists, explicitEmails, allRecipientEmails);
 		final ShareNewShareAcknowledgementEmailContext context =
 				new ShareNewShareAcknowledgementEmailContext(user, shareContainer, new HashSet<>());
 		final List<MailContact> result = context.getRecipientsWithVisibility();
-		final List<String> resultEmails = this.extractEmailsFromResult(result);
-		final List<String> resultContactListNames = this.extractContactListNamesFromResult(result);
-		assertThat(resultEmails).containsExactlyInAnyOrderElementsOf(normalizeEmails(expectedVisibleEmails));
+		final List<String> resultEmails = EmailTestUtils.extractEmailsFromResult(result);
+		final List<String> resultContactListNames = EmailTestUtils.extractContactListNamesFromResult(result);
+		assertThat(resultEmails).containsExactlyInAnyOrderElementsOf(EmailTestUtils.normalizeEmails(expectedVisibleEmails));
 		if (!expectedHiddenEmails.isEmpty()) {
 			assertThat(resultEmails)
-					.doesNotContainAnyElementsOf(normalizeEmails(expectedHiddenEmails));
+					.doesNotContainAnyElementsOf(EmailTestUtils.normalizeEmails(expectedHiddenEmails));
 		}
 		assertThat(resultContactListNames)
 				.containsExactlyInAnyOrderElementsOf(expectedContactListNames);
 		int expectedTotalItems = expectedVisibleEmails.size() + expectedContactListNames.size();
 		assertThat(result).hasSize(expectedTotalItems);
-	}
-
-	/**
-	 * Creates a mock {@link User} with the specified guest status.
-	 *
-	 * @param isGuest true if the user should be a guest, false for regular user
-	 * @return a mocked {@link User} instance with the specified guest configuration
-	 */
-	private User createMockUser(boolean isGuest) {
-		final User user = mock(User.class);
-		when(user.isGuest()).thenReturn(isGuest);
-		final AbstractDomain domain = mock(AbstractDomain.class);
-		when(user.getDomain()).thenReturn(domain);
-		return user;
 	}
 
 	/**
@@ -285,44 +242,5 @@ public class ShareNewShareAcknowledgementEmailBuilderTest {
 		lenient().when(shareContainer.getAccountContactLists()).thenReturn(accountContactLists);
 		lenient().when(shareContainer.getExplicitRecipientEmails()).thenReturn(explicitEmails);
 		return shareContainer;
-	}
-
-	/**
-	 * Extracts email addresses from a list of {@link MailContact} objects.
-	 *
-	 * @param result the list of mail contacts to process
-	 * @return a list of lowercase email addresses extracted from the mail contacts
-	 */
-	private List<String> extractEmailsFromResult(@Nonnull final List<MailContact> result) {
-		return result.stream()
-				.map(MailContact::getMail)
-				.filter(Objects::nonNull)
-				.map(String::toLowerCase)
-				.collect(Collectors.toList());
-	}
-
-	/**
-	 * Extracts contact list names from a list of {@link MailContact} objects.
-	 *
-	 * @param result the list of mail contacts to process
-	 * @return a list of contact list names present in the mail contacts
-	 */
-	private List<String> extractContactListNamesFromResult(@Nonnull final List<MailContact> result) {
-		return result.stream()
-				.map(MailContact::getContactListName)
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList());
-	}
-
-	/**
-	 * Normalizes email addresses by converting them to lowercase.
-	 *
-	 * @param emails the list of email addresses to normalize
-	 * @return a list of lowercase email addresses, preserving null values
-	 */
-	private List<String> normalizeEmails(@Nonnull final List<String> emails) {
-		return emails.stream()
-				.map(email -> email != null ? email.toLowerCase() : null)
-				.collect(Collectors.toList());
 	}
 }

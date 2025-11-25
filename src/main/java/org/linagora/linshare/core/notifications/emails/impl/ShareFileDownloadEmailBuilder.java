@@ -67,7 +67,7 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 		ctx.setVariable("share", downloadedShare);
 		ctx.setVariable("shareDate", shareDate);
 		ctx.setVariable("shareOwner", new MailContact(shareOwner));
-		ctx.setVariable("shareRecipient", emailCtx.getRecipient());
+		ctx.setVariable("shareRecipient", emailCtx.createRecipientDataAgainstContactListViewStatus());
 
 		List<Share> shares = Lists.newArrayList();
 		if (isAnonymous) {

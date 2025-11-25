@@ -32,6 +32,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.math3.util.Pair;
+import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
@@ -40,10 +41,10 @@ import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.ContactList;
-import org.linagora.linshare.core.domain.entities.AccountContactLists;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.AuditEntryField;
@@ -60,8 +61,8 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
-import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.webservice.utils.PageContainer;
@@ -76,8 +77,6 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
-import org.bson.Document;
 
 public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditLogEntry> implements AuditLogEntryService {
 
@@ -420,7 +419,6 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			resource.setRecipient(null);
 		} else if (Objects.equals(originalLog.getActor().getUuid(), guest.getLsUuid()) &&
 				!this.canViewContactListMembers(accountContactLists) &&
-				originalLog.getAction().equals(LogAction.CREATE) &&
 				!originalLog.getRecipientUuid().equals(contactList.getOwner().getLsUuid())) {
 			// the guest is the actor in the log, he created a new share, and he is not the recipient.
 			hiddenLog.setActor(originalLog.getActor());

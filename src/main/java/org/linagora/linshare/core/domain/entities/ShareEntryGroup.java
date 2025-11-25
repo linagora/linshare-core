@@ -15,12 +15,17 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.notifications.dto.MailContact;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -182,6 +187,55 @@ public class ShareEntryGroup {
 
 	public Language getExternalMailLocale() {
 		return externalMailLocale;
+	}
+
+	/**
+	 * Get all individual recipients (excluding contact list members)
+	 */
+	public @Nonnull Set<String> getExplicitIndividualEmails() {
+		final Set<String> explicitEmails = new HashSet<>();
+		if (this.shareEntries != null) {
+			for (final ShareEntry share : this.shareEntries) {
+				if (share.getRecipient() != null && share.getContactListUuid() == null) {
+					final String email = share.getRecipient().getMail();
+					if (email != null) {
+						explicitEmails.add(email.toLowerCase());
+					}
+				}
+			}
+		}
+		return explicitEmails;
+	}
+
+	/**
+	 * Get all recipients as MailContact objects
+	 */
+	public @Nonnull List<MailContact> getAllRecipients() {
+		final List<MailContact> allRecipients = new ArrayList<>();
+		if (this.shareEntries != null) {
+			for (final ShareEntry share : this.shareEntries) {
+				if (share.getRecipient() != null) {
+					allRecipients.add(new MailContact(share.getRecipient()));
+				}
+			}
+		}
+		return allRecipients;
+	}
+
+	/**
+	 * Get unique contact list UUIDs from all shares
+	 */
+	public @Nonnull Set<String> getContactListUuids() {
+		final Set<String> contactListUuids = new HashSet<>();
+		if (this.shareEntries != null) {
+			for (final ShareEntry share : this.shareEntries) {
+				final String contactListUuid = share.getContactListUuid();
+				if (contactListUuid != null) {
+					contactListUuids.add(contactListUuid);
+				}
+			}
+		}
+		return contactListUuids;
 	}
 
 	public void setExternalMailLocale(Language externalMailLocale) {

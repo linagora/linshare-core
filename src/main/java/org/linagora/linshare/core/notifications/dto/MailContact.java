@@ -32,6 +32,18 @@ public class MailContact {
 
 	protected String contactListName;
 
+	/**
+	 * Count of contact list members who haven't downloaded any shared files.
+	 * Used for anonymous display when contact list members are not visible.
+	 */
+	private int notDownloadedCount;
+
+	/**
+	 * Total number of members in the contact list.
+	 * Always contains a valid count (0 for empty lists).
+	 */
+	private int totalMembersCount;
+
 	public MailContact() {
 	}
 
@@ -113,6 +125,22 @@ public class MailContact {
 
 	public void setContactListName(String contactListName) {
 		this.contactListName = contactListName;
+	}
+
+	public int getNotDownloadedCount() {
+		return this.notDownloadedCount;
+	}
+
+	public void setNotDownloadedCount(final int notDownloadedCount) {
+		this.notDownloadedCount = notDownloadedCount;
+	}
+
+	public int getTotalMembersCount() {
+		return this.totalMembersCount;
+	}
+
+	public void setTotalMembersCount(final int totalMembersCount) {
+		this.totalMembersCount = totalMembersCount;
 	}
 
 	@Override

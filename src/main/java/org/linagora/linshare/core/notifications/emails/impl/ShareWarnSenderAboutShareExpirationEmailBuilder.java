@@ -50,11 +50,11 @@ public class ShareWarnSenderAboutShareExpirationEmailBuilder extends EmailBuilde
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("shareOwner", new MailContact(shareOwner));
-		ctx.setVariable("shareRecipient", new MailContact(shareRecipient));
+		ctx.setVariable("recipient", emailCtx.createRecipientDataAgainstContactListViewStatus());
 		ctx.setVariable("share", share);
 		ctx.setVariable(linshareURL, linshareURL);
 		ctx.setVariable("daysLeft", emailCtx.getDaysLeft());
-
+		ctx.setVariable("emptyString", "");
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
@@ -65,11 +65,12 @@ public class ShareWarnSenderAboutShareExpirationEmailBuilder extends EmailBuilde
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		ctx.setVariable("recipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		Share share = new Share("a-shared-file.txt", true);
 		share.setHref(getRecipientShareLink(fakeLinshareURL, share.getUuid()));
 		ctx.setVariable("share", share);
 		ctx.setVariable("daysLeft", Integer.valueOf(7));
+		ctx.setVariable("emptyString", "");
 		res.add(ctx);
 		return res;
 	}

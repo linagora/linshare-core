@@ -34,6 +34,10 @@ import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.ShareWarnUndownloadedFilesharesEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
+import org.linagora.linshare.core.service.ContactListService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
@@ -52,17 +56,33 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 
 	private final LogEntryService logEntryService;
 
+	private final ContactListService contactListService;
+
+	private final AccountService accountService;
+
+	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+
+	private final AuditLogEntryService auditLogEntryService;
+
 	public UndownloadedSharedDocumentsBatchImpl(
 			final ShareEntryGroupService service,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final LogEntryService logEntryService,
+			final ContactListService contactListService,
+	final AccountService accountService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
+			final AuditLogEntryService auditLogEntryService,
 			AccountRepository<Account> accountRepository) {
 		super(accountRepository);
 		this.service = service;
 		this.mailService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.logEntryService = logEntryService;
+		this.contactListService = contactListService;
+		this.accountService = accountService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -89,7 +109,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 			shareEntryGroup.setProcessed(true);
 			if (shareEntryGroup.needNotification()) {
 				// log action and notification
-				EmailContext emailContext = new ShareWarnUndownloadedFilesharesEmailContext(shareEntryGroup);
+				final EmailContext emailContext = new ShareWarnUndownloadedFilesharesEmailContext(shareEntryGroup, this.contactListService, this.accountService, this.functionalityReadOnlyService, this.auditLogEntryService);
 				mail = mailService.build(emailContext);
 				shareEntryGroup.setNotified(true);
 				logs = getLogActions(actor, shareEntryGroup);

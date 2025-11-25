@@ -30,8 +30,8 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.ShareWarnUndownloadedFilesharesEmailContext;
-import org.linagora.linshare.core.notifications.dto.SEGDocument;
 import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.core.notifications.dto.SEGDocument;
 import org.linagora.linshare.core.notifications.dto.ShareGroup;
 import org.thymeleaf.context.Context;
 
@@ -59,19 +59,17 @@ public class ShareWarnUndownloadedFilesharesEmailBuilder extends EmailBuilder {
 		ctx.setVariable("shareGroup", new ShareGroup(group));
 
 		ctx.setVariable("linshareURL", linshareURL);
-
+		final List<MailContact> recipientsWithVisibility = emailCtx.createRecipientDataAgainstContactListViewStatus();
 		List<SEGDocument> documents = Lists.newArrayList();
 		Map<DocumentEntry, List<Entry>> tmpDocuments = group.getTmpDocuments();
+		ctx.setVariable("recipients", recipientsWithVisibility);
+		ctx.setVariable("recipientsCount", recipientsWithVisibility.size());
 		for (Map.Entry<DocumentEntry, List<Entry>> tmpDocument : tmpDocuments.entrySet()) {
 			DocumentEntry documentEntry = tmpDocument.getKey();
 			SEGDocument d = new SEGDocument(documentEntry);
 			d.setHref(getOwnerDocumentLink(linshareURL, d.getUuid()));
 			d.setAllDownloaded(allSharesWereDownloaded(documentEntry, group));
 			d.setOneDownloaded(oneShareWasDownloaded(documentEntry, group));
-			List<Entry> shares = tmpDocument.getValue();
-			for (Entry entry : shares) {
-				d.addShare(entry);
-			}
 			documents.add(d);
 		}
 		ctx.setVariable("documents", documents);
@@ -91,42 +89,28 @@ public class ShareWarnUndownloadedFilesharesEmailBuilder extends EmailBuilder {
 		ctx.setVariable("shareGroup",
 				new ShareGroup("My test subject", new Date(), getFakeExpirationDate(), getFakeExpirationDate()));
 
+		// Documents
 		List<SEGDocument> documents = Lists.newArrayList();
-
-		SEGDocument d = null;
-
-		// first document
-		d = new SEGDocument("a-shared-file.txt", 653347L);
-		d.setHref(getOwnerDocumentLink(fakeLinshareURL, d.getUuid()));
-		d.setAllDownloaded(true);
-		d.setOneDownloaded(true);
-		d.addShare(new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"), true);
-		d.addShare(new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"), true);
-		d.addShare(new MailContact("unknown@linshare.org"), true);
-		documents.add(d);
-
-		// second document
-		d = new SEGDocument("a-shared-file2.txt", 6533L);
+		SEGDocument d = new SEGDocument("config.inc.php", 653347L);
 		d.setHref(getOwnerDocumentLink(fakeLinshareURL, d.getUuid()));
 		d.setAllDownloaded(false);
 		d.setOneDownloaded(false);
-		d.addShare(new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"), false);
-		d.addShare(new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"), false);
-		d.addShare(new MailContact("unknown@linshare.org"), false);
-		documents.add(d);
-
-		// third document
-		d = new SEGDocument("a-shared-file3.txt", 653347L);
-		d.setHref(getOwnerDocumentLink(fakeLinshareURL, d.getUuid()));
-		d.setAllDownloaded(false);
-		d.setOneDownloaded(true);
-		d.addShare(new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"), true);
-		d.addShare(new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"), false);
-		d.addShare(new MailContact("unknown@linshare.org"), false);
 		documents.add(d);
 
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
+		List<MailContact> recipients = Lists.newArrayList();
+
+		MailContact listContact = new MailContact();
+		listContact.setContactListName("invisible_contact_list");
+		recipients.add(listContact);
+
+		recipients.add(new MailContact("abbey.curry@linshare.org", "Abbey", "CURRY"));
+		recipients.add(new MailContact("grant.big@linshare.org", "Grant", "BIG"));
+
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipientsCount", recipients.size());
+
 		res.add(ctx);
 		return res;
 	}

@@ -57,6 +57,8 @@ import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -85,9 +87,13 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 
 	private final MailBuildingService mailBuildingService;
 
+	private final AuditLogEntryService auditLogEntryService;
+
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
-	private final MailingListBusinessService mailingListBusinessService;
+	private final MailingListBusinessService contactListBusinessService;
+
+	private final AccountService accountService;
 
 	public ShareEntryServiceImpl(
 			GuestRepository guestRepository,
@@ -100,7 +106,9 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository,
 			ShareEntryResourceAccessControl rac,
 			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
-			@Nonnull final MailingListBusinessService mailingListBusinessService) {
+			@Nonnull final MailingListBusinessService contactListBusinessService,
+			@Nonnull final AccountService accountService,
+			@Nonnull final AuditLogEntryService auditLogEntryService) {
 		super(rac, sanitizerInputHtmlBusinessService);
 		this.guestRepository = guestRepository;
 		this.functionalityService = functionalityService;
@@ -110,7 +118,9 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
-		this.mailingListBusinessService = mailingListBusinessService;
+		this.contactListBusinessService = contactListBusinessService;
+		this.accountService = accountService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -149,7 +159,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		MailContainerWithRecipient mail = null;
 		if (share.getDownloaded() <= 0) {
-			ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share);
+			final ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share, this.contactListBusinessService,this.accountService, this.functionalityService, this.auditLogEntryService);
 			mail = mailBuildingService.build(context);
 		}
 		share = shareEntryBusinessService.updateDownloadCounter(share.getUuid());
@@ -259,7 +269,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		checkDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		if (share.getDownloaded() <= 0) {
-			ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share);
+			final ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share, this.contactListBusinessService, this.accountService, this.functionalityService, this.auditLogEntryService);
 			final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
 			if (mail != null) {
 				this.notifierService.sendNotification(mail);
@@ -284,21 +294,34 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		return shareEntryBusinessService.findAllMyRecievedShareEntries((User) owner);
 	}
 
+	/**
+	 * Creates share entries for the given share container.
+	 * This method handles both individual shares and contact list shares, with special logic
+	 * for mixed shares (contact lists + explicit recipients). For explicitly selected recipients,
+	 * the contactListUuid is always set to null to ensure proper visibility in notifications.
+	 *
+	 * @param actor the account performing the share operation
+	 * @param owner the owner of the documents being shared
+	 * @param sc the share container containing recipients, documents, and contact lists
+	 * @param shareEntryGroup the share entry group to associate with the shares
+	 * @return a set of created share entries
+	 * @throws BusinessException if permissions are insufficient or validation fails
+	 */
 	@Override
-	public Set<ShareEntry> create(Account actor, User owner, ShareContainer sc, ShareEntryGroup shareEntryGroup) {
+	public Set<ShareEntry> create(final @Nonnull Account actor, final @Nonnull User owner, final @Nonnull ShareContainer sc, final @Nonnull ShareEntryGroup shareEntryGroup) {
 		preChecks(actor, owner);
 		Validate.notNull(sc);
 		checkCreatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
-		Set<ShareEntry> entries = Sets.newHashSet();
-		TimeUnitValueFunctionality functionality = functionalityService.getCollectedEmailsExpirationTimeFunctionality(owner.getDomain());
-		Date contactExpirationDate = functionality.getContactExpirationDate();
-		for (User recipient : sc.getShareRecipients()) {
-			Set<ShareEntry> shares = Sets.newHashSet();
+		final Set<ShareEntry> entries = Sets.newHashSet();
+		final TimeUnitValueFunctionality functionality = this.functionalityService.getCollectedEmailsExpirationTimeFunctionality(owner.getDomain());
+		final Date contactExpirationDate = functionality.getContactExpirationDate();
+		for (final User recipient : sc.getShareRecipients()) {
+			final Set<ShareEntry> shares = Sets.newHashSet();
 			String contactListUuid = null;
 			String contactListName = null;
 			if (!sc.getContactLists().isEmpty()) {
-				ContactList contactList = findContactListForRecipient(sc.getContactLists(), recipient);
+				final ContactList contactList = this.findContactListForRecipient(sc.getContactLists(), recipient);
 				if (contactList != null) {
 					contactListUuid = contactList.getUuid();
 					contactListName = contactList.getIdentifier();
@@ -309,35 +332,28 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				}
 			}
 			final boolean isContactListMember = contactListUuid != null;
-			for (DocumentEntry documentEntry : sc.getDocuments()) {
-				// Defines weather the entry is, already, explicitly shared with the recipient
-				final boolean isExplicitlySharedWithRecipient = shareEntryBusinessService.isShareEntryAlreadyExistsWithoutContactList(
-						documentEntry, owner, recipient);
+			final boolean isExplicitlySelected = isRecipientExplicitlySelected(sc, recipient);
+			for (final DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareEntry createShare = null;
-				updateGuestExpiryDate(recipient);
-				if (isContactListMember && !isExplicitlySharedWithRecipient) {
-					// Create or update of share entry of contact list member
+				this.updateGuestExpiryDate(recipient);
+				if (isContactListMember && !isExplicitlySelected) {
 					createShare = this.shareEntryBusinessService.create(documentEntry, owner, recipient,
 							sc.getExpiryCalendar(), shareEntryGroup, sc.getSharingNote());
 					createShare.setContactListUuid(contactListUuid);
 					logger.debug("Contact list UUID associated with share: {}", contactListUuid);
-				} else if (isContactListMember) {
-					logger.debug("document entry {} is, already, explicitly shared with recipient {}. No changes...",
-							documentEntry, recipient);
-					continue;
 				} else {
-					// Create/update entry for explicit user (not a contact list member).
 					createShare = this.shareEntryBusinessService.create(documentEntry, owner, recipient,
 							sc.getExpiryCalendar(), shareEntryGroup, sc.getSharingNote());
 					createShare.setContactListUuid(null);
+					logger.debug("Explicit recipient: {} (contactListUuid=null)", recipient.getMail());
 				}
 				shares.add(createShare);
-				recipientFavouriteRepository.incAndCreate(owner,
+				this.recipientFavouriteRepository.incAndCreate(owner,
 						recipient.getMail(), contactExpirationDate, false);
-				ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.CREATE, createShare,
+				final ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.CREATE, createShare,
 						AuditLogEntryType.SHARE_ENTRY);
-				String recipientUuid = recipient.getLsUuid();
-				if (contactListUuid != null) {
+				final String recipientUuid = recipient.getLsUuid();
+				if (contactListUuid != null && !isExplicitlySelected) {
 					log.setContactListUuid(contactListUuid);
 					log.setContactListName(contactListName);
 					logger.debug("Audit log created with list: uuid={}, name={}", contactListUuid, contactListName);
@@ -362,6 +378,49 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	}
 
 	/**
+	 * Determines whether a recipient was explicitly selected by the user versus being included
+	 * only through contact list membership. This is crucial for proper visibility handling
+	 * in notifications, especially for guest users.
+	 * The method uses multiple strategies to detect explicit selection:
+	 * 1. Check explicit recipient emails list
+	 * 2. Check direct recipients in share container
+	 * 3. Detect mixed shares (contact lists + additional recipients)
+	 *
+	 * @param shareContainer the share container containing sharing information
+	 * @param recipient the recipient to check for explicit selection
+	 * @return true if the recipient was explicitly selected by the user, false if included only via contact list
+	 */
+	private boolean isRecipientExplicitlySelected(final @Nonnull ShareContainer shareContainer, final @Nonnull User recipient) {
+		if (shareContainer.getExplicitRecipientEmails() != null) {
+			boolean isExplicit = shareContainer.getExplicitRecipientEmails().stream()
+					.anyMatch(email -> email.equalsIgnoreCase(recipient.getMail()));
+			logger.debug("Recipient {} explicit check via emails: {}", recipient.getMail(), isExplicit);
+			return isExplicit;
+		}
+		try {
+			if (shareContainer.getRecipients() != null) {
+				boolean isExplicit = shareContainer.getRecipients().stream()
+						.anyMatch(rec -> rec.getMail() != null &&
+								rec.getMail().equalsIgnoreCase(recipient.getMail()));
+				logger.debug("Recipient {} explicit check via recipients: {}", recipient.getMail(), isExplicit);
+				return isExplicit;
+			}
+		} catch (Exception e) {
+			logger.warn("Error checking explicit recipient for: {}", recipient.getMail(), e);
+		}
+		if (!shareContainer.getContactLists().isEmpty()) {
+			final int totalListMembers = shareContainer.getContactLists().stream()
+					.mapToInt(list -> list.getContactListContacts().size())
+					.sum();
+			boolean isMixedShare = shareContainer.getShareRecipients().size() > totalListMembers;
+			logger.debug("Recipient {} mixed share check: {}", recipient.getMail(), isMixedShare);
+			return isMixedShare;
+		}
+		logger.debug("Recipient {} default to non-explicit", recipient.getMail());
+		return false;
+	}
+
+	/**
 	 * Add the contact list info (UUID and name), if exists, to the provided log.
 	 *
 	 * @param contactListUuid
@@ -373,7 +432,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	private void addContactListInfo(@Nullable final String contactListUuid, @Nonnull final ShareEntryAuditLogEntry log) {
 		if (contactListUuid != null) {
 			try {
-				final ContactList contactList = this.mailingListBusinessService.findByUuid(contactListUuid);
+				final ContactList contactList = this.contactListBusinessService.findByUuid(contactListUuid);
 				log.setContactListUuid(contactList.getUuid());
 				log.setContactListName(contactList.getIdentifier());
 			} catch (final BusinessException e) {
