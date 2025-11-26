@@ -62,6 +62,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
@@ -205,14 +206,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return processedLogs;
 	}
 
-	/**
-	 * Check whether the members of the provided contact list can be viewed by guests.
-	 *
-	 * @param accountContactLists accountContactList object to which belongs the contact list being checked. Not
-	 *                            {@code null}.
-	 * @return {@code true} if the members of the contact list are visible for guests, {@code false} otherwise.
-	 */
-	private boolean canViewContactListMembers(@Nonnull final AccountContactLists accountContactLists) {
+	public boolean canViewContactListMembers(@Nonnull final AccountContactLists accountContactLists) {
 		if (accountContactLists.getCanViewContactListMembers() != null) {
 			return accountContactLists.getCanViewContactListMembers();
 		} else {
@@ -408,7 +402,6 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 
 		final ShareEntryAuditLogEntry hiddenLog = new ShareEntryAuditLogEntry();
 		final ShareEntryMto resource = (ShareEntryMto)originalLog.getResource();
-
 		if (!Objects.equals(originalLog.getActor().getUuid(), guest.getLsUuid()) &&
 				!this.canViewContactListMembers(accountContactLists)) {
 			// the guest is not the actor in the log, so he can't see the contact list members
@@ -416,16 +409,20 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			hiddenLog.setRecipientUuid(null);
 			hiddenLog.setActor(null);
 			hiddenLog.setAuthUser(null);
-			resource.setRecipient(null);
+			if (resource.getRecipient() !=null) {
+				resource.setRecipient(new AccountMto());
+			}
 		} else if (Objects.equals(originalLog.getActor().getUuid(), guest.getLsUuid()) &&
 				!this.canViewContactListMembers(accountContactLists) &&
-				!originalLog.getRecipientUuid().equals(contactList.getOwner().getLsUuid())) {
+				!Objects.equals(originalLog.getRecipientUuid(), contactList.getOwner().getLsUuid())) {
 			// the guest is the actor in the log, he created a new share, and he is not the recipient.
 			hiddenLog.setActor(originalLog.getActor());
 			hiddenLog.setAuthUser(originalLog.getAuthUser());
 			hiddenLog.setRecipientMail(null);
 			hiddenLog.setRecipientUuid(null);
-			resource.setRecipient(null);
+			if (resource.getRecipient() !=null) {
+				resource.setRecipient(new AccountMto());
+			}
 		} else {
 			// the guest can see contact list members
 			hiddenLog.setRecipientMail(originalLog.getRecipientMail());

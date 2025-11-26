@@ -17,6 +17,7 @@ package org.linagora.linshare.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -169,6 +170,18 @@ class AuditLogEntryServiceImplTest {
         verifyNoInteractions(mailingListBusinessService, accountService);
     }
 
+	/**
+	 * Returns whether the given {@link AccountMto} is null or contains no data.
+	 */
+	private static Boolean isEmptyAccountMtoOrNull(final AccountMto accountMto) {
+		if (accountMto == null) {
+			return true;
+		}
+		return accountMto.getUuid() == null &&
+				accountMto.getMail() == null &&
+				accountMto.getName() == null;
+	}
+
     /**
      * Tests that a guest user retrieving audit logs will receive filtered share entries
      * when they do not have permission to view contact list members.
@@ -210,8 +223,10 @@ class AuditLogEntryServiceImplTest {
         assertThat(processedLog.getContactListName()).isEqualTo("Test Contact List");
 
         ShareEntryMto resource = (ShareEntryMto) processedLog.getResource();
-        assertThat(resource.getRecipient()).isNull();
-
+        assertNotNull(resource.getRecipient());
+		assertThat(resource.getRecipient()).isInstanceOf(AccountMto.class);
+		assertThat(resource.getRecipient().getUuid()).isNull();
+		assertThat(resource.getRecipient().getMail()).isNull();
         verify(mailingListBusinessService).findByUuid(contactListUuid);
         verify(accountService).findAccountContactListByAccountAndContactList(guest, contactList);
     }
@@ -315,7 +330,8 @@ class AuditLogEntryServiceImplTest {
 							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientMail(),
 							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientUuid(),
 							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getContactListUuid(),
-							auditLog -> ((ShareEntryMto) ((ShareEntryAuditLogEntry) auditLog).getResource()).getRecipient(),
+							auditLog -> isEmptyAccountMtoOrNull(
+									((ShareEntryMto) ((ShareEntryAuditLogEntry) auditLog).getResource()).getRecipient()),
 							AuditLogEntryUser::getAction,
 							AuditLogEntryUser::getCause)
 					.containsOnly(
@@ -325,7 +341,7 @@ class AuditLogEntryServiceImplTest {
 									null,
 									null,
 									shareEntryAuditLog.getContactListUuid(),
-									null,
+									true,
 									shareEntryAuditLog.getAction(),
 									shareEntryAuditLog.getCause()));
 		} else if (authUser.isGuest() &&
@@ -344,7 +360,8 @@ class AuditLogEntryServiceImplTest {
 							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientMail(),
 							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientUuid(),
 							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getContactListUuid(),
-							auditLog -> ((ShareEntryMto) ((ShareEntryAuditLogEntry) auditLog).getResource()).getRecipient(),
+							auditLog -> isEmptyAccountMtoOrNull(
+									((ShareEntryMto) ((ShareEntryAuditLogEntry) auditLog).getResource()).getRecipient()),
 							AuditLogEntryUser::getAction,
 							AuditLogEntryUser::getCause)
 					.containsOnly(
@@ -354,7 +371,7 @@ class AuditLogEntryServiceImplTest {
 									null,
 									null,
 									shareEntryAuditLog.getContactListUuid(),
-									null,
+									true,
 									shareEntryAuditLog.getAction(),
 									shareEntryAuditLog.getCause()));
 		} else {

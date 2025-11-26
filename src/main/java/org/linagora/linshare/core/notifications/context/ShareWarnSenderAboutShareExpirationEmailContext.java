@@ -25,7 +25,6 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -158,14 +157,18 @@ public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContex
 					contactListUuid
 			);
 			if (isContactFromContactListOnly(recipient, contactList)) {
-				final Optional<AccountContactLists> accountContactLists = this.accountService
-						.findAccountContactListByAccountAndContactList(entryOwner, contactList);
-				final boolean canViewMembers = this.canViewContactListMembers(accountContactLists, entryOwner);
-				if (!canViewMembers) {
-					final MailContact anonymizedContact = new MailContact();
-					anonymizedContact.setContactListName(contactList.getIdentifier());
-					return anonymizedContact;
+				final Optional<AccountContactLists> accountContactLists = this.accountService.findAccountContactListByAccountAndContactList(
+						entryOwner, contactList);
+				if (accountContactLists.isPresent()) {
+					final boolean canViewMembers = this.auditLogEntryService.canViewContactListMembers(
+							accountContactLists.get());
+					if (!canViewMembers) {
+						final MailContact anonymizedContact = new MailContact();
+						anonymizedContact.setContactListName(contactList.getIdentifier());
+						return anonymizedContact;
+					}
 				}
+				return this.createMailContact(recipient);
 			}
 			return this.createMailContact(recipient);
 		} catch (final BusinessException e) {
@@ -215,27 +218,6 @@ public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContex
 				.anyMatch(contact -> contact != null &&
 						contact.getMail() != null &&
 						contact.getMail().toLowerCase().equals(recipientEmail));
-	}
-
-	/**.
-	 * Checks if the share owner can view contact list members.
-	 * First checks account-specific visibility settings, then falls back to
-	 * domain-level functionality configuration.
-	 *
-	 * @param accountContactLists the optional account-specific contact list configuration
-	 * @param owner the account owner to check permissions for
-	 * @return true if members are visible to the owner, false if they should be anonymized
-	 */
-	private boolean canViewContactListMembers(final Optional<AccountContactLists> accountContactLists,
-			final @Nonnull Account owner) {
-		if (accountContactLists.isPresent()) {
-			final Boolean canView = accountContactLists.get().getCanViewContactListMembers();
-			if (canView != null) {
-				return canView;
-			}
-		}
-		final Functionality functionality = this.functionalityReadOnlyService.getGuestHideMembers(owner.getDomain());
-		return functionality.isParam();
 	}
 
 	/**

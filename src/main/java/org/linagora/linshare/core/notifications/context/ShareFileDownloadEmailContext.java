@@ -25,12 +25,10 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -271,34 +269,17 @@ public class ShareFileDownloadEmailContext extends EmailContext {
 						shareEntry.getEntryOwner(),
 						contactList
 				);
-		boolean canViewMembers = canViewContactListMembers(accountContactLists, shareEntry.getEntryOwner());
+		if(accountContactLists.isPresent()) {
+		boolean canViewMembers = this.auditLogEntryService.canViewContactListMembers(accountContactLists.get());
 		if (canViewMembers) {
 			return false;
+		}
 		}
 		final String shareContactListUuid = shareEntry.getContactListUuid();
 		if (shareContactListUuid == null) {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Checks if the owner can view contact list members.
-	 * First checks the account-specific setting, then falls back to domain functionality.
-	 *
-	 * @param accountContactLists the optional account contact lists configuration
-	 * @param owner the account owner to check permissions for
-	 * @return true if members are visible, false if they should be anonymized
-	 */
-	private boolean canViewContactListMembers(Optional<AccountContactLists> accountContactLists, Account owner) {
-		if (accountContactLists.isPresent()) {
-			final Boolean canView = accountContactLists.get().getCanViewContactListMembers();
-			if (canView != null) {
-				return canView;
-			}
-		}
-		Functionality functionality = this.functionalityReadOnlyService.getGuestHideMembers(owner.getDomain());
-		return functionality.isParam();
 	}
 
 	/**

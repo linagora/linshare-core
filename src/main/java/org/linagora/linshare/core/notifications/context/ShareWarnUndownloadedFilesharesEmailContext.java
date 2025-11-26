@@ -29,7 +29,6 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.ContactListContact;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -181,13 +180,13 @@ public class ShareWarnUndownloadedFilesharesEmailContext extends EmailContext {
 					this.shareEntryGroup.getOwner().getLsUuid(), contactListUuid);
 			final Optional<AccountContactLists> accountContactLists = this.accountService.findAccountContactListByAccountAndContactList(
 					this.shareEntryGroup.getOwner(), contactList);
-
-			if (this.canViewContactListMembers(accountContactLists)) {
-				this.addVisibleContactListMembers(contactList, finalRecipients);
-			} else {
-				this.addInvisibleContactList(contactList, finalRecipients);
+			if(accountContactLists.isPresent()) {
+				if (this.auditLogEntryService.canViewContactListMembers(accountContactLists.get())) {
+					this.addVisibleContactListMembers(contactList, finalRecipients);
+				} else {
+					this.addInvisibleContactList(contactList, finalRecipients);
+				}
 			}
-
 		} catch (final BusinessException e) {
 			if (e.getErrorCode() == BusinessErrorCode.LIST_DO_NOT_EXIST) {
 				String contactListName = contactListUuid;
@@ -294,22 +293,5 @@ public class ShareWarnUndownloadedFilesharesEmailContext extends EmailContext {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Checks contact list member visibility with domain functionality fallback.
-	 * Returns true if members are visible, false otherwise.
-	 */
-	private boolean canViewContactListMembers(@Nonnull final Optional<AccountContactLists> accountContactLists) {
-		if (accountContactLists.isPresent()) {
-			if (accountContactLists.get().getCanViewContactListMembers() != null) {
-				return accountContactLists.get().getCanViewContactListMembers();
-			} else {
-				final Functionality functionality = this.functionalityReadOnlyService.getGuestHideMembers(
-						accountContactLists.get().getAccount().getDomain());
-				return functionality.isParam();
-			}
-		}
-		return true;
 	}
 }

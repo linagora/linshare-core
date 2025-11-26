@@ -19,11 +19,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.linagora.linshare.core.domain.constants.AuditGroupLogEntryType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountContactLists;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.fields.AuditEntryField;
 import org.linagora.linshare.core.domain.entities.fields.SortOrder;
@@ -32,8 +35,6 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
 import org.linagora.linshare.webservice.utils.PageContainer;
-
-import javax.annotation.Nonnull;
 
 public interface AuditLogEntryService {
 
@@ -111,4 +112,13 @@ public interface AuditLogEntryService {
 	 * @return an {@link Optional} containing the contact list name if found, otherwise empty
 	 */
 	public Optional<String> findLastDeletedContactListName(@Nonnull final String contactListUuid);
+
+	/**
+	 * Check whether the members of the provided contact list can be viewed by guests.
+	 *
+	 * @param accountContactLists accountContactList object to which belongs the contact list being checked. Not
+	 *                            {@code null}.
+	 * @return {@code true} if the members of the contact list are visible for guests, {@code false} otherwise.
+	 */
+	public boolean canViewContactListMembers(@Nonnull final AccountContactLists accountContactLists);
 }
