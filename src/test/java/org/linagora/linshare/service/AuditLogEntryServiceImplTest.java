@@ -231,6 +231,25 @@ class AuditLogEntryServiceImplTest {
         verify(accountService).findAccountContactListByAccountAndContactList(guest, contactList);
     }
 
+
+	private static String normalizeString(String value) {
+		return (value == null || value.isEmpty() || value.trim().isEmpty()) ? null : value;
+	}
+
+	private static AccountMto normalizeAccountMto(AccountMto accountMto) {
+		if (accountMto == null) {
+			return null;
+		}
+		boolean hasUuid = accountMto.getUuid() != null && !accountMto.getUuid().isEmpty();
+		boolean hasMail = accountMto.getMail() != null && !accountMto.getMail().isEmpty();
+		boolean hasName = accountMto.getName() != null && !accountMto.getName().isEmpty();
+
+		if (!hasUuid && !hasMail && !hasName) {
+			return null;
+		}
+		return accountMto;
+	}
+
 	/**
 	 * <p>
 	 * Verify the finding of all {@link ShareEntryAuditLogEntry}ies for a given user.
@@ -325,12 +344,12 @@ class AuditLogEntryServiceImplTest {
 			// (so by the contact list member) --> contact list member data are hidden
 			assertThat(auditLogs)
 					.extracting(
-							AuditLogEntryUser::getAuthUser,
-							AuditLogEntryUser::getActor,
-							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientMail(),
-							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientUuid(),
+							auditLog -> normalizeAccountMto(((ShareEntryAuditLogEntry) auditLog).getAuthUser()),
+							auditLog -> normalizeAccountMto(((ShareEntryAuditLogEntry) auditLog).getActor()),
+							auditLog -> normalizeString(((ShareEntryAuditLogEntry) auditLog).getRecipientMail()),
+							auditLog -> normalizeString(((ShareEntryAuditLogEntry) auditLog).getRecipientUuid()),
 							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getContactListUuid(),
-							auditLog -> isEmptyAccountMtoOrNull(
+							auditLog -> normalizeAccountMto(
 									((ShareEntryMto) ((ShareEntryAuditLogEntry) auditLog).getResource()).getRecipient()),
 							AuditLogEntryUser::getAction,
 							AuditLogEntryUser::getCause)
@@ -341,7 +360,7 @@ class AuditLogEntryServiceImplTest {
 									null,
 									null,
 									shareEntryAuditLog.getContactListUuid(),
-									true,
+									null,
 									shareEntryAuditLog.getAction(),
 									shareEntryAuditLog.getCause()));
 		} else if (authUser.isGuest() &&
@@ -357,10 +376,10 @@ class AuditLogEntryServiceImplTest {
 					.extracting(
 							AuditLogEntryUser::getAuthUser,
 							AuditLogEntryUser::getActor,
-							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientMail(),
-							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getRecipientUuid(),
+							auditLog -> normalizeString(((ShareEntryAuditLogEntry) auditLog).getRecipientMail()),
+							auditLog -> normalizeString(((ShareEntryAuditLogEntry) auditLog).getRecipientUuid()),
 							auditLog -> ((ShareEntryAuditLogEntry) auditLog).getContactListUuid(),
-							auditLog -> isEmptyAccountMtoOrNull(
+							auditLog -> normalizeAccountMto(
 									((ShareEntryMto) ((ShareEntryAuditLogEntry) auditLog).getResource()).getRecipient()),
 							AuditLogEntryUser::getAction,
 							AuditLogEntryUser::getCause)
@@ -371,7 +390,7 @@ class AuditLogEntryServiceImplTest {
 									null,
 									null,
 									shareEntryAuditLog.getContactListUuid(),
-									true,
+									null,
 									shareEntryAuditLog.getAction(),
 									shareEntryAuditLog.getCause()));
 		} else {
@@ -802,4 +821,5 @@ class AuditLogEntryServiceImplTest {
 
         return log;
     }
+
 }

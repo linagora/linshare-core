@@ -401,28 +401,32 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			@Nonnull final AccountContactLists accountContactLists) {
 
 		final ShareEntryAuditLogEntry hiddenLog = new ShareEntryAuditLogEntry();
-		final ShareEntryMto resource = (ShareEntryMto)originalLog.getResource();
+		final ShareEntryMto resource;
+		if(originalLog.getResource() != null) {
+			resource = (ShareEntryMto) originalLog.getResource();
+		}
+		else {
+			resource = new ShareEntryMto();
+		}
 		if (!Objects.equals(originalLog.getActor().getUuid(), guest.getLsUuid()) &&
 				!this.canViewContactListMembers(accountContactLists)) {
 			// the guest is not the actor in the log, so he can't see the contact list members
-			hiddenLog.setRecipientMail(null);
-			hiddenLog.setRecipientUuid(null);
-			hiddenLog.setActor(null);
-			hiddenLog.setAuthUser(null);
-			if (resource.getRecipient() !=null) {
-				resource.setRecipient(new AccountMto());
-			}
+			hiddenLog.setRecipientMail("");
+			hiddenLog.setRecipientUuid("");
+			hiddenLog.setActor(new AccountMto());
+			hiddenLog.setAuthUser(new AccountMto());
+			resource.setRecipient(new AccountMto());
+
 		} else if (Objects.equals(originalLog.getActor().getUuid(), guest.getLsUuid()) &&
 				!this.canViewContactListMembers(accountContactLists) &&
 				!Objects.equals(originalLog.getRecipientUuid(), contactList.getOwner().getLsUuid())) {
 			// the guest is the actor in the log, he created a new share, and he is not the recipient.
 			hiddenLog.setActor(originalLog.getActor());
 			hiddenLog.setAuthUser(originalLog.getAuthUser());
-			hiddenLog.setRecipientMail(null);
-			hiddenLog.setRecipientUuid(null);
-			if (resource.getRecipient() !=null) {
-				resource.setRecipient(new AccountMto());
-			}
+			hiddenLog.setRecipientMail("");
+			hiddenLog.setRecipientUuid("");
+			resource.setRecipient(new AccountMto());
+
 		} else {
 			// the guest can see contact list members
 			hiddenLog.setRecipientMail(originalLog.getRecipientMail());
