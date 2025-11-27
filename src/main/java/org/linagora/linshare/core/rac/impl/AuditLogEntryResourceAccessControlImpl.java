@@ -49,8 +49,17 @@ public class AuditLogEntryResourceAccessControlImpl extends
     }
 
     private static boolean isUserRelated(Account authUser, AuditLogEntry entry) {
+        if (entry == null || entry.getAuthUser() == null || entry.getAuthUser().getUuid() == null) {
+            return false;
+        }
         boolean authUserIsOwner = entry.getAuthUser().getUuid().equals(authUser.getLsUuid());
-        boolean authUserIsRelated = entry instanceof AuditLogEntryUser && ((AuditLogEntryUser) entry).getRelatedAccounts().contains(authUser.getLsUuid());
+        boolean authUserIsRelated = false;
+        if (entry instanceof AuditLogEntryUser) {
+            AuditLogEntryUser userEntry = (AuditLogEntryUser) entry;
+            if (userEntry.getRelatedAccounts() != null) {
+                authUserIsRelated = userEntry.getRelatedAccounts().contains(authUser.getLsUuid());
+            }
+        }
         return authUserIsOwner || authUserIsRelated;
     }
 
