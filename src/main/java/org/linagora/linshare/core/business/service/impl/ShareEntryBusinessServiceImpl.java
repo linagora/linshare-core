@@ -151,12 +151,4 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 			logger.debug("Error: the list of share entry is null");
 		}
 	}
-
-	@Override
-	public boolean isShareEntryAlreadyExistsWithoutContactList(@Nonnull final DocumentEntry documentEntry,
-			@Nonnull final User sender, @Nonnull final User recipient) {
-		final ShareEntry shareEntry = shareEntryRepository.getShareEntry(documentEntry, sender, recipient);
-
-		return shareEntry != null && shareEntry.getContactListUuid() == null;
-	}
 }
