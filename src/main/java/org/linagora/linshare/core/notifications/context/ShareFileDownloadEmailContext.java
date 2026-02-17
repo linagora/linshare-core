@@ -37,31 +37,38 @@ import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.core.notifications.dto.Share;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ShareFileDownloadEmailContext extends EmailContext {
 
-	private static Logger logger = LoggerFactory.getLogger(ShareFileDownloadEmailContext.class);
+	private static final Logger logger = LoggerFactory.getLogger(ShareFileDownloadEmailContext.class);
 
-	protected Boolean anonymous = null;
+	/**
+	 * <p>Indicates whether this context represents an anonymous share.</p>
+	 * <p>This field is final to ensure consistency with the entry type:</p>
+	 * <ul><li>{@code true}: entry is an {@link AnonymousShareEntry}</li>
+	 * <li>{@code false}: entry is a {@link ShareEntry}</li></ul>
+	 */
+	private final boolean anonymous;
 
-	protected Entry entry;
+	/**
+	 * <p>The share entry - can only be {@link ShareEntry} or {@link AnonymousShareEntry}.</p>
+	 * <p>NOTE: This field is final to prevent modification after construction and ensure type safety.
+	 * Setting this field to other {@link Entry} types (DocumentEntry, ThreadEntry or UploadRequestEntry) is forbidden.</p>
+	 */
+	private final Entry entry;
 
 	protected Date actionDate;
 	protected AccountService accountService;
 	private MailingListBusinessService contactListBusinessService;
 	private AuditLogEntryService auditLogEntryService;
-	private FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	public ShareFileDownloadEmailContext(@Nonnull final ShareEntry shareEntry, @Nonnull final MailingListBusinessService contactListBusinessService, @Nonnull final AccountService accountService,
-			@Nonnull final FunctionalityReadOnlyService functionalityReadOnlyService, @Nonnull final AuditLogEntryService auditLogEntryService) {
+	public ShareFileDownloadEmailContext(@Nonnull final ShareEntry shareEntry, @Nonnull final MailingListBusinessService contactListBusinessService, @Nonnull final AccountService accountService, @Nonnull final AuditLogEntryService auditLogEntryService) {
 		super(shareEntry.getEntryOwner().getDomain(), true);
 		this.entry = shareEntry;
 		this.contactListBusinessService = contactListBusinessService;
 		this.accountService = accountService;
-		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.auditLogEntryService = auditLogEntryService;
 		this.anonymous = false;
 		this.actionDate = new Date();
@@ -80,16 +87,8 @@ public class ShareFileDownloadEmailContext extends EmailContext {
 		return entry;
 	}
 
-	public void setEntry(Entry entry) {
-		this.entry = entry;
-	}
-
-	public Boolean getAnonymous() {
+	public boolean getAnonymous() {
 		return anonymous;
-	}
-
-	public void setAnonymous(Boolean anonymous) {
-		this.anonymous = anonymous;
 	}
 
 	public Date getActionDate() {
@@ -131,7 +130,6 @@ public class ShareFileDownloadEmailContext extends EmailContext {
 	public void validateRequiredField() {
 		Validate.notNull(entry, "Missing shareEntry");
 		Validate.notNull(actionDate, "Missing actionDate");
-		Validate.notNull(anonymous, "Missing shareEntry / anonymousShareEntry");
 	}
 
 	public Share getShare() {
@@ -172,6 +170,7 @@ public class ShareFileDownloadEmailContext extends EmailContext {
 	 * @return MailContact containing either recipient details or anonymized contact list information
 	 */
 	public @Nonnull MailContact createRecipientDataAgainstContactListViewStatus() {
+		Validate.isTrue(!anonymous, "AnonymousShareEntry forbidden here");
 		final ShareEntry shareEntry = (ShareEntry) entry;
 
 		if (shouldShowRecipientDirectly(shareEntry)) {

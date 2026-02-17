@@ -88,6 +88,7 @@ class ShareWarnSenderAboutShareExpirationEmailContextTest {
 	/**
 	 * Provides comprehensive test scenarios for all recipient visibility cases.
 	 */
+	@Nonnull
 	private static Stream<Arguments> comprehensiveRecipientScenarios() {
 		return Stream.of(
 				arguments(
@@ -238,7 +239,7 @@ class ShareWarnSenderAboutShareExpirationEmailContextTest {
 	@MethodSource("comprehensiveRecipientScenarios")
 	void testCreateRecipientDataAgainstContactListViewStatus(
 			@Nonnull final String scenario,
-			boolean ownerIsGuest,
+			final boolean ownerIsGuest,
 			@Nullable final String contactListUuid,
 			@Nullable final String recipientEmail,
 			@Nullable final String contactListName,
@@ -247,7 +248,7 @@ class ShareWarnSenderAboutShareExpirationEmailContextTest {
 			@Nullable final String businessErrorMessage,
 			@Nullable final Optional<String> auditLogName,
 			@Nullable final RuntimeException runtimeException,
-			boolean isRecipientInContactList,
+			final boolean isRecipientInContactList,
 			@Nullable final String expectedEmail,
 			@Nullable final String expectedContactListName) throws Exception {
 
@@ -294,6 +295,8 @@ class ShareWarnSenderAboutShareExpirationEmailContextTest {
 					lenient().when(this.accountService.findAccountContactListByAccountAndContactList(
 									any(Account.class), eq(contactList)))
 							.thenReturn(Optional.of(acl));
+					lenient().when(this.auditLogEntryService.canViewContactListMembers(acl))
+							.thenReturn(canViewMembers);
 				} else if (canViewMembers == null) {
 					final AccountContactLists acl = mock(AccountContactLists.class);
 					lenient().when(acl.getContactList()).thenReturn(contactList);
@@ -301,6 +304,8 @@ class ShareWarnSenderAboutShareExpirationEmailContextTest {
 					when(this.accountService.findAccountContactListByAccountAndContactList(
 							any(Account.class), eq(contactList)))
 							.thenReturn(Optional.of(acl));
+					lenient().when(this.auditLogEntryService.canViewContactListMembers(acl))
+							.thenReturn(true);
 				} else {
 					when(this.accountService.findAccountContactListByAccountAndContactList(
 							any(Account.class), eq(contactList)))
@@ -341,7 +346,8 @@ class ShareWarnSenderAboutShareExpirationEmailContextTest {
 	/**
 	 * Creates a ShareWarnSenderAboutShareExpirationEmailContext instance for testing.
 	 */
-	private ShareWarnSenderAboutShareExpirationEmailContext createEmailContext(final @Nonnull ShareEntry shareEntry) {
+	@Nonnull
+	private ShareWarnSenderAboutShareExpirationEmailContext createEmailContext(@Nonnull final ShareEntry shareEntry) {
 		return new ShareWarnSenderAboutShareExpirationEmailContext(
 				shareEntry,
 				this.contactListService,

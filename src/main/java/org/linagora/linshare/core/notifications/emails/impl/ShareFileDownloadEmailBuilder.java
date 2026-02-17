@@ -15,6 +15,7 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -44,21 +45,21 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 	}
 
 	@Override
-	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		ShareFileDownloadEmailContext emailCtx = (ShareFileDownloadEmailContext) context;
+	public MailContainerWithRecipient buildMailContainer(final EmailContext context) throws BusinessException {
+		final ShareFileDownloadEmailContext emailCtx = (ShareFileDownloadEmailContext) context;
 
-		User shareOwner = (User) emailCtx.getEntry().getEntryOwner();
-		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
-		Boolean isAnonymous = emailCtx.getAnonymous();
-		String linshareURL = getLinShareUrl(shareOwner);
-		Share downloadedShare = emailCtx.getShare();
-		Document document = emailCtx.getDocument();
-		Date shareDate = emailCtx.getEntry().getCreationDate().getTime();
-		Calendar expirationDate = emailCtx.getEntry().getExpirationDate();
-		Date expiryDate = expirationDate != null ? expirationDate.getTime() : null;
+		final User shareOwner = (User) emailCtx.getEntry().getEntryOwner();
+		final MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
+		final boolean isAnonymous = emailCtx.getAnonymous();
+		final String linshareURL = getLinShareUrl(shareOwner);
+		final Share downloadedShare = emailCtx.getShare();
+		final Document document = emailCtx.getDocument();
+		final Date shareDate = emailCtx.getEntry().getCreationDate().getTime();
+		final Calendar expirationDate = emailCtx.getEntry().getExpirationDate();
+		final Date expiryDate = expirationDate != null ? expirationDate.getTime() : null;
 		document.setHref(getOwnerDocumentLink(linshareURL, document.getUuid()));
 
-		Context ctx = new Context(emailCtx.getLocale());
+		final Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("actionDate", emailCtx.getActionDate());
 		ctx.setVariable("anonymous", isAnonymous);
 		ctx.setVariable("document", document);
@@ -67,29 +68,32 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 		ctx.setVariable("share", downloadedShare);
 		ctx.setVariable("shareDate", shareDate);
 		ctx.setVariable("shareOwner", new MailContact(shareOwner));
-		ctx.setVariable("shareRecipient", emailCtx.createRecipientDataAgainstContactListViewStatus());
 
-		List<Share> shares = Lists.newArrayList();
 		if (isAnonymous) {
-			AnonymousShareEntry shareEntry = emailCtx.getAnonymousShareEntry();
-			Set<AnonymousShareEntry> anonymousShareEntries = shareEntry.getAnonymousUrl().getAnonymousShareEntries();
-			for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
-				Share share = new Share(anonymousShareEntry);
+			ctx.setVariable("shareRecipient", emailCtx.getRecipient());
+
+			final AnonymousShareEntry shareEntry = emailCtx.getAnonymousShareEntry();
+			final Set<AnonymousShareEntry> anonymousShareEntries = shareEntry.getAnonymousUrl().getAnonymousShareEntries();
+			final List<Share> shares = new ArrayList<>(anonymousShareEntries.size());
+			for (final AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
+				final Share share = new Share(anonymousShareEntry);
 				if (share.equals(downloadedShare)) {
 					share.setDownloading(true);
 				}
 				shares.add(share);
 			}
+			ctx.setVariable("shares", shares);
+			ctx.setVariable("sharesCount", shares.size());
 		} else {
-			// TODO add share present in SEG related to the current share
-			// recipient
+			ctx.setVariable("shareRecipient", emailCtx.createRecipientDataAgainstContactListViewStatus());
+			// TODO add share present in SEG related to the current share recipient
 			// ShareEntry shareEntry = emailCtx.getShareEntry();
-			// ShareEntryGroup shareEntryGroup =
-			// shareEntry.getShareEntryGroup();
+			// ShareEntryGroup shareEntryGroup = shareEntry.getShareEntryGroup();
 			// Set<ShareEntry> shareEntries = shareEntryGroup.getShareEntries();
+			ctx.setVariable("shares", List.of());
+			ctx.setVariable("sharesCount", 0);
 		}
-		ctx.setVariable("shares", shares);
-		ctx.setVariable("sharesCount", shares.size());
+
 		return buildMailContainerThymeleaf(cfg, getSupportedType(), ctx, emailCtx);
 	}
 
@@ -103,6 +107,7 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 		return res;
 	}
 
+	@Override
 	protected Share getNewFakeShare(String name, String linshareURL) {
 		Share share = new Share(name);
 		if (linshareURL != null) {

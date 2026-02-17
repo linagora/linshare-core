@@ -159,7 +159,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		MailContainerWithRecipient mail = null;
 		if (share.getDownloaded() <= 0) {
-			final ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share, this.contactListBusinessService,this.accountService, this.functionalityService, this.auditLogEntryService);
+			final ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share, this.contactListBusinessService, this.accountService, this.auditLogEntryService);
 			mail = mailBuildingService.build(context);
 		}
 		share = shareEntryBusinessService.updateDownloadCounter(share.getUuid());
@@ -269,7 +269,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		checkDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		if (share.getDownloaded() <= 0) {
-			final ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share, this.contactListBusinessService, this.accountService, this.functionalityService, this.auditLogEntryService);
+			final ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share, this.contactListBusinessService, this.accountService, this.auditLogEntryService);
 			final MailContainerWithRecipient mail = this.mailBuildingService.build(context);
 			if (mail != null) {
 				this.notifierService.sendNotification(mail);

@@ -369,6 +369,8 @@ class ShareWarnUndownloadedFilesharesEmailBuilderTest {
 		lenient().when(this.accountService.findAccountContactListByAccountAndContactList(
 						any(Account.class), eq(contactList)))
 				.thenReturn(Optional.of(acl));
+		lenient().when(this.auditLogEntryService.canViewContactListMembers(acl))
+				.thenReturn(canViewMembers);
 		final ShareWarnUndownloadedFilesharesEmailContext context =
 				new ShareWarnUndownloadedFilesharesEmailContext(
 						shareEntryGroup,

@@ -29,7 +29,7 @@ public class EmailTestUtils {
 	 */
 	public static @Nonnull User createMockUser(boolean isGuest) {
 		final User user = mock(User.class);
-		when(user.isGuest()).thenReturn(isGuest);
+		lenient().when(user.isGuest()).thenReturn(isGuest);
 		final AbstractDomain domain = mock(AbstractDomain.class);
 		when(user.getDomain()).thenReturn(domain);
 		lenient().when(user.getLsUuid()).thenReturn("user-uuid");
