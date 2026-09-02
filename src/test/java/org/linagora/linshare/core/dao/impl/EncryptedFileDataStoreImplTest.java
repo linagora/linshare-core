@@ -366,6 +366,42 @@ class EncryptedFileDataStoreImplTest {
 		});
 	}
 
+	@Test
+	void copyPatternDecryptsThenReEncryptsWithAFreshDekRatherThanCopyingCiphertext() throws Exception {
+		// Mirrors AbstractDocumentBusinessServiceImpl.createDocument's copy path:
+		// ByteSource byteSource = fileDataStore.get(sourceMetadata);
+		// destMetadata = fileDataStore.add(byteSource, destMetadata);
+		// Since both calls go through the same decorator, this must decrypt the
+		// source and re-encrypt under a fresh DEK/nonce, never reuse ciphertext
+		// bytes across two independent Document rows (ARCH.md 17, 19).
+		InMemoryFileDataStore fakeDelegate = new InMemoryFileDataStore();
+		byte[] plaintext = randomBytes(16 * 5 + 3);
+		FileMetaData sourceMetadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) plaintext.length, "source.bin");
+		EncryptedFileDataStoreImpl store = new EncryptedFileDataStoreImpl(fakeDelegate, newKeyService(),
+				smallChunkParams(), true, true, true);
+		store.add(ByteSource.wrap(plaintext), sourceMetadata);
+
+		ByteSource sourceByteSource = store.get(sourceMetadata);
+		FileMetaData destMetadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) plaintext.length, "copy.bin");
+		store.add(sourceByteSource, destMetadata);
+
+		assertEquals(plaintext.length, destMetadata.getSize());
+		org.junit.jupiter.api.Assertions.assertNotEquals(sourceMetadata.getUuid(), destMetadata.getUuid());
+
+		byte[] sourceCiphertext = fakeDelegate.rawBytes(sourceMetadata.getUuid());
+		byte[] destCiphertext = fakeDelegate.rawBytes(destMetadata.getUuid());
+		org.junit.jupiter.api.Assertions.assertFalse(java.util.Arrays.equals(sourceCiphertext, destCiphertext),
+				"copy must re-encrypt under a fresh DEK/nonce, not reuse the source's ciphertext bytes");
+
+		byte[] decryptedCopy;
+		try (InputStream in = store.get(destMetadata).openStream()) {
+			decryptedCopy = ByteStreams.toByteArray(in);
+		}
+		assertArrayEquals(plaintext, decryptedCopy);
+	}
+
 	private static byte[] randomBytes(int length) {
 		byte[] bytes = new byte[length];
 		new Random(13).nextBytes(bytes);
