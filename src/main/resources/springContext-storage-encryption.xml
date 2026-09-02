@@ -2,14 +2,19 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation=" http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd"
-	profile="jcloud-only-encrypted">
+	http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<import resource="OPTIONAL-springContext-storage-jcloud.xml" />
-
+	<!--
+		Not profile-gated: this always loads regardless of which storage
+		profile (jcloud, jcloud-only, gridfs, migration-gridfs-to-jcloud) is
+		active, and wraps that profile's rawFileDataStore. Whether it actually
+		encrypts is controlled purely by the write-enabled/read-enabled
+		properties below; with both false (the default) the delegate is
+		returned unchanged (docs/ARCH.md, docs/CLAUDE.md).
+	-->
 	<bean id="encryptedFileDataStoreFactory"
 		class="org.linagora.linshare.core.dao.utils.EncryptedFileDataStoreFactory">
-		<property name="delegate" ref="jcloudFileDataStore" />
+		<property name="delegate" ref="rawFileDataStore" />
 		<property name="writeEnabled" value="${linshare.documents.encryption.write-enabled}" />
 		<property name="readEnabled" value="${linshare.documents.encryption.read-enabled}" />
 		<property name="allowLegacyRead" value="${linshare.documents.encryption.allow-legacy-read}" />
