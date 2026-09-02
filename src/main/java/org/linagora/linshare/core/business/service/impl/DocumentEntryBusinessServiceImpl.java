@@ -177,6 +177,15 @@ public class DocumentEntryBusinessServiceImpl extends AbstractDocumentBusinessSe
 	}
 
 	@Override
+	public ByteSource getByteSourceRange(DocumentEntry entry, long rangeOffset, long rangeLength) {
+		String uuid = entry.getDocument().getUuid();
+		logger.debug("retrieve range [{}, {}+{}) from fileDataStore : {}", rangeOffset, rangeOffset, rangeLength,
+				uuid);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, entry.getDocument());
+		return fileDataStore.getRange(metadata, rangeOffset, rangeLength);
+	}
+
+	@Override
 	public DocumentEntry find(String uuid) {
 		return documentEntryRepository.findById(uuid);
 	}

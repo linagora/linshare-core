@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.Objects;
 
 import javax.ws.rs.WebApplicationException;
@@ -71,7 +72,19 @@ public class DocumentStreamReponseBuilder {
 			throw new TechnicalException(TechnicalErrorCode.MISSING_DOCUMENT_IN_FILEDATASTORE,
 					"Can not download file : " + data.getName());
 		}
-		StreamingOutput stream = new StreamingOutput() {
+		ResponseBuilder response = Response.ok(getStreamingOutput(data));
+		setHeaderToResponse(response, data.getName(), data.getMimeType(), data.getSize());
+		return response;
+	}
+
+	/**
+	 * Streams {@code data}'s byte source, then deletes its backing temp file
+	 * (if any and not already deleted) once every byte has been copied out —
+	 * shared by the plain and range document responses, which differ only in
+	 * response status/headers, not in how the body is streamed.
+	 */
+	private static StreamingOutput getStreamingOutput(FileAndMetaData data) {
+		return new StreamingOutput() {
 			@Override
 			public void write(OutputStream out) throws IOException, WebApplicationException {
 				try (InputStream inputStream = data.getByteSource().openBufferedStream()) {
@@ -79,14 +92,34 @@ public class DocumentStreamReponseBuilder {
 				} finally {
 					out.close();
 					if (Objects.nonNull(data.getFile()) && !data.isTempFileDeleted()) {
-						data.getFile().delete();
+						Files.delete(data.getFile().toPath());
 						data.setTempFileDeleted(true);
 					}
 				}
 			}
 		};
-		ResponseBuilder response = Response.ok(stream);
-		setHeaderToResponse(response, data.getName(), data.getMimeType(), data.getSize());
+	}
+
+	/**
+	 * Builds a {@code 206 Partial Content} response for the plaintext range
+	 * {@code [rangeStart, rangeEnd]} (inclusive) out of a resource whose full
+	 * plaintext size is {@code totalSize}. {@code data.getByteSource()} must
+	 * already yield exactly that range's bytes (see
+	 * {@link org.linagora.linshare.core.dao.FileDataStore#getRange}) — this
+	 * method only sets response status/headers, it does not itself slice
+	 * anything.
+	 */
+	public static ResponseBuilder getDocumentRangeResponseBuilder(FileAndMetaData data, long rangeStart,
+			long rangeEnd, long totalSize) {
+		if (data.getByteSource() == null) {
+			throw new TechnicalException(TechnicalErrorCode.MISSING_DOCUMENT_IN_FILEDATASTORE,
+					"Can not download file : " + data.getName());
+		}
+		long rangeLength = rangeEnd - rangeStart + 1;
+		ResponseBuilder response = Response.status(Response.Status.PARTIAL_CONTENT).entity(getStreamingOutput(data));
+		setHeaderToResponse(response, data.getName(), data.getMimeType(), rangeLength);
+		response.header("Content-Range", "bytes " + rangeStart + "-" + rangeEnd + "/" + totalSize);
+		response.header("Accept-Ranges", "bytes");
 		return response;
 	}
 

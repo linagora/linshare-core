@@ -274,6 +274,15 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 	}
 
 	@Override
+	public ByteSource getByteSourceRange(String docEntryUuid, long rangeOffset, long rangeLength)
+			throws BusinessException {
+		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
+		logger.debug("downloading range for document : " + docEntryUuid);
+		User authUser = checkAuthentication();
+		return documentEntryService.getByteSourceRange(authUser, authUser, docEntryUuid, rangeOffset, rangeLength);
+	}
+
+	@Override
 	public ByteSource getThumbnailByteSource(String docEntryUuid, ThumbnailType kind)
 			throws BusinessException {
 		Validate.notEmpty(docEntryUuid, "Missing required document uuid");

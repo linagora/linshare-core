@@ -22,7 +22,7 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="fileDataStore" class="org.linagora.linshare.core.dao.impl.MigrationFileDataStoreImpl">
+	<bean id="rawFileDataStore" class="org.linagora.linshare.core.dao.impl.MigrationFileDataStoreImpl">
 		<constructor-arg ref="jcloudDataBalancerFileDataStore" />
 		<constructor-arg ref="gridfsFileDataStore" />
 	</bean>

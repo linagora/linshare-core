@@ -481,6 +481,22 @@ public class DocumentEntryServiceImpl
 	}
 
 	@Override
+	public ByteSource getByteSourceRange(Account actor, Account owner, String uuid, long rangeOffset,
+			long rangeLength) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "document entry uuid is required.");
+		DocumentEntry entry = find(actor, owner, uuid);
+		checkDownloadPermission(actor, owner, DocumentEntry.class,
+				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
+		if (!actor.equals(owner)) {
+			// If it is not the current owner, it could be useful to warn the owner.
+			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.DOWNLOAD);
+			logEntryService.insert(log);
+		}
+		return documentEntryBusinessService.getByteSourceRange(entry, rangeOffset, rangeLength);
+	}
+
+	@Override
 	public void renameDocumentEntry(Account actor, Account owner, String uuid,
 			String newName) throws BusinessException {
 		preChecks(actor, owner);

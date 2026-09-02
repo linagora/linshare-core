@@ -102,6 +102,26 @@ linshare.encipherment.tmp.dir=/var/lib/linshare/tmp
 #### File system storage options - default backend####
 linshare.documents.storage.filesystem.directory=/var/lib/linshare/filesystemstorage
 
+#### Storage encryption at rest options (docs/ARCH.md, docs/CLAUDE.md) ####
+# Chunked application-level AES-256-GCM encryption for document blobs.
+# Disabled by default: enabling it does not change existing installations,
+# and existing plaintext blobs remain readable regardless of these settings.
+linshare.documents.encryption.write-enabled=false
+linshare.documents.encryption.read-enabled=false
+linshare.documents.encryption.chunk-size=4194304
+# key-provider: "local" (development/test only) or "vault" (production,
+# HashiCorp Vault Transit secrets engine).
+linshare.documents.encryption.key-provider=local
+linshare.documents.encryption.key-id=default
+linshare.documents.encryption.local.master-key-file=
+linshare.documents.encryption.allow-legacy-read=true
+
+# Only used when key-provider=vault. The Vault token is read from a file
+# (never a raw property value) so it never ends up in this properties file.
+linshare.documents.encryption.vault.address=
+linshare.documents.encryption.vault.token-file=
+linshare.documents.encryption.vault.transit-key-name=
+
 ######## Extended storage options ########
 
 #### Object storage options ####
@@ -215,6 +235,12 @@ linshare.mongo.bigfiles.credentials=
 # This cron is responsible of :
 #   - checking and update MIME type of Documents with check flag on
 # job.mimetype.cron.expression=0 0 0 * * ?
+
+# Migration batch is launched every day at 0:45a.m. It is a no-op unless
+# linshare.documents.encryption.read-enabled=true, in which case it scans
+# documents and migrates any still-legacy-plaintext blob to LSE1 (docs/ARCH.md
+# Phase 5). Safe to run repeatedly; already-migrated blobs are cheap no-ops.
+# job.encryption.migration.cron.expression=0 45 0 * * ?
 
 # Fetching consistency batch is launched at 2a.m every day
 # This cron is responsible of :

@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -32,6 +34,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -95,6 +99,13 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	protected final AccountQuotaFacade accountQuotaFacade;
 
 	protected boolean sizeValidation;
+
+	// Field injection (rather than a method parameter) so download(String)
+	// keeps matching DocumentRestService's interface signature exactly.
+	@Context
+	protected HttpHeaders httpHeaders;
+
+	private static final Pattern RANGE_HEADER_PATTERN = Pattern.compile("^bytes=(\\d*)-(\\d*)$");
 
 	public DocumentRestServiceImpl(DocumentFacade documentFacade, DocumentAsyncFacade documentAsyncFacade,
 			ThreadPoolTaskExecutor taskExecutor, AsyncTaskFacade asyncTaskFacade, AccountQuotaFacade accountQuotaFacade,
@@ -277,11 +288,72 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Override
 	public Response download(@PathParam("uuid") String uuid) throws BusinessException {
 		DocumentDto documentDto = documentFacade.find(Version.V2, uuid, false);
-		ByteSource byteSource = documentFacade.getByteSource(uuid);
-		FileAndMetaData data = new FileAndMetaData(byteSource, documentDto.getSize(),
-				documentDto.getName(), documentDto.getType());
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
+		long totalSize = documentDto.getSize();
+		long[] range = parseRange(httpHeaders.getHeaderString("Range"), totalSize);
+
+		if (range == null) {
+			ByteSource byteSource = documentFacade.getByteSource(uuid);
+			FileAndMetaData data = new FileAndMetaData(byteSource, documentDto.getSize(),
+					documentDto.getName(), documentDto.getType());
+			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
+			response.header("Accept-Ranges", "bytes");
+			return response.build();
+		}
+
+		long rangeOffset = range[0];
+		long rangeEndInclusive = range[1];
+		ByteSource rangeByteSource = documentFacade.getByteSourceRange(uuid, rangeOffset,
+				rangeEndInclusive - rangeOffset + 1);
+		FileAndMetaData data = new FileAndMetaData(rangeByteSource, documentDto.getSize(), documentDto.getName(),
+				documentDto.getType());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentRangeResponseBuilder(data, rangeOffset,
+				rangeEndInclusive, totalSize);
 		return response.build();
+	}
+
+	/**
+	 * Parses a single-range {@code Range: bytes=start-end} request header
+	 * (RFC 7233 §3.1; suffix "-N" and open-ended "N-" forms supported,
+	 * multi-range and other range units are not). Returns {@code null} when
+	 * absent or syntactically invalid — per RFC 7233, an unparsable Range
+	 * header is ignored rather than rejected, so the caller falls back to a
+	 * normal full response.
+	 *
+	 * @throws WebApplicationException 416 for a syntactically valid but
+	 *                                  unsatisfiable range.
+	 */
+	static long[] parseRange(String rangeHeader, long totalSize) {
+		if (rangeHeader == null) {
+			return null;
+		}
+		Matcher matcher = RANGE_HEADER_PATTERN.matcher(rangeHeader.trim());
+		if (!matcher.matches()) {
+			return null;
+		}
+		String startGroup = matcher.group(1);
+		String endGroup = matcher.group(2);
+		if (startGroup.isEmpty() && endGroup.isEmpty()) {
+			return null;
+		}
+
+		long start;
+		long endInclusive;
+		if (startGroup.isEmpty()) {
+			long suffixLength = Long.parseLong(endGroup);
+			start = Math.max(0, totalSize - suffixLength);
+			endInclusive = totalSize - 1;
+		} else {
+			start = Long.parseLong(startGroup);
+			endInclusive = endGroup.isEmpty() ? totalSize - 1 : Long.parseLong(endGroup);
+		}
+		if (endInclusive > totalSize - 1) {
+			endInclusive = totalSize - 1;
+		}
+		if (totalSize <= 0 || start >= totalSize || start > endInclusive) {
+			throw new WebApplicationException(Response.status(Status.REQUESTED_RANGE_NOT_SATISFIABLE)
+					.header("Content-Range", "bytes */" + totalSize).build());
+		}
+		return new long[] { start, endInclusive };
 	}
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")

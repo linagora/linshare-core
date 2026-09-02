@@ -31,4 +31,15 @@ public interface FileDataStore {
 
 	boolean exists(FileMetaData metadata);
 
+	/**
+	 * Returns exactly {@code length} bytes starting at physical byte
+	 * {@code offset}. The default falls back to slicing a full {@link #get}
+	 * read, which is correct for every existing implementation but not
+	 * efficient; a backend able to seek should override this to read only
+	 * the requested physical bytes (see {@code AbstractJcloudFileDataStoreImpl}).
+	 */
+	default ByteSource getRange(FileMetaData metadata, long offset, long length) {
+		return get(metadata).slice(offset, length);
+	}
+
 }

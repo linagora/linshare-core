@@ -50,6 +50,8 @@ public interface DocumentEntryBusinessService extends AbstractDocumentBusinessSe
 
 	ByteSource getByteSource(DocumentEntry entry) ;
 
+	ByteSource getByteSourceRange(DocumentEntry entry, long rangeOffset, long rangeLength);
+
 	public DocumentEntry find(String uuid);
 
 	public List<DocumentEntry> findAllMyDocumentEntries(Account owner);
