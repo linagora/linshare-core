@@ -73,10 +73,20 @@ public final class ChunkedDecryptor {
 	 * driving their own per-chunk reads (e.g. a future range reader).
 	 */
 	public UnwrappedBlobContext open(InputStream encryptedInPositionedAtHeader, byte[] blobId) throws IOException {
+		EncryptedBlobHeader header = EncryptedBlobFormat.readHeader(encryptedInPositionedAtHeader);
+		return openFromHeader(header, blobId);
+	}
+
+	/**
+	 * Same as {@link #open}, for a caller that already parsed/authenticated
+	 * the header separately — e.g. from a bounded physical range read used
+	 * only to learn the header, ahead of a second range read for the actual
+	 * chunk data a range request needs.
+	 */
+	public UnwrappedBlobContext openFromHeader(EncryptedBlobHeader header, byte[] blobId) {
 		if (blobId == null) {
 			throw new IllegalArgumentException("blobId is required and must not be null");
 		}
-		EncryptedBlobHeader header = EncryptedBlobFormat.readHeader(encryptedInPositionedAtHeader);
 		byte[] dek = keyEncryptionService.unwrap(header.getKeyId(), header.getWrappedKeyBytes());
 		if (dek == null || dek.length != EncryptedBlobHeader.DEK_LENGTH_BYTES) {
 			throw new EncryptedBlobKeyException("Unwrapped DEK has an unexpected length");

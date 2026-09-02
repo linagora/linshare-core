@@ -90,6 +90,43 @@ public class DocumentStreamReponseBuilder {
 		return response;
 	}
 
+	/**
+	 * Builds a {@code 206 Partial Content} response for the plaintext range
+	 * {@code [rangeStart, rangeEnd]} (inclusive) out of a resource whose full
+	 * plaintext size is {@code totalSize}. {@code data.getByteSource()} must
+	 * already yield exactly that range's bytes (see
+	 * {@link org.linagora.linshare.core.dao.FileDataStore#getRange}) — this
+	 * method only sets response status/headers, it does not itself slice
+	 * anything.
+	 */
+	public static ResponseBuilder getDocumentRangeResponseBuilder(FileAndMetaData data, long rangeStart,
+			long rangeEnd, long totalSize) {
+		if (data.getByteSource() == null) {
+			throw new TechnicalException(TechnicalErrorCode.MISSING_DOCUMENT_IN_FILEDATASTORE,
+					"Can not download file : " + data.getName());
+		}
+		long rangeLength = rangeEnd - rangeStart + 1;
+		StreamingOutput stream = new StreamingOutput() {
+			@Override
+			public void write(OutputStream out) throws IOException, WebApplicationException {
+				try (InputStream inputStream = data.getByteSource().openBufferedStream()) {
+					ByteStreams.copy(inputStream, out);
+				} finally {
+					out.close();
+					if (Objects.nonNull(data.getFile()) && !data.isTempFileDeleted()) {
+						data.getFile().delete();
+						data.setTempFileDeleted(true);
+					}
+				}
+			}
+		};
+		ResponseBuilder response = Response.status(Response.Status.PARTIAL_CONTENT).entity(stream);
+		setHeaderToResponse(response, data.getName(), data.getMimeType(), rangeLength);
+		response.header("Content-Range", "bytes " + rangeStart + "-" + rangeEnd + "/" + totalSize);
+		response.header("Accept-Ranges", "bytes");
+		return response;
+	}
+
 	public static ResponseBuilder getDocumentResponseBuilderBase64(
 			ByteSource byteSource, String fileName, String mimeType,
 			Long fileSize) {

@@ -125,6 +125,43 @@ class EncryptedFileSystemJcloudIntegrationTest {
 		assertArrayEquals(legacyPlaintext, readBack);
 	}
 
+	@Test
+	void rawFilesystemStoreHonorsPhysicalByteRanges(@TempDir Path tempDir) throws Exception {
+		// Validates the jclouds GetOptions.range() plumbing itself
+		// (AbstractJcloudFileDataStoreImpl.getRange), independent of encryption.
+		FileDataStore rawStore = newRawFilesystemStore(tempDir);
+		byte[] content = randomBytes(1000);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) content.length, "raw.bin");
+		FileMetaData stored = rawStore.add(ByteSource.wrap(content), metadata);
+
+		byte[] slice;
+		try (InputStream in = rawStore.getRange(stored, 100, 50).openStream()) {
+			slice = ByteStreams.toByteArray(in);
+		}
+		assertArrayEquals(Arrays.copyOfRange(content, 100, 150), slice);
+	}
+
+	@Test
+	void encryptedRangeReadOnRealFilesystemCrossesChunkBoundary(@TempDir Path tempDir) throws Exception {
+		FileDataStore rawStore = newRawFilesystemStore(tempDir);
+		EncryptedFileDataStoreImpl store = newEncryptedStore(rawStore, true);
+
+		byte[] plaintext = randomBytes(64 * 1024 * 3 + 777);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) plaintext.length, "large-file.bin");
+		FileMetaData stored = store.add(ByteSource.wrap(plaintext), metadata);
+
+		long offset = 64 * 1024 - 5; // 5 bytes before the first chunk boundary
+		long length = 20; // crosses into the second chunk
+
+		byte[] rangeResult;
+		try (InputStream in = store.getRange(stored, offset, length).openStream()) {
+			rangeResult = ByteStreams.toByteArray(in);
+		}
+		assertArrayEquals(Arrays.copyOfRange(plaintext, (int) offset, (int) (offset + length)), rangeResult);
+	}
+
 	private static Path findPersistedFile(Path tempDir, String uuid) throws IOException {
 		try (Stream<Path> paths = Files.walk(tempDir)) {
 			return paths.filter(Files::isRegularFile).filter(p -> p.getFileName().toString().equals(uuid)).findFirst()

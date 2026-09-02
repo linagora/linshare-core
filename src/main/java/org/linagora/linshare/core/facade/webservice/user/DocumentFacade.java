@@ -90,6 +90,9 @@ public interface DocumentFacade extends GenericFacade {
 	ByteSource getByteSource(String docEntryUuid)
 			throws BusinessException;
 
+	ByteSource getByteSourceRange(String docEntryUuid, long rangeOffset, long rangeLength)
+			throws BusinessException;
+
 	ByteSource getThumbnailByteSource(String docEntryUuid, ThumbnailType kind)
 			throws BusinessException;
 

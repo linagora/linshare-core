@@ -55,6 +55,13 @@ public final class EncryptedBlobHeader {
 
 	public static final int DEFAULT_WRAPPED_KEY_CAPACITY = 512;
 
+	/**
+	 * Upper bound on a blob's total header length, for callers that must
+	 * fetch the header via a bounded physical byte-range read before they
+	 * can parse it and learn its actual (per-blob) reserved capacities.
+	 */
+	public static final int MAX_HEADER_LENGTH = FIXED_HEADER_LENGTH + MAX_KEY_ID_CAPACITY + MAX_WRAPPED_KEY_CAPACITY;
+
 	private final int formatVersion;
 
 	private final int algorithmId;

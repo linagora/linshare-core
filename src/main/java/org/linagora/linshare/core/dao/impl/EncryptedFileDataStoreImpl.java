@@ -34,7 +34,10 @@ import org.linagora.linshare.storage.encryption.crypto.EncryptionParameters;
 import org.linagora.linshare.storage.encryption.crypto.UnwrappedBlobContext;
 import org.linagora.linshare.storage.encryption.exception.EncryptedBlobFormatException;
 import org.linagora.linshare.storage.encryption.format.ChunkLayout;
+import org.linagora.linshare.storage.encryption.format.ChunkRange;
+import org.linagora.linshare.storage.encryption.format.EncryptedBlobFormat;
 import org.linagora.linshare.storage.encryption.format.EncryptedBlobHeader;
+import org.linagora.linshare.storage.encryption.format.RangeMapper;
 import org.linagora.linshare.storage.encryption.key.KeyEncryptionService;
 
 import com.google.common.io.ByteSource;
@@ -167,6 +170,56 @@ public class EncryptedFileDataStoreImpl implements FileDataStore {
 					return new SequenceInputStream(new ByteArrayInputStream(peeked, 0, peekedLength), raw);
 				}
 				raw.close();
+				throw new EncryptedBlobFormatException(
+						"blob " + metadata.getUuid() + " is not an LSE1 blob and legacy reads are disabled");
+			}
+		};
+	}
+
+	@Override
+	public ByteSource getRange(FileMetaData metadata, long offset, long length) {
+		if (!readEnabled) {
+			return delegate.getRange(metadata, offset, length);
+		}
+		byte[] blobId = metadata.getUuid().getBytes(StandardCharsets.UTF_8);
+
+		return new ByteSource() {
+			@Override
+			public InputStream openStream() throws IOException {
+				byte[] peeked = new byte[EncryptedBlobHeader.MAGIC.length];
+				try (InputStream peekIn = delegate.getRange(metadata, 0, peeked.length).openStream()) {
+					readAtMost(peekIn, peeked);
+				}
+
+				if (Arrays.equals(peeked, EncryptedBlobHeader.MAGIC)) {
+					EncryptedBlobHeader header;
+					// Bounded: the header's true length depends on its own
+					// per-blob reserved capacities, only known once parsed, so
+					// this fetches a generous but bounded upper bound rather
+					// than the whole (possibly huge) object; any unused
+					// trailing bytes are simply never read by readHeader.
+					try (InputStream headerIn = delegate
+							.getRange(metadata, 0, EncryptedBlobHeader.MAX_HEADER_LENGTH).openStream()) {
+						header = EncryptedBlobFormat.readHeader(headerIn);
+					}
+
+					ChunkLayout layout = ChunkLayout.of(header);
+					ChunkRange chunkRange = RangeMapper.map(layout, offset, length);
+					long physicalStart = layout.chunkRecordOffset(chunkRange.getFirstChunkIndex());
+					long physicalEndExclusive = layout.chunkRecordOffset(chunkRange.getLastChunkIndex())
+							+ layout.chunkCiphertextLength(chunkRange.getLastChunkIndex());
+
+					InputStream chunkDataIn = delegate
+							.getRange(metadata, physicalStart, physicalEndExclusive - physicalStart).openStream();
+					ChunkedDecryptor decryptor = new ChunkedDecryptor(keyEncryptionService);
+					UnwrappedBlobContext ctx = decryptor.openFromHeader(header, blobId);
+					return new DecryptingInputStream(decryptor, ctx, chunkDataIn, chunkRange.getFirstChunkIndex(),
+							chunkRange.getLastChunkIndex(), chunkRange.getSkipBytesInFirstChunk(),
+							chunkRange.getRequestedPlaintextLength());
+				}
+				if (allowLegacyRead) {
+					return delegate.getRange(metadata, offset, length).openStream();
+				}
 				throw new EncryptedBlobFormatException(
 						"blob " + metadata.getUuid() + " is not an LSE1 blob and legacy reads are disabled");
 			}

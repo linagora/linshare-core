@@ -28,6 +28,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
+import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.linagora.linshare.core.dao.JcloudObjectStorageFileDataStore;
@@ -152,6 +153,24 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 			@Override
 			public InputStream openStream() throws IOException {
 				Blob blob = getBlobStore(containerName).getBlob(containerName, metadata.getUuid());
+				return blob.getPayload().openStream();
+			}
+		};
+	}
+
+	@Override
+	public ByteSource getRange(FileMetaData metadata, long offset, long length) {
+		String containerName = metadata.getBucketUuid();
+		if (containerName == null) {
+			logger.error("document's BucketUuid can not be null.");
+			throw new TechnicalException(TechnicalErrorCode.MISSING_FILEDATASTORE_BUCKET, "document's BucketUuid can not be null.");
+		}
+		long endInclusive = offset + length - 1;
+		return new ByteSource() {
+			@Override
+			public InputStream openStream() throws IOException {
+				Blob blob = getBlobStore(containerName).getBlob(containerName, metadata.getUuid(),
+						GetOptions.Builder.range(offset, endInclusive));
 				return blob.getPayload().openStream();
 			}
 		};

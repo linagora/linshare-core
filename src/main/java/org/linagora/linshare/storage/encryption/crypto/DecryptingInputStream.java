@@ -41,13 +41,37 @@ public final class DecryptingInputStream extends InputStream {
 
 	private final ChunkLayout layout;
 
+	private final long firstChunkIndex;
+
+	private final long lastChunkIndexInclusive;
+
 	private byte[] currentChunkPlaintext = new byte[0];
 
 	private int posInChunk;
 
 	private long nextChunkIndex;
 
+	private long remainingToServe;
+
 	public DecryptingInputStream(ChunkedDecryptor decryptor, UnwrappedBlobContext ctx, InputStream encryptedIn) {
+		this(decryptor, ctx, encryptedIn, 0, ChunkLayout.of(ctx.getHeader()).chunkCount() - 1, 0,
+				ctx.getHeader().getPlaintextSize());
+	}
+
+	/**
+	 * Serves only the plaintext bytes covered by chunks
+	 * {@code [firstChunkIndex, lastChunkIndexInclusive]} read from
+	 * {@code encryptedIn} (which must be positioned exactly at
+	 * {@code firstChunkIndex}'s physical record, e.g. via a range read),
+	 * discarding {@code skipBytesInFirstChunk} leading bytes of the first
+	 * decrypted chunk and never serving more than
+	 * {@code maxPlaintextBytesToServe} bytes in total — the mechanism behind
+	 * both a full download (the no-window constructor above) and an HTTP
+	 * Range request onto the same chunked, per-chunk-authenticated format.
+	 */
+	public DecryptingInputStream(ChunkedDecryptor decryptor, UnwrappedBlobContext ctx, InputStream encryptedIn,
+			long firstChunkIndex, long lastChunkIndexInclusive, long skipBytesInFirstChunk,
+			long maxPlaintextBytesToServe) {
 		if (decryptor == null || ctx == null || encryptedIn == null) {
 			throw new IllegalArgumentException("decryptor, ctx and encryptedIn must not be null");
 		}
@@ -55,7 +79,17 @@ public final class DecryptingInputStream extends InputStream {
 		this.ctx = ctx;
 		this.encryptedIn = encryptedIn;
 		this.layout = ChunkLayout.of(ctx.getHeader());
+		this.firstChunkIndex = firstChunkIndex;
+		this.lastChunkIndexInclusive = lastChunkIndexInclusive;
+		this.nextChunkIndex = firstChunkIndex;
+		this.remainingToServe = maxPlaintextBytesToServe;
+		// Applied only once, the first time a chunk is decrypted; consumed here
+		// as an int-sized "pending skip" so read()'s normal posInChunk bookkeeping
+		// handles it uniformly with everything else.
+		this.pendingSkipInFirstChunk = skipBytesInFirstChunk;
 	}
+
+	private long pendingSkipInFirstChunk;
 
 	@Override
 	public int read() throws IOException {
@@ -73,24 +107,28 @@ public final class DecryptingInputStream extends InputStream {
 			return -1;
 		}
 		int available = currentChunkPlaintext.length - posInChunk;
-		int toCopy = Math.min(available, len);
+		int toCopy = (int) Math.min(Math.min(available, len), remainingToServe);
 		System.arraycopy(currentChunkPlaintext, posInChunk, b, off, toCopy);
 		posInChunk += toCopy;
+		remainingToServe -= toCopy;
 		return toCopy;
 	}
 
 	private boolean fillIfNeeded() throws IOException {
+		if (remainingToServe <= 0) {
+			return false;
+		}
 		if (posInChunk < currentChunkPlaintext.length) {
 			return true;
 		}
-		if (nextChunkIndex >= layout.chunkCount()) {
+		if (nextChunkIndex > lastChunkIndexInclusive) {
 			return false;
 		}
 		int ciphertextLength = layout.chunkCiphertextLength(nextChunkIndex);
 		byte[] chunkBytes = new byte[ciphertextLength];
 		EncryptedBlobFormat.readFully(encryptedIn, chunkBytes, ciphertextLength);
 		currentChunkPlaintext = decryptor.decryptChunk(ctx, nextChunkIndex, chunkBytes);
-		posInChunk = 0;
+		posInChunk = (nextChunkIndex == firstChunkIndex) ? (int) pendingSkipInFirstChunk : 0;
 		nextChunkIndex++;
 		return true;
 	}

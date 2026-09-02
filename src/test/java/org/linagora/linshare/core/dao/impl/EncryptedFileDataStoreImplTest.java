@@ -228,6 +228,144 @@ class EncryptedFileDataStoreImplTest {
 		});
 	}
 
+	@Test
+	void readDisabledRangeIsPureDelegation() {
+		FileDataStore delegate = mock(FileDataStore.class);
+		ByteSource delegateSlice = ByteSource.wrap(new byte[] { 7, 8 });
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "text/plain", 10L, "f.txt");
+		when(delegate.getRange(metadata, 2, 2)).thenReturn(delegateSlice);
+
+		EncryptedFileDataStoreImpl store = new EncryptedFileDataStoreImpl(delegate, newKeyService(),
+				smallChunkParams(), false, false, true);
+
+		assertSame(delegateSlice, store.getRange(metadata, 2, 2));
+	}
+
+	@Test
+	void completeRangeMatchesFullDownload() throws Exception {
+		InMemoryFileDataStore fakeDelegate = new InMemoryFileDataStore();
+		byte[] plaintext = randomBytes(16 * 5); // 5 full chunks, chunk size 16
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) plaintext.length, "f.bin");
+		EncryptedFileDataStoreImpl store = new EncryptedFileDataStoreImpl(fakeDelegate, newKeyService(),
+				smallChunkParams(), true, true, true);
+		store.add(ByteSource.wrap(plaintext), metadata);
+
+		byte[] result;
+		try (InputStream in = store.getRange(metadata, 0, plaintext.length).openStream()) {
+			result = ByteStreams.toByteArray(in);
+		}
+		assertArrayEquals(plaintext, result);
+	}
+
+	@Test
+	void firstByteRangeMatchesOriginal() throws Exception {
+		assertRangeMatchesOriginal(0, 1);
+	}
+
+	@Test
+	void lastByteRangeMatchesOriginal() throws Exception {
+		byte[] plaintext = randomBytes(16 * 5 + 3);
+		assertRangeMatchesOriginal(plaintext, plaintext.length - 1, 1);
+	}
+
+	@Test
+	void exactOneChunkAlignedRangeMatchesOriginal() throws Exception {
+		assertRangeMatchesOriginal(16, 16);
+	}
+
+	@Test
+	void rangeStartingOneByteBeforeBoundaryMatchesOriginal() throws Exception {
+		assertRangeMatchesOriginal(15, 1);
+	}
+
+	@Test
+	void rangeCrossingChunkBoundaryMatchesOriginal() throws Exception {
+		assertRangeMatchesOriginal(15, 2);
+	}
+
+	@Test
+	void rangeSpanningManyChunksMatchesOriginal() throws Exception {
+		assertRangeMatchesOriginal(5, 16 * 3L);
+	}
+
+	private void assertRangeMatchesOriginal(long offset, long length) throws Exception {
+		byte[] plaintext = randomBytes(16 * 5 + 3); // 6 chunks, last one partial
+		assertRangeMatchesOriginal(plaintext, offset, length);
+	}
+
+	private void assertRangeMatchesOriginal(byte[] plaintext, long offset, long length) throws Exception {
+		InMemoryFileDataStore fakeDelegate = new InMemoryFileDataStore();
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) plaintext.length, "f.bin");
+		EncryptedFileDataStoreImpl store = new EncryptedFileDataStoreImpl(fakeDelegate, newKeyService(),
+				smallChunkParams(), true, true, true);
+		store.add(ByteSource.wrap(plaintext), metadata);
+
+		byte[] expected = java.util.Arrays.copyOfRange(plaintext, (int) offset, (int) (offset + length));
+		byte[] actual;
+		try (InputStream in = store.getRange(metadata, offset, length).openStream()) {
+			actual = ByteStreams.toByteArray(in);
+		}
+		assertArrayEquals(expected, actual);
+	}
+
+	@Test
+	void rangeExceedingPlaintextSizeThrows() throws Exception {
+		InMemoryFileDataStore fakeDelegate = new InMemoryFileDataStore();
+		byte[] plaintext = randomBytes(16 * 5);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) plaintext.length, "f.bin");
+		EncryptedFileDataStoreImpl store = new EncryptedFileDataStoreImpl(fakeDelegate, newKeyService(),
+				smallChunkParams(), true, true, true);
+		store.add(ByteSource.wrap(plaintext), metadata);
+
+		assertThrows(IllegalArgumentException.class,
+				() -> store.getRange(metadata, plaintext.length - 1, 2).openStream());
+	}
+
+	@Test
+	void legacyPlaintextRangeReadReturnsCorrectSlice() throws Exception {
+		InMemoryFileDataStore fakeDelegate = new InMemoryFileDataStore();
+		byte[] legacyPlaintext = randomBytes(50);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "text/plain", (long) legacyPlaintext.length,
+				"legacy.txt");
+		metadata.setUuid("legacy-uuid");
+		fakeDelegate.putRaw(metadata.getUuid(), legacyPlaintext);
+
+		EncryptedFileDataStoreImpl store = new EncryptedFileDataStoreImpl(fakeDelegate, newKeyService(),
+				smallChunkParams(), true, true, true);
+
+		byte[] result;
+		try (InputStream in = store.getRange(metadata, 10, 20).openStream()) {
+			result = ByteStreams.toByteArray(in);
+		}
+		assertArrayEquals(java.util.Arrays.copyOfRange(legacyPlaintext, 10, 30), result);
+	}
+
+	@Test
+	void tamperedChunkWithinRequestedRangeFailsAuthentication() throws Exception {
+		InMemoryFileDataStore fakeDelegate = new InMemoryFileDataStore();
+		byte[] plaintext = randomBytes(16 * 5 + 3);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) plaintext.length, "f.bin");
+		EncryptedFileDataStoreImpl store = new EncryptedFileDataStoreImpl(fakeDelegate, newKeyService(),
+				smallChunkParams(), true, true, true);
+		store.add(ByteSource.wrap(plaintext), metadata);
+
+		// Flip the last physical byte, which belongs to the final chunk's tag —
+		// the chunk the range below (the last plaintext byte) actually needs.
+		byte[] corrupted = fakeDelegate.rawBytes(metadata.getUuid());
+		corrupted[corrupted.length - 1] ^= 0x01;
+		fakeDelegate.putRaw(metadata.getUuid(), corrupted);
+
+		assertThrows(EncryptedBlobAuthenticationException.class, () -> {
+			try (InputStream in = store.getRange(metadata, plaintext.length - 1, 1).openStream()) {
+				ByteStreams.toByteArray(in);
+			}
+		});
+	}
+
 	private static byte[] randomBytes(int length) {
 		byte[] bytes = new byte[length];
 		new Random(13).nextBytes(bytes);

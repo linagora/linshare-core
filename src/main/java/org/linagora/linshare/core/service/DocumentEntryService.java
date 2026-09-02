@@ -77,6 +77,9 @@ public interface DocumentEntryService {
 
     public ByteSource getByteSource(Account actor, Account owner, String uuid) throws BusinessException;
 
+    public ByteSource getByteSourceRange(Account actor, Account owner, String uuid, long rangeOffset,
+			long rangeLength) throws BusinessException;
+
 	/**
 	 * looking for a document entry using the uuid parameter.
 	 * Owner and actor rights will be check. A {@link BusinessException} 
