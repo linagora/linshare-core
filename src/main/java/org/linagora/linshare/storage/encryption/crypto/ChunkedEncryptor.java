@@ -130,6 +130,78 @@ public final class ChunkedEncryptor {
 		}
 	}
 
+	/**
+	 * Generates a DEK, wraps it, and builds the header — with no I/O. Lets a
+	 * caller learn the exact physical (ciphertext) length up front via
+	 * {@link ChunkLayout#totalPhysicalLength()} before streaming a single
+	 * byte, and lets it drive its own per-chunk encryption via
+	 * {@link #encryptChunk}, e.g. from a lazily-pulled {@code InputStream}
+	 * that a push-style {@link OutputStream} target such as {@link #encrypt}
+	 * cannot serve.
+	 */
+	public EncryptingBlobContext prepare(long plaintextSize) {
+		if (plaintextSize < 0) {
+			throw new IllegalArgumentException("plaintextSize must not be negative: " + plaintextSize);
+		}
+		NonceStrategy nonceStrategy = new RandomPrefixCounterNonceStrategy();
+		long chunkCount = EncryptedBlobHeader.computeChunkCount(plaintextSize, params.getChunkPlaintextSize());
+		if (chunkCount - 1 > nonceStrategy.maxChunkIndex()) {
+			throw new EncryptedBlobFormatException(
+					"plaintextSize " + plaintextSize + " requires more chunks than the nonce construction allows");
+		}
+
+		byte[] dek = new byte[EncryptedBlobHeader.DEK_LENGTH_BYTES];
+		secureRandom.nextBytes(dek);
+		boolean prepared = false;
+		try {
+			WrappedKey wrappedKey = keyEncryptionService.wrap(dek);
+			if (wrappedKey.getWrappedKeyBytes().length > params.getReservedWrappedKeyCapacity()) {
+				throw new EncryptedBlobKeyException("wrapped key length exceeds the reserved wrapped-key capacity");
+			}
+
+			byte[] noncePrefix = new byte[EncryptedBlobHeader.NONCE_PREFIX_LENGTH_BYTES];
+			secureRandom.nextBytes(noncePrefix);
+
+			EncryptedBlobHeader header = new EncryptedBlobHeader(EncryptedBlobHeader.FORMAT_VERSION,
+					EncryptedBlobHeader.ALGORITHM_AES_256_GCM, nonceStrategy.schemeId(), plaintextSize,
+					params.getChunkPlaintextSize(), chunkCount, noncePrefix, wrappedKey.getKeyId(),
+					params.getReservedKeyIdCapacity(), wrappedKey.getWrappedKeyBytes(),
+					params.getReservedWrappedKeyCapacity());
+			EncryptingBlobContext ctx = new EncryptingBlobContext(header, dek);
+			prepared = true;
+			return ctx;
+		} finally {
+			if (!prepared) {
+				Arrays.fill(dek, (byte) 0);
+			}
+		}
+	}
+
+	/** Encrypts exactly one chunk; bounded to one chunk-sized buffer. */
+	public byte[] encryptChunk(EncryptingBlobContext ctx, long chunkIndex, byte[] chunkPlaintext, byte[] blobId) {
+		EncryptedBlobHeader header = ctx.getHeader();
+		ChunkLayout layout = ChunkLayout.of(header);
+		int expectedLength = layout.chunkPlaintextLength(chunkIndex);
+		if (chunkPlaintext.length != expectedLength) {
+			throw new IllegalArgumentException("Chunk " + chunkIndex + " has unexpected plaintext length "
+					+ chunkPlaintext.length + ", expected " + expectedLength);
+		}
+
+		NonceStrategy nonceStrategy = NonceStrategy.forSchemeId(header.getNonceSchemeId());
+		byte[] nonce = nonceStrategy.deriveNonce(header.getNoncePrefix(), chunkIndex);
+		byte[] aad = ChunkAadFactory.build(header, blobId, chunkIndex);
+
+		try {
+			Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+			cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(ctx.getDek(), "AES"),
+					new GCMParameterSpec(EncryptedBlobHeader.GCM_TAG_LENGTH_BITS, nonce));
+			cipher.updateAAD(aad);
+			return cipher.doFinal(chunkPlaintext);
+		} catch (GeneralSecurityException e) {
+			throw new EncryptedBlobKeyException("Chunk " + chunkIndex + " could not be encrypted", e);
+		}
+	}
+
 	private static void readFullyStrict(InputStream in, byte[] buffer, int length) throws IOException {
 		int totalRead = 0;
 		while (totalRead < length) {

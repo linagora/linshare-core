@@ -102,6 +102,18 @@ linshare.encipherment.tmp.dir=/var/lib/linshare/tmp
 #### File system storage options - default backend####
 linshare.documents.storage.filesystem.directory=/var/lib/linshare/filesystemstorage
 
+#### Storage encryption at rest options (docs/ARCH.md, docs/CLAUDE.md) ####
+# Chunked application-level AES-256-GCM encryption for document blobs.
+# Disabled by default: enabling it does not change existing installations,
+# and existing plaintext blobs remain readable regardless of these settings.
+linshare.documents.encryption.write-enabled=false
+linshare.documents.encryption.read-enabled=false
+linshare.documents.encryption.chunk-size=4194304
+linshare.documents.encryption.key-provider=local
+linshare.documents.encryption.key-id=default
+linshare.documents.encryption.local.master-key-file=
+linshare.documents.encryption.allow-legacy-read=true
+
 ######## Extended storage options ########
 
 #### Object storage options ####

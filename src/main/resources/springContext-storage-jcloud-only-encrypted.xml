@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd"
+	profile="jcloud-only-encrypted">
+
+	<import resource="OPTIONAL-springContext-storage-jcloud.xml" />
+
+	<bean id="encryptedFileDataStoreFactory"
+		class="org.linagora.linshare.core.dao.utils.EncryptedFileDataStoreFactory">
+		<property name="delegate" ref="jcloudFileDataStore" />
+		<property name="writeEnabled" value="${linshare.documents.encryption.write-enabled}" />
+		<property name="readEnabled" value="${linshare.documents.encryption.read-enabled}" />
+		<property name="allowLegacyRead" value="${linshare.documents.encryption.allow-legacy-read}" />
+		<property name="chunkSize" value="${linshare.documents.encryption.chunk-size}" />
+		<property name="keyProvider" value="${linshare.documents.encryption.key-provider}" />
+		<property name="localMasterKeyFile" value="${linshare.documents.encryption.local.master-key-file}" />
+		<property name="keyId" value="${linshare.documents.encryption.key-id}" />
+	</bean>
+
+	<bean
+		id="fileDataStore"
+		factory-bean="encryptedFileDataStoreFactory"
+		factory-method="getDefault"
+		/>
+
+</beans>
