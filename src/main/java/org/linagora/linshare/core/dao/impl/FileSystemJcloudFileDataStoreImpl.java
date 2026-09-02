@@ -15,16 +15,22 @@
  */
 package org.linagora.linshare.core.dao.impl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
 import org.apache.commons.lang3.Validate;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.linagora.linshare.core.dao.AtomicBlobReplace;
 
 import com.google.inject.Module;
 
-public class FileSystemJcloudFileDataStoreImpl extends AbstractJcloudFileDataStoreImpl {
+public class FileSystemJcloudFileDataStoreImpl extends AbstractJcloudFileDataStoreImpl implements AtomicBlobReplace {
 
 	protected static String PROVIDER = "filesystem";
 
@@ -48,6 +54,34 @@ public class FileSystemJcloudFileDataStoreImpl extends AbstractJcloudFileDataSto
 
 	public String getBaseDirectory() {
 		return baseDirectory;
+	}
+
+	/**
+	 * Backs onto {@code java.nio.file.Files.move(..., ATOMIC_MOVE)} — a real
+	 * filesystem rename, since both blobs live under the same
+	 * {@code baseDirectory}/{@code container} directory and therefore the
+	 * same filesystem/mount. Mirrors exactly how jclouds' own
+	 * {@code FilesystemStorageStrategyImpl} computes a blob's on-disk path
+	 * (baseDirectory/container/key, no further nesting or key transformation).
+	 */
+	@Override
+	public void atomicReplace(String container, String sourceKey, String targetKey) throws IOException {
+		Path source = resolveBlobPath(container, sourceKey);
+		Path target = resolveBlobPath(container, targetKey);
+		Files.move(source, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+	}
+
+	private Path resolveBlobPath(String container, String key) {
+		validatePathComponent(container);
+		validatePathComponent(key);
+		return Paths.get(baseDirectory, container, key);
+	}
+
+	private static void validatePathComponent(String value) {
+		if (value == null || value.isEmpty() || value.contains("/") || value.contains("\\")
+				|| value.contains("..")) {
+			throw new IllegalArgumentException("Invalid blob container/key component: " + value);
+		}
 	}
 
 	@Override

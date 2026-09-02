@@ -66,6 +66,8 @@ public class EncryptedFileDataStoreImpl implements FileDataStore {
 
 	private final boolean allowLegacyRead;
 
+	private final EncryptedBlobMigrator migrator;
+
 	public EncryptedFileDataStoreImpl(FileDataStore delegate, KeyEncryptionService keyEncryptionService,
 			EncryptionParameters encryptionParameters, boolean writeEnabled, boolean readEnabled,
 			boolean allowLegacyRead) {
@@ -78,6 +80,17 @@ public class EncryptedFileDataStoreImpl implements FileDataStore {
 		this.writeEnabled = writeEnabled;
 		this.readEnabled = readEnabled;
 		this.allowLegacyRead = allowLegacyRead;
+		this.migrator = new EncryptedBlobMigrator(delegate, keyEncryptionService, encryptionParameters);
+	}
+
+	/** @see EncryptedBlobMigrator#isLegacyBlob */
+	public boolean isLegacyBlob(FileMetaData metadata) throws IOException {
+		return migrator.isLegacyBlob(metadata);
+	}
+
+	/** @see EncryptedBlobMigrator#migrate */
+	public MigrationOutcome migrateLegacyBlob(FileMetaData metadata, String expectedSha256Hex) throws IOException {
+		return migrator.migrate(metadata, expectedSha256Hex);
 	}
 
 	@Override

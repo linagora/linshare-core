@@ -126,6 +126,54 @@ class EncryptedFileSystemJcloudIntegrationTest {
 	}
 
 	@Test
+	void migrationOfLegacyBlobOnRealFilesystemUsesAtomicRename(@TempDir Path tempDir) throws Exception {
+		FileSystemJcloudFileDataStoreImpl rawStore = (FileSystemJcloudFileDataStoreImpl) newRawFilesystemStore(
+				tempDir);
+		byte[] legacyPlaintext = randomBytes(64 * 1024 * 2 + 123);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) legacyPlaintext.length, "legacy-large.bin");
+		FileMetaData stored = rawStore.add(ByteSource.wrap(legacyPlaintext), metadata);
+
+		KeyEncryptionService keyEncryptionService = new LocalKeyEncryptionService(randomMasterKey(), "test-kek");
+		EncryptionParameters params = new EncryptionParameters(64 * 1024, EncryptedBlobHeader.DEFAULT_KEY_ID_CAPACITY,
+				EncryptedBlobHeader.DEFAULT_WRAPPED_KEY_CAPACITY);
+		EncryptedBlobMigrator migrator = new EncryptedBlobMigrator(rawStore, keyEncryptionService, params);
+
+		MigrationOutcome outcome = migrator.migrate(stored, sha256Hex(legacyPlaintext));
+		assertEquals(MigrationOutcome.MIGRATED, outcome);
+
+		// No leftover temp file anywhere under the store's directory.
+		try (Stream<Path> paths = Files.walk(tempDir)) {
+			assertFalse(paths.anyMatch(p -> p.getFileName().toString().endsWith(".migrating")),
+					"no temp migration artifact should remain after a successful commit");
+		}
+
+		Path persistedFile = findPersistedFile(tempDir, stored.getUuid());
+		byte[] persisted = Files.readAllBytes(persistedFile);
+		assertArrayEquals(EncryptedBlobHeader.MAGIC, Arrays.copyOf(persisted, 4));
+
+		EncryptedFileDataStoreImpl decoratedStore = new EncryptedFileDataStoreImpl(rawStore, keyEncryptionService,
+				params, true, true, true);
+		byte[] decrypted;
+		try (InputStream in = decoratedStore.get(stored).openStream()) {
+			decrypted = ByteStreams.toByteArray(in);
+		}
+		assertArrayEquals(legacyPlaintext, decrypted);
+
+		// Idempotent: migrating again is a clean, harmless no-op.
+		assertEquals(MigrationOutcome.ALREADY_ENCRYPTED, migrator.migrate(stored, sha256Hex(legacyPlaintext)));
+	}
+
+	private static String sha256Hex(byte[] data) throws Exception {
+		byte[] digest = MessageDigest.getInstance("SHA-256").digest(data);
+		StringBuilder sb = new StringBuilder();
+		for (byte b : digest) {
+			sb.append(String.format("%02x", b));
+		}
+		return sb.toString();
+	}
+
+	@Test
 	void rawFilesystemStoreHonorsPhysicalByteRanges(@TempDir Path tempDir) throws Exception {
 		// Validates the jclouds GetOptions.range() plumbing itself
 		// (AbstractJcloudFileDataStoreImpl.getRange), independent of encryption.
