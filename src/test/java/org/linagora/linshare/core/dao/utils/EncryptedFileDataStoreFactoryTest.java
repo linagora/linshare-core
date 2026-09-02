@@ -100,9 +100,59 @@ class EncryptedFileDataStoreFactoryTest {
 		factory.setDelegate(delegate);
 		factory.setWriteEnabled(true);
 		factory.setReadEnabled(true);
-		factory.setKeyProvider("vault");
+		factory.setKeyProvider("some-made-up-provider");
 		factory.setLocalMasterKeyFile(keyFile.toString());
 		factory.setKeyId("test-kek");
+
+		assertThrows(EncryptedBlobKeyException.class, factory::getDefault);
+	}
+
+	@Test
+	void enabledFactoryWithValidVaultConfigBuildsEncryptedStore(@TempDir Path tempDir) throws Exception {
+		Path tokenFile = tempDir.resolve("vault.token");
+		Files.write(tokenFile, "s.faketoken".getBytes());
+
+		FileDataStore delegate = mock(FileDataStore.class);
+		EncryptedFileDataStoreFactory factory = new EncryptedFileDataStoreFactory();
+		factory.setDelegate(delegate);
+		factory.setWriteEnabled(true);
+		factory.setReadEnabled(true);
+		factory.setKeyProvider("vault");
+		factory.setVaultAddress("http://127.0.0.1:8200/");
+		factory.setVaultTokenFile(tokenFile.toString());
+		factory.setVaultTransitKeyName("linshare-storage");
+
+		assertTrue(factory.getDefault() instanceof EncryptedFileDataStoreImpl);
+	}
+
+	@Test
+	void failsClosedAtStartupWhenVaultTokenFileIsMissing(@TempDir Path tempDir) {
+		FileDataStore delegate = mock(FileDataStore.class);
+		EncryptedFileDataStoreFactory factory = new EncryptedFileDataStoreFactory();
+		factory.setDelegate(delegate);
+		factory.setWriteEnabled(true);
+		factory.setReadEnabled(true);
+		factory.setKeyProvider("vault");
+		factory.setVaultAddress("http://127.0.0.1:8200/");
+		factory.setVaultTokenFile(tempDir.resolve("does-not-exist").toString());
+		factory.setVaultTransitKeyName("linshare-storage");
+
+		assertThrows(EncryptedBlobKeyException.class, factory::getDefault);
+	}
+
+	@Test
+	void failsClosedWhenVaultConfigIsIncomplete(@TempDir Path tempDir) throws Exception {
+		Path tokenFile = tempDir.resolve("vault.token");
+		Files.write(tokenFile, "s.faketoken".getBytes());
+
+		FileDataStore delegate = mock(FileDataStore.class);
+		EncryptedFileDataStoreFactory factory = new EncryptedFileDataStoreFactory();
+		factory.setDelegate(delegate);
+		factory.setWriteEnabled(true);
+		factory.setReadEnabled(true);
+		factory.setKeyProvider("vault");
+		factory.setVaultTokenFile(tokenFile.toString());
+		// vaultAddress and vaultTransitKeyName deliberately left unset.
 
 		assertThrows(EncryptedBlobKeyException.class, factory::getDefault);
 	}

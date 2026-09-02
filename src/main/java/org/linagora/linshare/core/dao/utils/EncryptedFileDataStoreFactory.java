@@ -15,9 +15,12 @@
  */
 package org.linagora.linshare.core.dao.utils;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.dao.impl.EncryptedFileDataStoreImpl;
 import org.linagora.linshare.storage.encryption.crypto.EncryptionParameters;
@@ -25,6 +28,7 @@ import org.linagora.linshare.storage.encryption.exception.EncryptedBlobKeyExcept
 import org.linagora.linshare.storage.encryption.format.EncryptedBlobHeader;
 import org.linagora.linshare.storage.encryption.key.KeyEncryptionService;
 import org.linagora.linshare.storage.encryption.key.LocalKeyEncryptionService;
+import org.linagora.linshare.storage.encryption.key.VaultKeyEncryptionService;
 
 /**
  * Builds the {@code fileDataStore} bean, transparently wrapping a delegate
@@ -37,6 +41,8 @@ import org.linagora.linshare.storage.encryption.key.LocalKeyEncryptionService;
 public class EncryptedFileDataStoreFactory {
 
 	protected static final String LOCAL_KEY_PROVIDER = "local";
+
+	protected static final String VAULT_KEY_PROVIDER = "vault";
 
 	protected FileDataStore delegate;
 
@@ -54,6 +60,12 @@ public class EncryptedFileDataStoreFactory {
 
 	protected String keyId;
 
+	protected String vaultAddress;
+
+	protected String vaultTokenFile;
+
+	protected String vaultTransitKeyName;
+
 	public FileDataStore getDefault() {
 		if (!writeEnabled && !readEnabled) {
 			return delegate;
@@ -66,13 +78,33 @@ public class EncryptedFileDataStoreFactory {
 	}
 
 	private KeyEncryptionService buildKeyEncryptionService() {
-		if (!LOCAL_KEY_PROVIDER.equals(keyProvider)) {
-			throw new EncryptedBlobKeyException("Unsupported linshare.documents.encryption.key-provider: "
-					+ keyProvider);
+		if (LOCAL_KEY_PROVIDER.equals(keyProvider)) {
+			requireNonEmpty(localMasterKeyFile, "linshare.documents.encryption.local.master-key-file");
+			requireNonEmpty(keyId, "linshare.documents.encryption.key-id");
+			return new LocalKeyEncryptionService(Paths.get(localMasterKeyFile), keyId);
 		}
-		Validate.notEmpty(localMasterKeyFile, "Missing linshare.documents.encryption.local.master-key-file");
-		Validate.notEmpty(keyId, "Missing linshare.documents.encryption.key-id");
-		return new LocalKeyEncryptionService(Paths.get(localMasterKeyFile), keyId);
+		if (VAULT_KEY_PROVIDER.equals(keyProvider)) {
+			requireNonEmpty(vaultAddress, "linshare.documents.encryption.vault.address");
+			requireNonEmpty(vaultTokenFile, "linshare.documents.encryption.vault.token-file");
+			requireNonEmpty(vaultTransitKeyName, "linshare.documents.encryption.vault.transit-key-name");
+			return new VaultKeyEncryptionService(URI.create(vaultAddress), readVaultToken(), vaultTransitKeyName);
+		}
+		throw new EncryptedBlobKeyException(
+				"Unsupported linshare.documents.encryption.key-provider: " + keyProvider);
+	}
+
+	private static void requireNonEmpty(String value, String propertyName) {
+		if (value == null || value.isEmpty()) {
+			throw new EncryptedBlobKeyException("Missing " + propertyName);
+		}
+	}
+
+	private String readVaultToken() {
+		try {
+			return new String(Files.readAllBytes(Paths.get(vaultTokenFile)), StandardCharsets.UTF_8).trim();
+		} catch (IOException e) {
+			throw new EncryptedBlobKeyException("Unable to read Vault token file: " + vaultTokenFile, e);
+		}
 	}
 
 	public void setDelegate(FileDataStore delegate) {
@@ -105,5 +137,17 @@ public class EncryptedFileDataStoreFactory {
 
 	public void setKeyId(String keyId) {
 		this.keyId = keyId;
+	}
+
+	public void setVaultAddress(String vaultAddress) {
+		this.vaultAddress = vaultAddress;
+	}
+
+	public void setVaultTokenFile(String vaultTokenFile) {
+		this.vaultTokenFile = vaultTokenFile;
+	}
+
+	public void setVaultTransitKeyName(String vaultTransitKeyName) {
+		this.vaultTransitKeyName = vaultTransitKeyName;
 	}
 }

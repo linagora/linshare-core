@@ -56,12 +56,15 @@ class ChunkAadFactoryTest {
 	}
 
 	@Test
-	void lengthPrefixingPreventsAmbiguousConcatenation() {
-		// keyId="ab" + blobId="cdef" must not serialize the same as keyId="abcd" + blobId="ef"
-		EncryptedBlobHeader headerAb = header("ab");
-		EncryptedBlobHeader headerAbcd = header("abcd");
-		byte[] aadAbCdef = ChunkAadFactory.build(headerAb, "cdef".getBytes(StandardCharsets.UTF_8), 0);
-		byte[] aadAbcdEf = ChunkAadFactory.build(headerAbcd, "ef".getBytes(StandardCharsets.UTF_8), 0);
-		assertFalse(java.util.Arrays.equals(aadAbCdef, aadAbcdEf));
+	void aadIsIdenticalAcrossDifferentKeyIds() {
+		// KEK rotation (docs/CLAUDE.md 27) rewraps the DEK under a new keyId
+		// without touching chunk ciphertext. That is only possible if the
+		// AAD used to authenticate each chunk does not depend on keyId.
+		EncryptedBlobHeader beforeRotation = header("old-kek");
+		EncryptedBlobHeader afterRotation = header("new-kek");
+		byte[] blobId = "blob-1".getBytes(StandardCharsets.UTF_8);
+
+		assertArrayEquals(ChunkAadFactory.build(beforeRotation, blobId, 0),
+				ChunkAadFactory.build(afterRotation, blobId, 0));
 	}
 }

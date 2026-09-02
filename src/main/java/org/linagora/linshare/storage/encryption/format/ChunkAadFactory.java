@@ -16,17 +16,23 @@
 package org.linagora.linshare.storage.encryption.format;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 import org.linagora.linshare.storage.encryption.exception.EncryptedBlobFormatException;
 
 /**
  * Builds the AES-GCM additional authenticated data for one chunk, binding
- * format version, plaintext size, chunk size, chunk index, key id and the
- * caller-supplied blob identifier (ARCH.md 7.2) so that header tampering,
- * chunk swapping and chunk replay-at-a-different-index all fail
- * authentication. Every variable-length field is length-prefixed so distinct
- * (keyId, blobId) pairs never serialize to the same bytes.
+ * format version, algorithm id, nonce scheme id, plaintext size, chunk
+ * size, chunk index and the caller-supplied blob identifier (ARCH.md 7.2)
+ * so that header tampering, chunk swapping and chunk replay-at-a-different-
+ * index all fail authentication.
+ *
+ * <p>Deliberately excludes the header's {@code keyId}/wrapped-DEK: those
+ * identify which KEK currently wraps the DEK, not how the chunk bytes
+ * themselves are interpreted, and KEK rotation (docs/CLAUDE.md 27) must be
+ * able to change them without touching — or being able to touch — a single
+ * already-authenticated chunk. Binding keyId here would make that
+ * impossible, since rewrapping under a new KEK would then also change every
+ * chunk's AAD despite the ciphertext staying byte-identical.
  */
 public final class ChunkAadFactory {
 
@@ -40,14 +46,12 @@ public final class ChunkAadFactory {
 		if (blobId == null) {
 			throw new EncryptedBlobFormatException("blobId is required and must not be null");
 		}
-		byte[] keyIdBytes = header.getKeyId().getBytes(StandardCharsets.UTF_8);
 
 		int size = 1 + 1 + 1 // formatVersion, algorithmId, nonceSchemeId
 				+ 8 // plaintextSize
 				+ 4 // chunkPlaintextSize
 				+ 8 // chunkCount
 				+ 8 // chunkIndex
-				+ 2 + keyIdBytes.length // keyIdLength + keyId
 				+ 4 + blobId.length; // blobIdLength + blobId
 
 		ByteBuffer buffer = ByteBuffer.allocate(size);
@@ -58,8 +62,6 @@ public final class ChunkAadFactory {
 		buffer.putInt(header.getChunkPlaintextSize());
 		buffer.putLong(header.getChunkCount());
 		buffer.putLong(chunkIndex);
-		buffer.putShort((short) keyIdBytes.length);
-		buffer.put(keyIdBytes);
 		buffer.putInt(blobId.length);
 		buffer.put(blobId);
 		return buffer.array();

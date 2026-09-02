@@ -164,6 +164,55 @@ class EncryptedFileSystemJcloudIntegrationTest {
 		assertEquals(MigrationOutcome.ALREADY_ENCRYPTED, migrator.migrate(stored, sha256Hex(legacyPlaintext)));
 	}
 
+	@Test
+	void kekRotationOnRealFilesystemUsesAtomicRenameAndLeavesChunksByteIdentical(@TempDir Path tempDir)
+			throws Exception {
+		FileSystemJcloudFileDataStoreImpl rawStore = (FileSystemJcloudFileDataStoreImpl) newRawFilesystemStore(
+				tempDir);
+		KeyEncryptionService oldKeyService = new LocalKeyEncryptionService(randomMasterKey(), "old-kek");
+		EncryptionParameters params = new EncryptionParameters(64 * 1024, EncryptedBlobHeader.DEFAULT_KEY_ID_CAPACITY,
+				EncryptedBlobHeader.DEFAULT_WRAPPED_KEY_CAPACITY);
+		byte[] plaintext = randomBytes(64 * 1024 * 2 + 321);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, "application/octet-stream",
+				(long) plaintext.length, "rotate-me.bin");
+		EncryptedFileDataStoreImpl encryptedStore = new EncryptedFileDataStoreImpl(rawStore, oldKeyService, params,
+				true, true, true);
+		FileMetaData stored = encryptedStore.add(ByteSource.wrap(plaintext), metadata);
+
+		Path persistedFile = findPersistedFile(tempDir, stored.getUuid());
+		byte[] beforeRotation = Files.readAllBytes(persistedFile);
+		long headerLength = org.linagora.linshare.storage.encryption.format.ChunkLayout
+				.of(org.linagora.linshare.storage.encryption.format.EncryptedBlobFormat
+						.readHeader(new java.io.ByteArrayInputStream(beforeRotation)))
+				.headerTotalLength();
+
+		KeyEncryptionService newKeyService = new LocalKeyEncryptionService(randomMasterKey(), "new-kek");
+		KekRotator rotator = new KekRotator(rawStore, oldKeyService, newKeyService);
+
+		RotationOutcome outcome = rotator.rotate(stored, "new-kek");
+		assertEquals(RotationOutcome.ROTATED, outcome);
+
+		try (Stream<Path> paths = Files.walk(tempDir)) {
+			assertFalse(paths.anyMatch(p -> p.getFileName().toString().endsWith(".rewrapping")),
+					"no temp rotation artifact should remain after a successful commit");
+		}
+
+		byte[] afterRotation = Files.readAllBytes(persistedFile);
+		byte[] chunksBefore = Arrays.copyOfRange(beforeRotation, (int) headerLength, beforeRotation.length);
+		byte[] chunksAfter = Arrays.copyOfRange(afterRotation, (int) headerLength, afterRotation.length);
+		assertArrayEquals(chunksBefore, chunksAfter, "chunk ciphertext must be untouched by rotation");
+
+		EncryptedFileDataStoreImpl rotatedStore = new EncryptedFileDataStoreImpl(rawStore, newKeyService, params,
+				true, true, true);
+		byte[] decrypted;
+		try (InputStream in = rotatedStore.get(stored).openStream()) {
+			decrypted = ByteStreams.toByteArray(in);
+		}
+		assertArrayEquals(plaintext, decrypted);
+
+		assertEquals(RotationOutcome.ALREADY_ROTATED, rotator.rotate(stored, "new-kek"));
+	}
+
 	private static String sha256Hex(byte[] data) throws Exception {
 		byte[] digest = MessageDigest.getInstance("SHA-256").digest(data);
 		StringBuilder sb = new StringBuilder();

@@ -109,10 +109,18 @@ linshare.documents.storage.filesystem.directory=/var/lib/linshare/filesystemstor
 linshare.documents.encryption.write-enabled=false
 linshare.documents.encryption.read-enabled=false
 linshare.documents.encryption.chunk-size=4194304
+# key-provider: "local" (development/test only) or "vault" (production,
+# HashiCorp Vault Transit secrets engine).
 linshare.documents.encryption.key-provider=local
 linshare.documents.encryption.key-id=default
 linshare.documents.encryption.local.master-key-file=
 linshare.documents.encryption.allow-legacy-read=true
+
+# Only used when key-provider=vault. The Vault token is read from a file
+# (never a raw property value) so it never ends up in this properties file.
+linshare.documents.encryption.vault.address=
+linshare.documents.encryption.vault.token-file=
+linshare.documents.encryption.vault.transit-key-name=
 
 ######## Extended storage options ########
 
