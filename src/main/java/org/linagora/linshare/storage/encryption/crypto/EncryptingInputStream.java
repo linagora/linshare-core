@@ -132,7 +132,7 @@ public final class EncryptingInputStream extends InputStream {
 		}
 
 		if (remaining > 0 && fillIfNeeded()) {
-			int fromBuffer = (int) Math.min(currentBuffer.length - posInBuffer, remaining);
+			int fromBuffer = (int) Math.min((long) currentBuffer.length - posInBuffer, remaining);
 			posInBuffer += fromBuffer;
 			remaining -= fromBuffer;
 		}

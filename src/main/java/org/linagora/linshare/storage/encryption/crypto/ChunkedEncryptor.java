@@ -153,7 +153,10 @@ public final class ChunkedEncryptor {
 		byte[] dek = new byte[EncryptedBlobHeader.DEK_LENGTH_BYTES];
 		secureRandom.nextBytes(dek);
 		boolean prepared = false;
-		try {
+		// dek is a byte[], not Closeable, and the finally below only zeroes it
+		// conditionally on failure; try-with-resources would zero it
+		// unconditionally and corrupt the returned context's DEK.
+		try { // NOSONAR S2093
 			WrappedKey wrappedKey = keyEncryptionService.wrap(dek);
 			if (wrappedKey.getWrappedKeyBytes().length > params.getReservedWrappedKeyCapacity()) {
 				throw new EncryptedBlobKeyException("wrapped key length exceeds the reserved wrapped-key capacity");

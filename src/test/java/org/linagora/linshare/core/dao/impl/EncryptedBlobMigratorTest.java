@@ -113,7 +113,7 @@ class EncryptedBlobMigratorTest {
 		assertFalse(migrator.isLegacyBlob(metadata));
 
 		byte[] persisted = store.rawBytes(BUCKET, "doc-1");
-		assertArrayEquals(EncryptedBlobHeader.MAGIC, Arrays.copyOf(persisted, 4));
+		assertArrayEquals(EncryptedBlobHeader.magic(), Arrays.copyOf(persisted, 4));
 	}
 
 	@Test

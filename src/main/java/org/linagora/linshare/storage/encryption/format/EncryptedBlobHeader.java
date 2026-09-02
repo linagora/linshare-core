@@ -27,7 +27,12 @@ import org.linagora.linshare.storage.encryption.exception.EncryptedBlobUnsupport
  */
 public final class EncryptedBlobHeader {
 
-	public static final byte[] MAGIC = { 'L', 'S', 'E', '1' };
+	private static final byte[] MAGIC = { 'L', 'S', 'E', '1' };
+
+	/** Defensive copy — {@link #MAGIC} itself must never be exposed directly, since a {@code byte[]} is mutable regardless of the field being {@code static final}. */
+	public static byte[] magic() {
+		return MAGIC.clone();
+	}
 
 	public static final int FORMAT_VERSION = 1;
 
@@ -84,60 +89,30 @@ public final class EncryptedBlobHeader {
 
 	private final int reservedWrappedKeyCapacity;
 
-	public EncryptedBlobHeader(int formatVersion, int algorithmId, int nonceSchemeId, long plaintextSize,
+	// The 11 parameters are the LSE1 wire header's raw fields, each independently
+	// validated (see EncryptedBlobHeaderTest); a Builder would not resolve this
+	// finding since S107 has no private-constructor exemption, and grouping them
+	// into sub-objects would be a real format redesign, not a mechanical fix.
+	public EncryptedBlobHeader(int formatVersion, int algorithmId, int nonceSchemeId, long plaintextSize, // NOSONAR S107
 			int chunkPlaintextSize, long chunkCount, byte[] noncePrefix, String keyId, int reservedKeyIdCapacity,
 			byte[] wrappedKeyBytes, int reservedWrappedKeyCapacity) {
-		if (formatVersion != FORMAT_VERSION) {
-			throw new EncryptedBlobUnsupportedVersionException("Unsupported LSE1 format version: " + formatVersion);
-		}
-		if (algorithmId != ALGORITHM_AES_256_GCM) {
-			throw new EncryptedBlobUnsupportedVersionException("Unsupported LSE1 algorithm id: " + algorithmId);
-		}
+		validateFormatVersion(formatVersion);
+		validateAlgorithmId(algorithmId);
 		NonceStrategy nonceStrategy = NonceStrategy.forSchemeId(nonceSchemeId);
 
-		if (plaintextSize < 0) {
-			throw new EncryptedBlobFormatException("plaintextSize must not be negative: " + plaintextSize);
-		}
-		if (chunkPlaintextSize <= 0 || chunkPlaintextSize > MAX_CHUNK_PLAINTEXT_SIZE) {
-			throw new EncryptedBlobFormatException("chunkPlaintextSize out of range: " + chunkPlaintextSize);
-		}
+		validatePlaintextSize(plaintextSize);
+		validateChunkPlaintextSize(chunkPlaintextSize);
 		long expectedChunkCount = computeChunkCount(plaintextSize, chunkPlaintextSize);
-		if (chunkCount != expectedChunkCount) {
-			throw new EncryptedBlobFormatException(
-					"chunkCount " + chunkCount + " is inconsistent with plaintextSize " + plaintextSize
-							+ " and chunkPlaintextSize " + chunkPlaintextSize + " (expected " + expectedChunkCount
-							+ ")");
-		}
-		if (chunkCount - 1 > nonceStrategy.maxChunkIndex()) {
-			throw new EncryptedBlobFormatException(
-					"chunkCount " + chunkCount + " exceeds the nonce construction's representable range");
-		}
-		if (noncePrefix == null || noncePrefix.length != NONCE_PREFIX_LENGTH_BYTES) {
-			throw new EncryptedBlobFormatException("noncePrefix must be exactly " + NONCE_PREFIX_LENGTH_BYTES
-					+ " bytes");
-		}
-		if (keyId == null || keyId.isEmpty()) {
-			throw new EncryptedBlobFormatException("keyId must not be null or empty");
-		}
+		validateChunkCount(chunkCount, plaintextSize, chunkPlaintextSize, expectedChunkCount);
+		validateChunkCountFitsNonceRange(chunkCount, nonceStrategy);
+		validateNoncePrefix(noncePrefix);
+		validateKeyId(keyId);
 		byte[] keyIdBytes = keyId.getBytes(StandardCharsets.UTF_8);
-		if (reservedKeyIdCapacity <= 0 || reservedKeyIdCapacity > MAX_KEY_ID_CAPACITY) {
-			throw new EncryptedBlobFormatException("reservedKeyIdCapacity out of range: " + reservedKeyIdCapacity);
-		}
-		if (keyIdBytes.length > reservedKeyIdCapacity) {
-			throw new EncryptedBlobFormatException("keyId length " + keyIdBytes.length
-					+ " exceeds reservedKeyIdCapacity " + reservedKeyIdCapacity);
-		}
-		if (wrappedKeyBytes == null || wrappedKeyBytes.length == 0) {
-			throw new EncryptedBlobFormatException("wrappedKeyBytes must not be null or empty");
-		}
-		if (reservedWrappedKeyCapacity <= 0 || reservedWrappedKeyCapacity > MAX_WRAPPED_KEY_CAPACITY) {
-			throw new EncryptedBlobFormatException(
-					"reservedWrappedKeyCapacity out of range: " + reservedWrappedKeyCapacity);
-		}
-		if (wrappedKeyBytes.length > reservedWrappedKeyCapacity) {
-			throw new EncryptedBlobFormatException("wrappedKeyBytes length " + wrappedKeyBytes.length
-					+ " exceeds reservedWrappedKeyCapacity " + reservedWrappedKeyCapacity);
-		}
+		validateReservedKeyIdCapacity(reservedKeyIdCapacity);
+		validateKeyIdFitsCapacity(keyIdBytes, reservedKeyIdCapacity);
+		validateWrappedKeyBytes(wrappedKeyBytes);
+		validateReservedWrappedKeyCapacity(reservedWrappedKeyCapacity);
+		validateWrappedKeyFitsCapacity(wrappedKeyBytes, reservedWrappedKeyCapacity);
 
 		this.formatVersion = formatVersion;
 		this.algorithmId = algorithmId;
@@ -150,6 +125,93 @@ public final class EncryptedBlobHeader {
 		this.reservedKeyIdCapacity = reservedKeyIdCapacity;
 		this.wrappedKeyBytes = wrappedKeyBytes.clone();
 		this.reservedWrappedKeyCapacity = reservedWrappedKeyCapacity;
+	}
+
+	private static void validateFormatVersion(int formatVersion) {
+		if (formatVersion != FORMAT_VERSION) {
+			throw new EncryptedBlobUnsupportedVersionException("Unsupported LSE1 format version: " + formatVersion);
+		}
+	}
+
+	private static void validateAlgorithmId(int algorithmId) {
+		if (algorithmId != ALGORITHM_AES_256_GCM) {
+			throw new EncryptedBlobUnsupportedVersionException("Unsupported LSE1 algorithm id: " + algorithmId);
+		}
+	}
+
+	private static void validatePlaintextSize(long plaintextSize) {
+		if (plaintextSize < 0) {
+			throw new EncryptedBlobFormatException("plaintextSize must not be negative: " + plaintextSize);
+		}
+	}
+
+	private static void validateChunkPlaintextSize(int chunkPlaintextSize) {
+		if (chunkPlaintextSize <= 0 || chunkPlaintextSize > MAX_CHUNK_PLAINTEXT_SIZE) {
+			throw new EncryptedBlobFormatException("chunkPlaintextSize out of range: " + chunkPlaintextSize);
+		}
+	}
+
+	private static void validateChunkCount(long chunkCount, long plaintextSize, int chunkPlaintextSize,
+			long expectedChunkCount) {
+		if (chunkCount != expectedChunkCount) {
+			throw new EncryptedBlobFormatException(
+					"chunkCount " + chunkCount + " is inconsistent with plaintextSize " + plaintextSize
+							+ " and chunkPlaintextSize " + chunkPlaintextSize + " (expected " + expectedChunkCount
+							+ ")");
+		}
+	}
+
+	private static void validateChunkCountFitsNonceRange(long chunkCount, NonceStrategy nonceStrategy) {
+		if (chunkCount - 1 > nonceStrategy.maxChunkIndex()) {
+			throw new EncryptedBlobFormatException(
+					"chunkCount " + chunkCount + " exceeds the nonce construction's representable range");
+		}
+	}
+
+	private static void validateNoncePrefix(byte[] noncePrefix) {
+		if (noncePrefix == null || noncePrefix.length != NONCE_PREFIX_LENGTH_BYTES) {
+			throw new EncryptedBlobFormatException("noncePrefix must be exactly " + NONCE_PREFIX_LENGTH_BYTES
+					+ " bytes");
+		}
+	}
+
+	private static void validateKeyId(String keyId) {
+		if (keyId == null || keyId.isEmpty()) {
+			throw new EncryptedBlobFormatException("keyId must not be null or empty");
+		}
+	}
+
+	private static void validateReservedKeyIdCapacity(int reservedKeyIdCapacity) {
+		if (reservedKeyIdCapacity <= 0 || reservedKeyIdCapacity > MAX_KEY_ID_CAPACITY) {
+			throw new EncryptedBlobFormatException("reservedKeyIdCapacity out of range: " + reservedKeyIdCapacity);
+		}
+	}
+
+	private static void validateKeyIdFitsCapacity(byte[] keyIdBytes, int reservedKeyIdCapacity) {
+		if (keyIdBytes.length > reservedKeyIdCapacity) {
+			throw new EncryptedBlobFormatException("keyId length " + keyIdBytes.length
+					+ " exceeds reservedKeyIdCapacity " + reservedKeyIdCapacity);
+		}
+	}
+
+	private static void validateWrappedKeyBytes(byte[] wrappedKeyBytes) {
+		if (wrappedKeyBytes == null || wrappedKeyBytes.length == 0) {
+			throw new EncryptedBlobFormatException("wrappedKeyBytes must not be null or empty");
+		}
+	}
+
+	private static void validateReservedWrappedKeyCapacity(int reservedWrappedKeyCapacity) {
+		if (reservedWrappedKeyCapacity <= 0 || reservedWrappedKeyCapacity > MAX_WRAPPED_KEY_CAPACITY) {
+			throw new EncryptedBlobFormatException(
+					"reservedWrappedKeyCapacity out of range: " + reservedWrappedKeyCapacity);
+		}
+	}
+
+	private static void validateWrappedKeyFitsCapacity(byte[] wrappedKeyBytes, int reservedWrappedKeyCapacity) {
+		if (wrappedKeyBytes.length > reservedWrappedKeyCapacity) {
+			throw new EncryptedBlobFormatException("wrappedKeyBytes length " + wrappedKeyBytes.length
+					+ " exceeds reservedWrappedKeyCapacity " + reservedWrappedKeyCapacity);
+		}
 	}
 
 	/**

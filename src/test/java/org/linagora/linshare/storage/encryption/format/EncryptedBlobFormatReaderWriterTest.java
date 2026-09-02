@@ -140,7 +140,7 @@ class EncryptedBlobFormatReaderWriterTest {
 	 */
 	private byte[] fixedHeaderClaimingCapacities(int reservedKeyIdCapacity, int reservedWrappedKeyCapacity) {
 		ByteBuffer buffer = ByteBuffer.allocate(EncryptedBlobHeader.FIXED_HEADER_LENGTH);
-		buffer.put(EncryptedBlobHeader.MAGIC);
+		buffer.put(EncryptedBlobHeader.magic());
 		buffer.put((byte) EncryptedBlobHeader.FORMAT_VERSION);
 		buffer.put((byte) EncryptedBlobHeader.ALGORITHM_AES_256_GCM);
 		buffer.put((byte) RandomPrefixCounterNonceStrategy.SCHEME_ID);

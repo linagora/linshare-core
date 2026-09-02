@@ -15,8 +15,6 @@
  */
 package org.linagora.linshare.storage.encryption.crypto;
 
-import java.util.Arrays;
-
 import org.linagora.linshare.storage.encryption.format.EncryptedBlobHeader;
 
 /**
@@ -28,40 +26,9 @@ import org.linagora.linshare.storage.encryption.format.EncryptedBlobHeader;
  * zeroes the DEK bytes; Java offers no stronger memory-erasure guarantee than
  * that.
  */
-public final class EncryptingBlobContext implements AutoCloseable {
-
-	private final EncryptedBlobHeader header;
-
-	private final byte[] dek;
-
-	private boolean closed;
+public final class EncryptingBlobContext extends AbstractBlobContext {
 
 	EncryptingBlobContext(EncryptedBlobHeader header, byte[] dek) {
-		this.header = header;
-		this.dek = dek;
-	}
-
-	public EncryptedBlobHeader getHeader() {
-		ensureOpen();
-		return header;
-	}
-
-	byte[] getDek() {
-		ensureOpen();
-		return dek;
-	}
-
-	private void ensureOpen() {
-		if (closed) {
-			throw new IllegalStateException("EncryptingBlobContext is already closed");
-		}
-	}
-
-	@Override
-	public void close() {
-		if (!closed) {
-			Arrays.fill(dek, (byte) 0);
-			closed = true;
-		}
+		super(header, dek);
 	}
 }

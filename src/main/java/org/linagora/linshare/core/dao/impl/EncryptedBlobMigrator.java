@@ -81,10 +81,10 @@ public class EncryptedBlobMigrator {
 
 	/** Peeks the blob's magic bytes only; never decrypts/returns content. */
 	public boolean isLegacyBlob(FileMetaData metadata) throws IOException {
-		byte[] peeked = new byte[EncryptedBlobHeader.MAGIC.length];
+		byte[] peeked = new byte[EncryptedBlobHeader.magic().length];
 		try (InputStream in = delegate.getRange(metadata, 0, peeked.length).openStream()) {
 			int read = readAtMost(in, peeked);
-			return !(read == peeked.length && Arrays.equals(peeked, EncryptedBlobHeader.MAGIC));
+			return !(read == peeked.length && Arrays.equals(peeked, EncryptedBlobHeader.magic()));
 		}
 	}
 
@@ -132,7 +132,7 @@ public class EncryptedBlobMigrator {
 		ByteSource legacyPlaintext = delegate.get(metadata);
 		ChunkedEncryptor encryptor = new ChunkedEncryptor(keyEncryptionService, encryptionParameters);
 		EncryptingBlobContext ctx = encryptor.prepare(plaintextSize);
-		try {
+		try (ctx) {
 			long physicalSize = ChunkLayout.of(ctx.getHeader()).totalPhysicalLength();
 			FileMetaData physicalTempMetadata = new FileMetaData(tempMetadata.getKind(), tempMetadata.getMimeType(),
 					physicalSize, tempMetadata.getFileName());
@@ -146,8 +146,6 @@ public class EncryptedBlobMigrator {
 				}
 			};
 			delegate.add(encryptingSource, physicalTempMetadata);
-		} finally {
-			ctx.close();
 		}
 	}
 

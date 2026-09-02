@@ -31,7 +31,7 @@ public class FileAndMetaData {
 
 	protected String mimeType;
 
-	protected Boolean tempFileDeleted;
+	protected boolean tempFileDeleted;
 
 	protected File file;
 
@@ -93,11 +93,11 @@ public class FileAndMetaData {
 		this.mimeType = mimeType;
 	}
 
-	public Boolean isTempFileDeleted() {
+	public boolean isTempFileDeleted() {
 		return tempFileDeleted;
 	}
 
-	public void setTempFileDeleted(Boolean tempFileDeleted) {
+	public void setTempFileDeleted(boolean tempFileDeleted) {
 		this.tempFileDeleted = tempFileDeleted;
 	}
 

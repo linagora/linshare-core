@@ -93,8 +93,8 @@ class EncryptedFileSystemJcloudIntegrationTest {
 		Path persistedFile = findPersistedFile(tempDir, stored.getUuid());
 		byte[] persisted = Files.readAllBytes(persistedFile);
 		assertFalse(containsSubsequence(persisted, plaintext), "persisted bytes must not contain the plaintext");
-		byte[] magicPrefix = Arrays.copyOf(persisted, EncryptedBlobHeader.MAGIC.length);
-		assertArrayEquals(EncryptedBlobHeader.MAGIC, magicPrefix);
+		byte[] magicPrefix = Arrays.copyOf(persisted, EncryptedBlobHeader.magic().length);
+		assertArrayEquals(EncryptedBlobHeader.magic(), magicPrefix);
 
 		byte[] downloaded;
 		try (InputStream in = store.get(stored).openStream()) {
@@ -150,7 +150,7 @@ class EncryptedFileSystemJcloudIntegrationTest {
 
 		Path persistedFile = findPersistedFile(tempDir, stored.getUuid());
 		byte[] persisted = Files.readAllBytes(persistedFile);
-		assertArrayEquals(EncryptedBlobHeader.MAGIC, Arrays.copyOf(persisted, 4));
+		assertArrayEquals(EncryptedBlobHeader.magic(), Arrays.copyOf(persisted, 4));
 
 		EncryptedFileDataStoreImpl decoratedStore = new EncryptedFileDataStoreImpl(rawStore, keyEncryptionService,
 				params, true, true, true);

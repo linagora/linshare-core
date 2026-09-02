@@ -122,7 +122,7 @@ public class EncryptedFileDataStoreImpl implements FileDataStore {
 
 		ChunkedEncryptor encryptor = new ChunkedEncryptor(keyEncryptionService, encryptionParameters);
 		EncryptingBlobContext ctx = encryptor.prepare(plaintextSize);
-		try {
+		try (ctx) {
 			// The physical (ciphertext) length is a deterministic function of the
 			// header alone, known before a single byte is encrypted. The delegate
 			// store must receive this exact length: at least the filesystem
@@ -153,8 +153,6 @@ public class EncryptedFileDataStoreImpl implements FileDataStore {
 				metadata.setBucketUuid(stored.getBucketUuid());
 			}
 			return metadata;
-		} finally {
-			ctx.close();
 		}
 	}
 
@@ -170,10 +168,10 @@ public class EncryptedFileDataStoreImpl implements FileDataStore {
 			@Override
 			public InputStream openStream() throws IOException {
 				InputStream raw = innerSource.openStream();
-				byte[] peeked = new byte[EncryptedBlobHeader.MAGIC.length];
+				byte[] peeked = new byte[EncryptedBlobHeader.magic().length];
 				int peekedLength = readAtMost(raw, peeked);
 
-				if (peekedLength == peeked.length && Arrays.equals(peeked, EncryptedBlobHeader.MAGIC)) {
+				if (peekedLength == peeked.length && Arrays.equals(peeked, EncryptedBlobHeader.magic())) {
 					InputStream reconstructed = new SequenceInputStream(new ByteArrayInputStream(peeked), raw);
 					ChunkedDecryptor decryptor = new ChunkedDecryptor(keyEncryptionService);
 					UnwrappedBlobContext ctx = decryptor.open(reconstructed, blobId);
@@ -199,12 +197,12 @@ public class EncryptedFileDataStoreImpl implements FileDataStore {
 		return new ByteSource() {
 			@Override
 			public InputStream openStream() throws IOException {
-				byte[] peeked = new byte[EncryptedBlobHeader.MAGIC.length];
+				byte[] peeked = new byte[EncryptedBlobHeader.magic().length];
 				try (InputStream peekIn = delegate.getRange(metadata, 0, peeked.length).openStream()) {
 					readAtMost(peekIn, peeked);
 				}
 
-				if (Arrays.equals(peeked, EncryptedBlobHeader.MAGIC)) {
+				if (Arrays.equals(peeked, EncryptedBlobHeader.magic())) {
 					EncryptedBlobHeader header;
 					// Bounded: the header's true length depends on its own
 					// per-blob reserved capacities, only known once parsed, so

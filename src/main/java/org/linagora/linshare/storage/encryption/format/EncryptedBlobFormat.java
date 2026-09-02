@@ -39,9 +39,9 @@ public final class EncryptedBlobFormat {
 		readFully(in, fixed, fixed.length);
 		ByteBuffer buffer = ByteBuffer.wrap(fixed);
 
-		byte[] magic = new byte[EncryptedBlobHeader.MAGIC.length];
+		byte[] magic = new byte[EncryptedBlobHeader.magic().length];
 		buffer.get(magic);
-		if (!Arrays.equals(magic, EncryptedBlobHeader.MAGIC)) {
+		if (!Arrays.equals(magic, EncryptedBlobHeader.magic())) {
 			throw new EncryptedBlobFormatException("Bad magic: not an LSE1 blob");
 		}
 		int formatVersion = buffer.get() & 0xFF;
@@ -98,7 +98,7 @@ public final class EncryptedBlobFormat {
 		byte[] wrappedKeyBytes = header.getWrappedKeyBytes();
 
 		ByteBuffer buffer = ByteBuffer.allocate(EncryptedBlobHeader.FIXED_HEADER_LENGTH);
-		buffer.put(EncryptedBlobHeader.MAGIC);
+		buffer.put(EncryptedBlobHeader.magic());
 		buffer.put((byte) header.getFormatVersion());
 		buffer.put((byte) header.getAlgorithmId());
 		buffer.put((byte) header.getNonceSchemeId());

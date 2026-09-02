@@ -126,7 +126,10 @@ public final class VaultKeyEncryptionService implements KeyEncryptionService {
 		HttpResponse<String> response;
 		try {
 			response = httpClient.send(request, BodyHandlers.ofString(StandardCharsets.UTF_8));
-		} catch (java.io.IOException | InterruptedException e) {
+		} catch (java.io.IOException e) {
+			throw new EncryptedBlobKeyException("Vault request failed: " + path, e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 			throw new EncryptedBlobKeyException("Vault request failed: " + path, e);
 		}
 		if (response.statusCode() != 200) {
