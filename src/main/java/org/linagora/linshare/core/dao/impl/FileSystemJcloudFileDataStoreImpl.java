@@ -26,11 +26,10 @@ import org.apache.commons.lang3.Validate;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.linagora.linshare.core.dao.AtomicBlobReplace;
 
 import com.google.inject.Module;
 
-public class FileSystemJcloudFileDataStoreImpl extends AbstractJcloudFileDataStoreImpl implements AtomicBlobReplace {
+public class FileSystemJcloudFileDataStoreImpl extends AbstractJcloudFileDataStoreImpl {
 
 	protected static String PROVIDER = "filesystem";
 

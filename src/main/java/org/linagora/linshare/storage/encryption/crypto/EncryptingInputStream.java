@@ -93,6 +93,68 @@ public final class EncryptingInputStream extends InputStream {
 		return toCopy;
 	}
 
+	/**
+	 * Skips ahead without encrypting whatever whole future chunks fall
+	 * entirely within the skip range — their ciphertext length is known
+	 * from the header alone, so the expensive AES-GCM work is avoidable for
+	 * any chunk skipped past in full; only the underlying plaintext still
+	 * has to be advanced (via its own {@code skip}), since GCM output can't
+	 * be produced mid-chunk without processing that chunk from its start.
+	 *
+	 * <p>This is what keeps jclouds' generic multipart upload slicing
+	 * (which slices the encrypted {@code ByteSource} into parts via {@code
+	 * ByteSource.slice(offset, length)}, each re-opening this stream from
+	 * byte 0 and skipping to its own starting offset — see docs/ARCH.md 18)
+	 * from re-encrypting every earlier chunk for every part.
+	 */
+	@Override
+	public long skip(long n) throws IOException {
+		if (n <= 0) {
+			return 0;
+		}
+		long remaining = n;
+
+		if (currentBuffer != null && posInBuffer < currentBuffer.length) {
+			int availableInBuffer = currentBuffer.length - posInBuffer;
+			int fromBuffer = (int) Math.min(availableInBuffer, remaining);
+			posInBuffer += fromBuffer;
+			remaining -= fromBuffer;
+		}
+
+		while (remaining > 0 && nextChunkIndex < layout.chunkCount()) {
+			int chunkCiphertextLength = layout.chunkCiphertextLength(nextChunkIndex);
+			if (remaining < chunkCiphertextLength) {
+				break;
+			}
+			skipPlaintextFullyStrict(plaintextIn, layout.chunkPlaintextLength(nextChunkIndex));
+			nextChunkIndex++;
+			remaining -= chunkCiphertextLength;
+		}
+
+		if (remaining > 0 && fillIfNeeded()) {
+			int fromBuffer = (int) Math.min(currentBuffer.length - posInBuffer, remaining);
+			posInBuffer += fromBuffer;
+			remaining -= fromBuffer;
+		}
+
+		return n - remaining;
+	}
+
+	private static void skipPlaintextFullyStrict(InputStream in, long length) throws IOException {
+		long remaining = length;
+		while (remaining > 0) {
+			long skipped = in.skip(remaining);
+			if (skipped > 0) {
+				remaining -= skipped;
+				continue;
+			}
+			if (in.read() == -1) {
+				throw new EOFException("Plaintext stream ended before the declared plaintextSize was fully read");
+			}
+			remaining--;
+		}
+	}
+
 	private boolean fillIfNeeded() throws IOException {
 		if (currentBuffer != null && posInBuffer < currentBuffer.length) {
 			return true;

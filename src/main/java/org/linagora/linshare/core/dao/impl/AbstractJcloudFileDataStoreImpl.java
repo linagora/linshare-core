@@ -28,9 +28,11 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
+import org.jclouds.blobstore.options.CopyOptions;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.linagora.linshare.core.dao.AtomicBlobReplace;
 import org.linagora.linshare.core.dao.JcloudObjectStorageFileDataStore;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -41,7 +43,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 
 
-public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectStorageFileDataStore, Closeable {
+public abstract class AbstractJcloudFileDataStoreImpl
+		implements JcloudObjectStorageFileDataStore, AtomicBlobReplace, Closeable {
 
 	protected static final Logger logger = LoggerFactory.getLogger(AbstractJcloudFileDataStoreImpl.class);
 
@@ -174,6 +177,23 @@ public abstract class AbstractJcloudFileDataStoreImpl implements JcloudObjectSto
 				return blob.getPayload().openStream();
 			}
 		};
+	}
+
+	/**
+	 * Generic fallback for backends with no cheaper native primitive
+	 * (contrast {@code FileSystemJcloudFileDataStoreImpl}'s real inode
+	 * rename): a server-side {@code copyBlob} — a single {@code PUT} with
+	 * {@code x-amz-copy-source} on S3, {@code X-Copy-From} on Swift, never a
+	 * client-side download+reupload (docs/ARCH.md 18) — followed by removing
+	 * the source. The target key's atomicity is therefore exactly that of a
+	 * single object PUT on the backend, the same guarantee any other write
+	 * to that key would have.
+	 */
+	@Override
+	public void atomicReplace(String container, String sourceKey, String targetKey) throws IOException {
+		BlobStore blobStore = getBlobStore(container);
+		blobStore.copyBlob(container, sourceKey, container, targetKey, CopyOptions.NONE);
+		blobStore.removeBlob(container, sourceKey);
 	}
 
 	@Override
