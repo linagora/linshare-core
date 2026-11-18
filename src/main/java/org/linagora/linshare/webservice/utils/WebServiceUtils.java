@@ -18,8 +18,10 @@ package org.linagora.linshare.webservice.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 import org.apache.commons.lang3.Validate;
@@ -105,6 +107,7 @@ public class WebServiceUtils {
 			logger.error(e.getMessage(), e);
 			throw new BusinessException(BusinessErrorCode.WRONG_URL, "Malformed URL : " + fileURL);
 		}
+		checkRemoteUrlIsAllowed(url);
 		try (InputStream inputStream = url.openStream()) {
 			tempFile = WebServiceUtils.getTempFile(inputStream, discriminator, defaultFileName);
 		} catch (IOException e) {
@@ -118,6 +121,40 @@ public class WebServiceUtils {
 			WebServiceUtils.checkSizeValidation(fileSize, currSize);
 		}
 		return tempFile;
+	}
+
+	/**
+	 * Mitigates Server Side Request Forgery (CWE-918) on the create-from-URL
+	 * document features. Only http and https schemes are allowed, and the
+	 * resolved destination address must not target the local host or an
+	 * internal / reserved network range.
+	 */
+	public static void checkRemoteUrlIsAllowed(URL url) {
+		String scheme = url.getProtocol();
+		if (scheme == null
+				|| !(scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https"))) {
+			logger.warn("Rejected document creation from URL with forbidden scheme: " + scheme);
+			throw new BusinessException(BusinessErrorCode.WRONG_URL,
+					"Only http and https URLs are allowed.");
+		}
+		InetAddress[] addresses;
+		try {
+			addresses = InetAddress.getAllByName(url.getHost());
+		} catch (UnknownHostException e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(BusinessErrorCode.WRONG_URL,
+					"Can not resolve host for URL : " + url);
+		}
+		for (InetAddress address : addresses) {
+			if (address.isLoopbackAddress() || address.isAnyLocalAddress()
+					|| address.isLinkLocalAddress() || address.isSiteLocalAddress()
+					|| address.isMulticastAddress()) {
+				logger.warn("Rejected document creation from URL targeting a forbidden address: "
+						+ address.getHostAddress());
+				throw new BusinessException(BusinessErrorCode.WRONG_URL,
+						"The requested URL targets a forbidden address.");
+			}
+		}
 	}
 
 	public static String getFileNameFromUrl(String fileURL, String defaultFileName) {
